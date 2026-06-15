@@ -1,0 +1,29 @@
+{
+    "program_name": "寒冬pip", 
+    "program_subname": "HDpip", 
+    "welcome": {
+        "title": "Welcome", 
+        "hello": "Welcome to use HDpip!", 
+        "back_button": "Back", 
+        "next_button": "Next", 
+        "license_tip": "I have read and agreed the license", 
+        "theme_tip": "Chose a theme", 
+        "theme_list": ["System", "Light", "Dark"], 
+        "info_tip": "Please check your environment information", 
+        "item": "Item", 
+        "value": "Value", 
+        "info_treeview": [
+            "System Version", 
+            "Python Version", 
+            "Python Path", 
+            "pip Version", 
+            "pip Head", 
+            "HDpip Version"
+        ], 
+        "end_tip": "Everything is ready, click the button to start", 
+        "end_button": "OK, let's go",
+        "auto_setting": "Loading auto settings...",
+        "save_setting": "Saving settings...",
+        "done": "Done"
+    }
+}

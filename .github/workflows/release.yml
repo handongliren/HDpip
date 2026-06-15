@@ -4,7 +4,6 @@
 name: Python publish
 
 on:
-  push:
   release:
     types: [published]
   workflow_dispatch:

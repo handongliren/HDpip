@@ -3,6 +3,7 @@
 name: GitHub Pages
 
 on:
+  push:
   release:
     types: [published]
   workflow_dispatch:
@@ -15,7 +16,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -25,14 +26,14 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Set up Python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
 
       - name: Caching
-        uses: actions/cache@main
+        uses: actions/cache@v4
         with:
           key: mkdocs-material-${{ env.cache_id }}
           path: .cache

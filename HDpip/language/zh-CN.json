@@ -1,0 +1,32 @@
+{
+    "program_name": "寒冬pip", 
+    "program_subname": "HDpip", 
+    "welcome": {
+        "title": "欢迎", 
+        "hello": "欢迎使用寒冬pip！", 
+        "back_button": "上一步", 
+        "next_button": "下一步", 
+        "license_tip": "我已阅读并同意以上许可", 
+        "theme_tip": "选择一个主题", 
+        "theme_list": ["跟随系统", "亮色", "暗色"], 
+        "info_tip": "请检查您的环境信息", 
+        "item": "项目", 
+        "value": "值", 
+        "info_treeview": [
+            "系统版本", 
+            "Python版本", 
+            "Python路径", 
+            "pip版本", 
+            "pip执行头", 
+            "HDpip版本"
+        ], 
+        "end_tip": "一切已经就绪，按下按钮以开始", 
+        "end_button": "好了，进入HDpip的世界", 
+        "auto_setting": "加载自动设置……", 
+        "save_setting": "保存设置……", 
+        "done": "完成"
+    }, 
+    "main": {
+        "description": "一个基于马良框架的pip GUI"
+    }
+}

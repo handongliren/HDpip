@@ -3,9 +3,6 @@
 name: GitHub Pages
 
 on:
-  push:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:

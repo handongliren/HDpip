@@ -9,8 +9,8 @@ edit_uri_template: "" # 编辑地址模板（默认值）
 site_description: HDpip 的官方网站 # 站点描述
 site_author: handongliren # 站点作者
 copyright: <a href="#__consent">修改 Cookie 设置</a><br>Copyright &copy; 2026 小康, 寒冬利刃<br>本站从maliang网站修改而来 # 版权信息和 Cookie 设置
-remote_branch: gh-pages # GitHub Pages 远程分支名称（默认值）
-remote_name: origin # 远程名称（默认值）
+remote_branch: github-pages # GitHub Pages 远程分支名称（默认值）
+remote_name: github # 远程名称（默认值）
 docs_dir: docs # 文档目录（默认值）
 site_dir: site # 网站目录（默认值）
 dev_addr: 127.0.0.1:8080 # 预览模式地址（默认值）
@@ -405,37 +405,4 @@ nav:
   - 项目主页:
       - 项目主页: index.md
       - 开源许可: LICENSE.md
-      - 行为准则: CODE_OF_CONDUCT.md
-      - 贡献指南: CONTRIBUTING.md
-      - 安全策略: SECURITY.md
       - 更新日志: CHANGELOG.md
-      - 赞助我们: Sponsor.md
-      - 更多交流: Contact.md
-
-  - 教程和文档:
-      - t&d/index.md
-      - 第三方扩展包: t&d/third-party.md
-
-  - 示例项目:
-      - projects/index.md
-      - 官方项目:
-          - 1. Intelligent Magic Cube: projects/official/1.md
-          - 2. Chinese Chess: projects/official/2.md
-          - 3. Super Gobang: projects/official/3.md
-          - 4. Todo List: projects/official/4.md
-      - 用户项目:
-          - 1. Login2.0: projects/users/1.md
-          - 2. ArkLauncher: projects/users/2.md
-
-  - 相关博客:
-      - blog/index.md
-      - 标签索引: blog/tags.md
-
-  - 官方视频:
-      - videos/index.md
-      - 这……这还是 tkinter 吗？给我干哪儿来了这是？？？: videos/pages/6.md
-      - tkt 再度更新：新增播放视频的扩展包！: videos/pages/5.md
-      - 干掉 tkinter！tkintertools 大更新啦！: videos/pages/4.md
-      - tkintertools 又更新啦！: videos/pages/3.md
-      - 碾压 tkinter 的 UI 框架：tkintertools 3.0.0 正式进入 beta 公测阶段: videos/pages/2.md
-      - 这还是你记忆中的 tkinter 的程序吗？？？: videos/pages/1.md

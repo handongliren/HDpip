@@ -4,8 +4,6 @@ import json
 import urllib.request
 import subprocess
 
-TOKEN = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("CODECOV_TOKEN", "")
-
 
 def run_coverage():
     """运行 pytest 并生成覆盖率报告。"""
@@ -61,5 +59,14 @@ def _get_commit_sha() -> str:
 
 
 if __name__ == "__main__":
+    try:
+        token = sys.argv[1]
+    except IndexError:
+        if os.path.exists("codecov.token"):
+            with open("codecov.token", encoding = "utf-8") as f:
+                token = f.read().strip()
+        else:
+            token = os.environ.get("CODECOV_TOKEN", "")
+
     run_coverage()
-    upload_to_codecov(TOKEN)
+    upload_to_codecov(token)

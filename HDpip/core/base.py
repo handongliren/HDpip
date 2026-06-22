@@ -307,7 +307,7 @@ class Data():
         通知所有事件。
 
         :param event_type: 事件类型
-        :type event_type: Literal["open", "load", "save", "\_\_getitem\_\_", "\_\_setitem\_\_", "\_\_delitem\_\_", "\_\_add\_\_"]
+        :type event_type: Literal["open", "load", "save", "\\_\\_getitem\\_\\_", "\\_\\_setitem\\_\\_", "\\_\\_delitem\\_\\_", "\\_\\_add\\_\\_"]
         :param event_data: 事件数据
         :type event_data: dict[str, Any]
         """

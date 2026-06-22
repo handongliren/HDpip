@@ -16,7 +16,7 @@ dependencies = [
     "pip>=25.2",
     "maliang>=3.1.0",
     "pyyaml",
-    "pipdeptree>=2.0.0",
+    "pipdeptree>=2.0.0"
 ]
 keywords = ["pip", "gui", "maliang", "hdlr", "寒冬利刃", "handongliren"]
 classifiers = [

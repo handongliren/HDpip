@@ -50,5 +50,11 @@
         "Русский",
         "العربية",
         "हिन्दी"
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "/^python -m pytest --version ; python -m pytest --help \\| findstr /R /C:\"--cov\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

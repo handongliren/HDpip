@@ -4,3 +4,6 @@ pypirc.pypirc
 site/
 *.token
 *.egg-info/
+.coverage
+coverage.xml
+junit.xml

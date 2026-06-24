@@ -7,6 +7,7 @@
 """
 
 import sys
+import argparse
 import locale
 import difflib
 import pathlib
@@ -57,10 +58,19 @@ language_dict = {
 local_language = locale.getdefaultlocale()[0]
 possible_language = difflib.get_close_matches(local_language, ["zh-CN", "en"], n = 1) or ["en"]
 language = language_dict[possible_language[0]]
-try:
-    error = sys.argv[1]
-except:
-    error = language["placeholder"]
+# Parse command-line arguments. Support:
+#   --text "error text"
+#   --auto-close N
+# or legacy single positional argument (error text).
+parser = argparse.ArgumentParser(add_help = False)
+parser.add_argument("--text", "-t", dest = "text", help = "Error text", default = language["placeholder"])
+parser.add_argument("--auto-close", dest = "auto_close", type = int, help = "Auto close", default = -1)
+# allow legacy single positional argument as text
+parser.add_argument("positional", nargs = "?", help = argparse.SUPPRESS)
+ns, _ = parser.parse_known_args()
+
+error = ns.text if ns.text is not None else (ns.positional or language["placeholder"])
+auto_close = ns.auto_close or -1
 
 maliang.core.configs.Env.system = "Windows11"
 
@@ -96,4 +106,6 @@ dialog_arguments = {
 }
 
 root = dialog.DialogTk(**dialog_arguments)
+if "auto_close" in globals() and isinstance(auto_close, int) and auto_close > =  0:
+    root.after(auto_close, root.destroy)
 root.mainloop()

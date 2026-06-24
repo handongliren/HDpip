@@ -25,7 +25,7 @@ def catch(func: Callable[..., Any] | None = None, *, auto_close: int = 0):
     :rtype: _Wrapped[Callable[..., Any], Any, Callable[..., Any], Any | None]
     """
 
-    def _decorate(f: Callable[..., Any], *, auto_close: int = -1):
+    def _decorate(f: Callable[..., Any], *, auto_close: int = 0):
         @wraps(f)
         def wrapper(*args, **kwargs):
             try:

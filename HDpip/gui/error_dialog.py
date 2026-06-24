@@ -64,13 +64,13 @@ language = language_dict[possible_language[0]]
 # or legacy single positional argument (error text).
 parser = argparse.ArgumentParser(add_help = False)
 parser.add_argument("--text", "-t", dest = "text", help = "Error text", default = language["placeholder"])
-parser.add_argument("--auto-close", dest = "auto_close", type = int, help = "Auto close", default = -1)
+parser.add_argument("--auto-close", "-a", dest = "auto_close", type = int, help = "Auto close", default = 0)
 # allow legacy single positional argument as text
 parser.add_argument("positional", nargs = "?", help = argparse.SUPPRESS)
 ns, _ = parser.parse_known_args()
 
 error = ns.text if ns.text is not None else (ns.positional or language["placeholder"])
-auto_close = ns.auto_close or -1
+auto_close = ns.auto_close or 0
 
 maliang.core.configs.Env.system = "Windows11"
 
@@ -83,7 +83,7 @@ def exportCommand(*argvs, **kargvs) -> None:
         filetypes = [(language["log_file"], ".log"), (language["all_files"], ".*")],
         title = language["export_title"],
         initialfile = "error.log",
-        initialdir = str(base_dir.parents[-1])
+        initialdir = str(base_dir.parents[0])
     )).resolve()
     if not file.is_dir():
         if core.base.isBelongedToHDpip(file):
@@ -106,6 +106,6 @@ dialog_arguments = {
 }
 
 root = dialog.DialogTk(**dialog_arguments)
-if "auto_close" in globals() and isinstance(auto_close, int) and auto_close >=  0:
+if "auto_close" in globals() and isinstance(auto_close, int) and auto_close > 0:
     root.after(auto_close, root.destroy)
 root.mainloop()

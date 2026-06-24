@@ -106,6 +106,6 @@ dialog_arguments = {
 }
 
 root = dialog.DialogTk(**dialog_arguments)
-if "auto_close" in globals() and isinstance(auto_close, int) and auto_close > =  0:
+if "auto_close" in globals() and isinstance(auto_close, int) and auto_close >=  0:
     root.after(auto_close, root.destroy)
 root.mainloop()

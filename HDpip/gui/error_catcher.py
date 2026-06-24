@@ -31,8 +31,7 @@ def catch(func: Callable[..., Any] | None = None, *, auto_close: int = 0):
             try:
                 return f(*args, **kwargs)
             except Exception as error:
-                auto_close = auto_close
-                auto_close_arg = ["--auto-close", str(auto_close)] if auto_close and auto_close >= 0 else []
+                auto_close_arg = ["--auto-close", str(auto_close)] if auto_close and auto_close > 0 else []
 
                 subprocess.Popen(
                     [sys.executable, str(base_dir / "gui/error_dialog.py"), "--text", "".join(traceback.format_exception(error))] + auto_close_arg,

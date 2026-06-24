@@ -11,23 +11,23 @@ import pytest
 from HDpip.gui.error_catcher import catch
 
 
-@catch
+@catch(auto_close = 500)
 def raise_value_error():
     raise ValueError("这是一个测试错误！")
 
 
-@catch
+@catch(auto_close = 500)
 def divide_by_zero():
     return 1 / 0
 
 
-@catch
+@catch(auto_close = 500)
 def key_error():
     d = {}
     return d["missing"]
 
 
-@catch
+@catch(auto_close = 500)
 def normal_return():
     return 42
 

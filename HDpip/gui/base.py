@@ -48,8 +48,8 @@ success_subtle = "#4da37c"
 info_subtle = "#6ee5f8"
 warning_subtle = "#ffe083"
 danger_subtle = "#e86a76"
-light_subtle = "#f9fafb"
-dark_subtle = "#3a3e42"
+light_subtle = gray_300
+dark_subtle = gray_700
 
 colors = {
     "primary": [primary, primary_subtle],
@@ -115,54 +115,54 @@ class Button(maliang.Button):
                     case "default":
                         self.style.set(
                             "light",
-                            fg = (light, light, light),
-                            bg = (dark, dark, dark),
-                            ol = (dark, dark, dark)
+                            fg = (light, light, light_subtle),
+                            bg = (dark, dark, dark_subtle),
+                            ol = (dark, dark, dark_subtle)
                         )
                         self.style.set(
                             "dark",
-                            fg = (dark, dark, dark),
-                            bg = (light, light, light),
-                            ol = (light, light, light)
+                            fg = (dark, dark, dark_subtle),
+                            bg = (light, light, light_subtle),
+                            ol = (light, light, light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (dark, dark, dark),
-                            bg = (light, light, light),
-                            ol = (light, light, light)
+                            fg = (dark, dark, dark_subtle),
+                            bg = (light, light, light_subtle),
+                            ol = (light, light, light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (light, light, light),
-                            bg = (colors[color][0], colors[color][0], colors[color][0]),
-                            ol = (colors[color][0], colors[color][0], colors[color][0])
+                            fg = (light, light, light_subtle),
+                            bg = (colors[color][0], colors[color][0], colors[color][1]),
+                            ol = (colors[color][0], colors[color][0], colors[color][1])
                         )
             else:
                 match color:
                     case "default":
                         self.style.set(
                             "light",
-                            fg = (dark, light, light),
-                            bg = ("", dark, dark),
-                            ol = (dark, dark, dark)
+                            fg = (dark, light, light_subtle),
+                            bg = ("", dark, dark_subtle),
+                            ol = (dark, dark, dark_subtle)
                         )
                         self.style.set(
                             "dark",
-                            fg = (light, dark, dark),
-                            bg = ("", light, light),
-                            ol = (light, light, light)
+                            fg = (light, dark, dark_subtle),
+                            bg = ("", light, light_subtle),
+                            ol = (light, light, light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (light, dark, dark),
-                            bg = ("", light, light),
-                            ol = (light, light, light)
+                            fg = (light, dark, dark_subtle),
+                            bg = ("", light, light_subtle),
+                            ol = (light, light, light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (colors[color][0], light, light),
-                            bg = ("", colors[color][0], colors[color][0]),
-                            ol = (colors[color][0], colors[color][0], colors[color][0])
+                            fg = (colors[color][0], light, light_subtle),
+                            bg = ("", colors[color][0], colors[color][1]),
+                            ol = (colors[color][0], colors[color][0], colors[color][1])
                         )
         else:
             if not outline:

@@ -7,3 +7,4 @@ site/
 .coverage
 coverage.xml
 junit.xml
+/**/.cache/

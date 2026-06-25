@@ -28,7 +28,6 @@ If you have any suggestions, etc., you can start a discussion in the discussion 
 * The content must be relevant to the project;
 * The code style meets the requirements (see below);
 * Include appropriate comments;
-* All in English, including docstrings;
 
 ### Documents
 

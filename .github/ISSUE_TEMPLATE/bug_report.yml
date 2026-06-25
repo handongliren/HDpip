@@ -9,8 +9,8 @@ body:
         Thanks for taking the time to fill out this bug report! ❤️  
         感谢您抽出宝贵时间填写此错误报告！❤️
 
-        Please read our [Contribution Guideline](https://github.com/handongliren/HDpip/blob/main/en/CONTRIBUTING/) before completing this report.
-        请在填写此报告前先阅读我们的[贡献指南](https://github.com/handongliren/HDpip/blob/main/CONTRIBUTING/)。
+        Please read our [Contribution Guideline](https://github.com/handongliren/HDpip/blob/main/CONTRIBUTING.md) before completing this report.
+        请在填写此报告前先阅读我们的[贡献指南](https://github.com/handongliren/HDpip/blob/main/CONTRIBUTING.md)。
   - type: input
     id: version
     attributes:

@@ -22,12 +22,23 @@ def main() -> int:
     token = load_token()
     os.environ["GH_TOKEN"] = token
 
-    shutil.rmtree(root / "site")
-    cmd = [sys.executable, "-m", "mkdocs", "build", "-f", "mkdocs.yml"]
-    cmd = [sys.executable, "-m", "mkdocs", "build", "-f", "docs/en/mkdocs.yml"]
+    site_dir = root / "site"
+    if site_dir.exists():
+        shutil.rmtree(site_dir)
+
+    commands = [
+        [sys.executable, "-m", "mkdocs", "build", "-f", "mkdocs.yml"],
+        [sys.executable, "-m", "mkdocs", "build", "-f", "docs/en/mkdocs.yml"],
+    ]
+
     print(f"Using token from {token_file}")
-    completed = subprocess.run(cmd, cwd = root, check = False)
-    return completed.returncode
+    for cmd in commands:
+        print(f"Running: {' '.join(cmd)}")
+        completed = subprocess.run(cmd, cwd = root, check = False)
+        if completed.returncode != 0:
+            return completed.returncode
+
+    return 0
 
 if __name__ ==  "__main__":
     raise SystemExit(main())

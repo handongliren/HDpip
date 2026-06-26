@@ -27,8 +27,8 @@ def main() -> int:
         shutil.rmtree(site_dir)
 
     commands = [
-        [sys.executable, "-m", "mkdocs", "build", "-f", "mkdocs.yml"],
-        [sys.executable, "-m", "mkdocs", "build", "-f", "docs/en/mkdocs.yml"],
+        [sys.executable, "-m", "mkdocs", "build", "--dirty", "-f", "mkdocs.yml"],
+        [sys.executable, "-m", "mkdocs", "build", "--dirty", "-f", "docs/en/mkdocs.yml"],
     ]
 
     print(f"Using token from {token_file}")

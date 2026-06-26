@@ -49,7 +49,7 @@ extra:
       link: https://pypi.org/project/HDpip/
       name: PyPI
     - icon: fontawesome/brands/bilibili
-      link: https://space.bilibili.com/498105668
+      link: https://space.bilibili.com/1020168139
       name: Bilibili
     - icon: fontawesome/solid/paper-plane
       link: mailto:1079489986@qq.com
@@ -92,4 +92,7 @@ nav:
   - Home:
       - Home: index.md
       - License: LICENSE.md
+      - Code of Conduct: CODE_OF_CONDUCT.md
+      - Contribution Guide: CONTRIBUTING.md
+      - Security Policy: SECURITY.md
       - Changelog: CHANGELOG.md

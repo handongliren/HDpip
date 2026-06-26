@@ -244,10 +244,10 @@ extra: # 额外设定
       link: https://pypi.org/project/HDpip/
       name: PyPI
     - icon: fontawesome/brands/bilibili
-      link: https://space.bilibili.com/498105668
+      link: https://space.bilibili.com/1020168139
       name: 哔哩哔哩
     - icon: fontawesome/solid/paper-plane
-      link: mailto:2951256653@qq.com
+      link: mailto:1079489986@qq.com
       name: 联系作者
   consent:
     actions:
@@ -345,12 +345,12 @@ plugins:
   - git-authors: # 通过本地 git 存储库获取贡献者
       add_co_authors: true
       sort_authors_by: contribution
-  - git-committers: # 通过云端 git 存储库获取贡献者
-      repository: handongliren/HDpip
-      branch: main
-      token: !ENV GH_TOKEN # 需要自行在终端中设置临时环境变量，强烈不建议显式地在此处设置 token
-      exclude_committers:
-        - web-flow
+#  - git-committers: # 通过云端 git 存储库获取贡献者
+#      repository: handongliren/HDpip
+#      branch: main
+#      token: !ENV GH_TOKEN # 需要自行在终端中设置临时环境变量，强烈不建议显式地在此处设置 token
+#      exclude_committers:
+#        - web-flow
   - autorefs:
       resolve_closest: true
   - literate-nav:
@@ -405,4 +405,7 @@ nav:
   - 项目主页:
       - 项目主页: index.md
       - 开源许可: LICENSE.md
+      - 行为准则: CODE_OF_CONDUCT.md
+      - 贡献指南: CONTRIBUTING.md
+      - 安全策略: SECURITY.md
       - 更新日志: CHANGELOG.md

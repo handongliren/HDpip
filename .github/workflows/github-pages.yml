@@ -52,3 +52,4 @@ jobs:
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  PYTHONIOENCODING: "utf-8"

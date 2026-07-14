@@ -91,7 +91,7 @@ pip install HDpip
 !!! quote ""
 
     <div markdown align="center">
-    本站共有 {{ pages }} 个页面，{{ words }} 个字，{{ codes }} 行代码，{{ images }} 张图片，您是第 <span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span> 位访客！
+    本站共有 {{ pages }} 个页面，{{ words }} 个字，{{ codes }} 行代码，{{ images }} 张图片，您是第 <span id="busuanzi_site_uv"><i class="fa fa-spinner fa-spin"></i></span> 位访客！
     </div>
 
 <div align="center" markdown>

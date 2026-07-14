@@ -76,7 +76,7 @@ Here are some links that may be helpful to you:
 !!! quote ""
 
     <div markdown align="center">
-    This site has {{ pages }} pages, {{ words }} words, {{ codes }} lines of code, {{ images }} images, and you are the <span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span> visitor!
+    This site has {{ pages }} pages, {{ words }} words, {{ codes }} lines of code, {{ images }} images, and you are the <span id="busuanzi_site_uv"><i class="fa fa-spinner fa-spin"></i></span> visitor!
     </div>
 
 <div align="center" markdown>

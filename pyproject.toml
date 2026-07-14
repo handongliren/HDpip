@@ -7,14 +7,14 @@ name = "HDpip"
 version = "0.0.4"
 description = "寒冬pip(HDpip)"
 readme = "HDpip/README.md"
-license = "GPL-3.0-or-later"
+license = "GPL-3.0"
 authors = [
     {name = "寒冬利刃(handongliren(hdlr))", email = "1079489986@qq.com"},
 ]
 requires-python = ">=3.10"
 dependencies = [
     "pip>=25.2",
-    "maliang>=3.1.0",
+    "maliang[opt]>=3.1.0",
     "pyyaml",
     "pipdeptree>=2.0.0"
 ]
@@ -23,6 +23,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

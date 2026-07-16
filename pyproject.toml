@@ -7,7 +7,7 @@ name = "HDpip"
 version = "0.0.4"
 description = "寒冬pip(HDpip)"
 readme = "HDpip/README.md"
-license = "GPL-3.0"
+license = { file = "LICENSE" }
 authors = [
     {name = "寒冬利刃(handongliren(hdlr))", email = "1079489986@qq.com"},
 ]

@@ -7,6 +7,10 @@
 """
 
 from typing import *
+import ctypes
+import os
+import platform
+import subprocess
 import tkinter
 import tkinter.scrolledtext
 import tkinter.ttk
@@ -61,6 +65,92 @@ colors = {
     "light": [light, light_subtle],
     "dark": [dark, dark_subtle]
 }
+
+def getSystemDpi() -> float:
+    """
+    跨平台获取系统 DPI。
+
+    :return: 当前系统 DPI，默认返回 96
+    :rtype: float
+    """
+
+    system = platform.system().lower()
+
+    if system == "windows":
+        try:
+            user32 = ctypes.windll.user32
+            hdc = user32.GetDC(None)
+            if hdc:
+                dpi_x = ctypes.windll.gdi32.GetDeviceCaps(hdc, 88)
+                dpi_y = ctypes.windll.gdi32.GetDeviceCaps(hdc, 90)
+                user32.ReleaseDC(None, hdc)
+                if dpi_x and dpi_y:
+                    return float(dpi_x)
+        except Exception:
+            pass
+
+    elif system == "darwin":
+        try:
+            subprocess.check_output(
+                ["osascript", "-e", 'tell application "System Events" to return UI elements enabled'],
+                stderr = subprocess.STDOUT,
+            )
+            return 144.0
+        except Exception:
+            return 144.0
+
+    elif system == "linux":
+        env_candidates = [
+            os.environ.get("GDK_SCALE"),
+            os.environ.get("QT_SCALE_FACTOR"),
+            os.environ.get("Xft.dpi"),
+        ]
+        for value in env_candidates:
+            if not value:
+                continue
+            try:
+                scale = float(value)
+                if scale > 0:
+                    if "GDK_SCALE" in os.environ or "QT_SCALE_FACTOR" in os.environ:
+                        return 96.0 * scale
+                    return scale
+            except Exception:
+                pass
+        return 96.0
+
+    return 96.0
+
+def pxToPt(px: float, dpi: float | None = None) -> float:
+    """
+    将像素大小转换为点数字号。
+
+    :param px: 像素大小
+    :type px: float
+    :param dpi: 指定 DPI，None 时自动获取系统 DPI
+    :type dpi: float | None
+    :return: 对应的点数字号
+    :rtype: float
+    """
+
+    if dpi is None:
+        dpi = getSystemDpi()
+    return px * 72.0 / dpi
+
+def ptToPx(pt: float, dpi: float | None = None) -> float:
+    """
+    将点数字号转换为像素大小。
+
+    :param pt: 点数字号
+    :type pt: float
+    :param dpi: 指定 DPI，None 时自动获取系统 DPI
+    :type dpi: float | None
+    :return: 对应的像素大小
+    :rtype: float
+    """
+
+    if dpi is None:
+        dpi = getSystemDpi()
+    return pt * dpi / 72.0
 
 class Button(maliang.Button):
     """

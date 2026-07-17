@@ -142,6 +142,9 @@ def pxToPt(px: float, dpi: float | None = None) -> float:
     """
     将像素大小转换为点数字号。
 
+    为了让 Tk / maliang 在当前系统下显示出更接近目标像素高度的效果，
+    使用比纯理论值更大的换算系数。
+
     :param px: 像素大小
     :type px: float
     :param dpi: 指定 DPI，None 时自动获取系统 DPI
@@ -152,11 +155,13 @@ def pxToPt(px: float, dpi: float | None = None) -> float:
 
     if dpi is None:
         dpi = getSystemDpi()
-    return px * 72.0 / dpi
+    return px * 72.0 / dpi * 1.12
 
 def ptToPx(pt: float, dpi: float | None = None) -> float:
     """
     将点数字号转换为像素大小。
+
+    对应地，使用与 ``pxToPt`` 相反的换算系数。
 
     :param pt: 点数字号
     :type pt: float
@@ -168,7 +173,7 @@ def ptToPx(pt: float, dpi: float | None = None) -> float:
 
     if dpi is None:
         dpi = getSystemDpi()
-    return pt * dpi / 72.0
+    return pt * dpi / 72.0 / 1.12
 
 class Button(maliang.Button):
     """

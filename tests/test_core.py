@@ -101,33 +101,42 @@ class TestUtils:
 class TestGuiBase:
     """GUI 基础函数测试。"""
 
-    def test_get_system_dpi_macos_from_tkinter(self, monkeypatch):
+    def test_get_system_dpi_macos_from_core_graphics(self, monkeypatch):
         import HDpip.gui.base as gui_base
 
-        class DummyRoot:
-            def withdraw(self):
-                pass
+        class CGSize(gui_base.ctypes.Structure):
+            _fields_ = [("width", gui_base.ctypes.c_double), ("height", gui_base.ctypes.c_double)]
 
-            def winfo_fpixels(self, value):
-                assert value == "1i"
-                return 150
+        class DummyFunc:
+            def __init__(self, result):
+                self._result = result
+                self.restype = None
+                self.argtypes = None
 
-            def destroy(self):
-                pass
+            def __call__(self, *args):
+                return self._result
+
+        class DummyCoreGraphics:
+            def __init__(self):
+                self.CGMainDisplayID = DummyFunc(1)
+                self.CGDisplayScreenSize = DummyFunc(CGSize(254.0, 127.0))
+                self.CGDisplayPixelsWide = DummyFunc(1000)
+                self.CGDisplayPixelsHigh = DummyFunc(500)
+
+        dummy = DummyCoreGraphics()
 
         monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
-        monkeypatch.setattr(gui_base.tkinter, "Tk", lambda: DummyRoot())
+        monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
+        monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: dummy)
 
-        assert gui_base.getSystemDpi() == 150.0
+        assert gui_base.getSystemDpi() == 100.0
 
     def test_get_system_dpi_macos_fallback(self, monkeypatch):
         import HDpip.gui.base as gui_base
 
-        def raise_error():
-            raise RuntimeError("tkinter unavailable")
-
         monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
-        monkeypatch.setattr(gui_base.tkinter, "Tk", raise_error)
+        monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
+        monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: (_ for _ in ()).throw(RuntimeError("load fail")))
 
         assert gui_base.getSystemDpi() == 96.0
 

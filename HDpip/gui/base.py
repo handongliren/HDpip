@@ -8,9 +8,9 @@
 
 from typing import *
 import ctypes
+import ctypes.util
 import os
 import platform
-import subprocess
 import tkinter
 import tkinter.scrolledtext
 import tkinter.ttk
@@ -91,13 +91,31 @@ def getSystemDpi() -> float:
 
     elif system == "darwin":
         try:
-            subprocess.check_output(
-                ["osascript", "-e", 'tell application "System Events" to return UI elements enabled'],
-                stderr = subprocess.STDOUT,
-            )
-            return 144.0
+            core_graphics = ctypes.cdll.LoadLibrary(ctypes.util.find_library("CoreGraphics"))
+            core_graphics.CGMainDisplayID.restype = ctypes.c_uint32
+            core_graphics.CGDisplayScreenSize.argtypes = [ctypes.c_uint32]
+
+            class CGSize(ctypes.Structure):
+                _fields_ = [("width", ctypes.c_double), ("height", ctypes.c_double)]
+
+            core_graphics.CGDisplayScreenSize.restype = CGSize
+            core_graphics.CGDisplayPixelsWide.argtypes = [ctypes.c_uint32]
+            core_graphics.CGDisplayPixelsWide.restype = ctypes.c_size_t
+            core_graphics.CGDisplayPixelsHigh.argtypes = [ctypes.c_uint32]
+            core_graphics.CGDisplayPixelsHigh.restype = ctypes.c_size_t
+
+            display_id = core_graphics.CGMainDisplayID()
+            size = core_graphics.CGDisplayScreenSize(display_id)
+            if size.width > 0 and size.height > 0:
+                width = core_graphics.CGDisplayPixelsWide(display_id)
+                height = core_graphics.CGDisplayPixelsHigh(display_id)
+                dpi_x = width * 25.4 / size.width
+                dpi_y = height * 25.4 / size.height
+                if dpi_x > 0 and dpi_y > 0:
+                    return float((dpi_x + dpi_y) / 2.0)
         except Exception:
-            return 144.0
+            pass
+        return 96.0
 
     elif system == "linux":
         env_candidates = [

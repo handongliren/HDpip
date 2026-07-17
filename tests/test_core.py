@@ -98,6 +98,40 @@ class TestUtils:
         assert isinstance(HDpip.core.base.isDev(), bool)
 
 
+class TestGuiBase:
+    """GUI 基础函数测试。"""
+
+    def test_get_system_dpi_macos_from_tkinter(self, monkeypatch):
+        import HDpip.gui.base as gui_base
+
+        class DummyRoot:
+            def withdraw(self):
+                pass
+
+            def winfo_fpixels(self, value):
+                assert value == "1i"
+                return 150
+
+            def destroy(self):
+                pass
+
+        monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
+        monkeypatch.setattr(gui_base.tkinter, "Tk", lambda: DummyRoot())
+
+        assert gui_base.getSystemDpi() == 150.0
+
+    def test_get_system_dpi_macos_fallback(self, monkeypatch):
+        import HDpip.gui.base as gui_base
+
+        def raise_error():
+            raise RuntimeError("tkinter unavailable")
+
+        monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
+        monkeypatch.setattr(gui_base.tkinter, "Tk", raise_error)
+
+        assert gui_base.getSystemDpi() == 96.0
+
+
 class TestPipApi:
     """pip API 测试（非破坏性）。"""
 

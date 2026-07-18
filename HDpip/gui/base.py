@@ -138,7 +138,7 @@ def getSystemDpi() -> float:
 
     return 96.0
 
-def pxToPt(px: float, dpi: float | None = None) -> float:
+def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
     """
     将像素大小转换为点数字号。
 
@@ -149,15 +149,20 @@ def pxToPt(px: float, dpi: float | None = None) -> float:
     :type px: float
     :param dpi: 指定 DPI，None 时自动获取系统 DPI
     :type dpi: float | None
+    :param auto_int: 是否自动取整为整数点数字号，默认 True
+    :type auto_int: bool
     :return: 对应的点数字号
     :rtype: float
     """
 
     if dpi is None:
         dpi = getSystemDpi()
-    return px * 72.0 / dpi * 1.12
+    result = px * 72.0 / dpi
+    if auto_int:
+        result = int(result)
+    return result
 
-def ptToPx(pt: float, dpi: float | None = None) -> float:
+def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
     """
     将点数字号转换为像素大小。
 
@@ -167,13 +172,18 @@ def ptToPx(pt: float, dpi: float | None = None) -> float:
     :type pt: float
     :param dpi: 指定 DPI，None 时自动获取系统 DPI
     :type dpi: float | None
+    :param auto_int: 是否自动取整为整数像素大小，默认 True
+    :type auto_int: bool
     :return: 对应的像素大小
     :rtype: float
     """
 
     if dpi is None:
         dpi = getSystemDpi()
-    return pt * dpi / 72.0 / 1.12
+    result = pt * dpi / 72.0
+    if auto_int:
+        result = int(result)
+    return result
 
 class Button(maliang.Button):
     """
@@ -487,7 +497,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
-        font = ("Consolas", 10),
+        font = ("Consolas", pxToPt(20)),
         bg = light,
         fg = dark,
         relief = tkinter.FLAT,
@@ -686,14 +696,14 @@ class Treeview(maliang.Canvas):
             theme = maliang.theme.get_color_mode()
 
         if theme == "light":
-            self.style.configure("Treeview", rowheight = self.row_height, borderwidth = 0, background = light, foreground = dark, fieldbackground = light)
-            self.style.configure("Treeview.Heading", background = light, foreground = dark, borderwidth = 0)
+            self.style.configure("Treeview", rowheight = self.row_height, borderwidth = 0, background = light, foreground = dark, fieldbackground = light, font = self.font)
+            self.style.configure("Treeview.Heading", background = light, foreground = dark, borderwidth = 0, font = self.font)
             self.style.map("Treeview.Heading", background = [("active", gray_200)])
             self.style.map("Treeview", background = [("selected", info)], foreground = [("selected", dark)])
             self.vbar.configure(bg = gray_400, troughcolor = gray_200, activebackground = gray_500, highlightthickness = 0, relief = "flat", borderwidth = 0)
         else:
-            self.style.configure("Treeview", rowheight = self.row_height, borderwidth = 0, background = dark, foreground = light, fieldbackground = dark)
-            self.style.configure("Treeview.Heading", background = dark, foreground = light, borderwidth = 0)
+            self.style.configure("Treeview", rowheight = self.row_height, borderwidth = 0, background = dark, foreground = light, fieldbackground = dark, font = self.font)
+            self.style.configure("Treeview.Heading", background = dark, foreground = light, borderwidth = 0, font = self.font)
             self.style.map("Treeview.Heading", background = [("active", gray_800)])
             self.style.map("Treeview", background = [("selected", primary)], foreground = [("selected", light)])
             self.vbar.configure(bg = gray_600, troughcolor = gray_800, activebackground = gray_500, highlightthickness = 0, relief = "flat", borderwidth = 0)
@@ -718,7 +728,8 @@ class Treeview(maliang.Canvas):
         *,
         anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
         show: Literal["tree", "headings", "tree headings", ""] = "headings",
-        row_height: int = 40,
+        row_height: int = 25,
+        font: tuple[str, int] = ("Consolas", pxToPt(20)),
         **kwargs
     ):
         """
@@ -735,9 +746,12 @@ class Treeview(maliang.Canvas):
         :type show: Literal["tree", "headings", "tree headings", ""]
         :param row_height: 行高
         :type row_height: int
+        :param font: 字体
+        :type font: tuple[str, int]
         """
 
         self.row_height = row_height
+        self.font = font
 
         super().__init__(master, expand = "xy", auto_update = True)
 
@@ -769,6 +783,8 @@ class Treeview(maliang.Canvas):
         self.treeview.configure(yscrollcommand = self.vbar.set)
 
         self.style = tkinter.ttk.Style()
+        self.style.configure("Treeview", font = font)
+        self.style.configure("Treeview.Heading", font = font)
         self.switchTheme()
         maliang.theme.register_event(self.switchTheme)
 

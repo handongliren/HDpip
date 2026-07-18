@@ -102,6 +102,13 @@ class TestTreeview:
         values = tv.item(children[0], "values")
         assert values[2] == "已更新"
 
+    def test_resolve_cross_platform_font_family(self):
+        import tkinter.font
+        import HDpip
+
+        resolved = HDpip.gui.base.getAvailableFontFamily(["DengXian", "Microsoft YaHei", "Arial"], fallback = "sans-serif")
+        assert resolved in tkinter.font.families()
+
 
 if __name__ == "__main__":
     import maliang

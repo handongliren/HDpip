@@ -129,7 +129,7 @@ class TestGuiBase:
         monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
         monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: dummy)
 
-        assert gui_base.getSystemDpi() == 100.0
+        assert gui_base.getDpi() == 100.0
 
     def test_get_system_dpi_macos_fallback(self, monkeypatch):
         import HDpip.gui.base as gui_base
@@ -138,7 +138,7 @@ class TestGuiBase:
         monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
         monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: (_ for _ in ()).throw(RuntimeError("load fail")))
 
-        assert gui_base.getSystemDpi() == 96.0
+        assert gui_base.getDpi() == 96.0
 
 
 class TestPipApi:

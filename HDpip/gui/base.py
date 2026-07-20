@@ -143,9 +143,6 @@ def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     """
     将像素大小转换为点数字号。
 
-    为了让 Tk / maliang 在当前系统下显示出更接近目标像素高度的效果，
-    使用比纯理论值更大的换算系数。
-
     :param px: 像素大小
     :type px: float
     :param dpi: 指定 DPI，None 时自动获取系统 DPI
@@ -166,8 +163,6 @@ def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
 def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
     """
     将点数字号转换为像素大小。
-
-    对应地，使用与 ``pxToPt`` 相反的换算系数。
 
     :param pt: 点数字号
     :type pt: float

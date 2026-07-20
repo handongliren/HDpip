@@ -186,8 +186,19 @@ def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
         result = int(result)
     return result
 
+_ = tkinter.Tk()
+_.tk.eval("""
+proc bgerror {msg} {
+    if {[string match "*application has been destroyed*" $msg]} {
+        return
+    }
+    puts stderr $msg
+}
+""")
+_.withdraw()
 default_font = tkinter.font.nametofont("TkDefaultFont").copy()
 default_font.configure(size = pxToPt(20))
+_.destroy()
 
 class Button(maliang.Button):
     """

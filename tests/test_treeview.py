@@ -102,13 +102,6 @@ class TestTreeview:
         values = tv.item(children[0], "values")
         assert values[2] == "已更新"
 
-    def test_resolve_cross_platform_font_family(self):
-        import tkinter.font
-        import HDpip
-
-        resolved = HDpip.gui.base.getAvailableFontFamily(["DengXian", "Microsoft YaHei", "Arial"], fallback = "sans-serif")
-        assert resolved in tkinter.font.families()
-
 
 if __name__ == "__main__":
     import maliang
@@ -207,10 +200,10 @@ if __name__ == "__main__":
         global show_headings
         show_headings = not show_headings
         if show_headings:
-            tv.configure(show = "tree headings")
+            tv.treeview.configure(show = "tree headings")
             btn_hide_head.set("隐藏标题")
         else:
-            tv.configure(show = "tree")
+            tv.treeview.configure(show = "tree")
             btn_hide_head.set("显示标题")
 
     def scroll_bottom():

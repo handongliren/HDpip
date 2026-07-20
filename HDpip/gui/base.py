@@ -67,13 +67,22 @@ colors = {
     "dark": [dark, dark_subtle]
 }
 
-def getSystemDpi() -> float:
+_dpi_cache: float | None = None
+
+def getDpi(*, use_cache: bool = True) -> float:
     """
     跨平台获取系统 DPI。
 
+    :param use_cache: 是否使用缓存，默认 True
+    :type use_cache: bool
     :return: 当前系统 DPI，默认返回 96
     :rtype: float
     """
+
+    global _dpi_cache
+
+    if use_cache and _dpi_cache is not None:
+        return _dpi_cache
 
     system = platform.system().lower()
 
@@ -86,9 +95,9 @@ def getSystemDpi() -> float:
                 dpi_y = ctypes.windll.gdi32.GetDeviceCaps(hdc, 90)
                 user32.ReleaseDC(None, hdc)
                 if dpi_x and dpi_y:
-                    return float(dpi_x)
+                    result = float(dpi_x)
         except Exception:
-            pass
+            result = 96.0
 
     elif system == "darwin":
         try:
@@ -113,10 +122,9 @@ def getSystemDpi() -> float:
                 dpi_x = width * 25.4 / size.width
                 dpi_y = height * 25.4 / size.height
                 if dpi_x > 0 and dpi_y > 0:
-                    return float((dpi_x + dpi_y) / 2.0)
+                    result = float((dpi_x + dpi_y) / 2.0)
         except Exception:
-            pass
-        return 96.0
+            result = 96.0
 
     elif system == "linux":
         env_candidates = [
@@ -131,13 +139,15 @@ def getSystemDpi() -> float:
                 scale = float(value)
                 if scale > 0:
                     if "GDK_SCALE" in os.environ or "QT_SCALE_FACTOR" in os.environ:
-                        return 96.0 * scale
-                    return scale
+                        result = 96.0 * scale
+                    else:
+                        result = scale
             except Exception:
-                pass
-        return 96.0
+                result = 96.0
 
-    return 96.0
+    if use_cache:
+        _dpi_cache = result
+    return result
 
 def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
     """
@@ -154,7 +164,7 @@ def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     """
 
     if dpi is None:
-        dpi = getSystemDpi()
+        dpi = getDpi()
     result = px * 72.0 / dpi
     if auto_int:
         result = int(result)
@@ -175,7 +185,7 @@ def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     """
 
     if dpi is None:
-        dpi = getSystemDpi()
+        dpi = getDpi()
     result = pt * dpi / 72.0
     if auto_int:
         result = int(result)
@@ -194,6 +204,43 @@ _.withdraw()
 default_font = tkinter.font.nametofont("TkDefaultFont").copy()
 default_font.configure(size = pxToPt(20))
 _.destroy()
+
+def getScreenSize() -> tuple[int, int]:
+    """
+    获取当前屏幕分辨率。
+
+    :return: 当前屏幕分辨率
+    :rtype: tuple[int, int]
+    """
+
+    _ = tkinter.Tk()
+    _.withdraw()
+    width = _.winfo_screenwidth()
+    height = _.winfo_screenheight()
+    _.destroy()
+    return (width, height)
+
+def getSmartScaleValue(
+        base_size: tuple[int, int] = (1200, 800), 
+        screen_size: tuple[int, int] = getScreenSize(), 
+        *, 
+        strict_mode: bool = True, 
+        use_cache: bool = True
+    ) -> float:
+    """
+    根据屏幕分辨率和基准分辨率计算智能缩放值。
+
+    :param base_size: 基准尺寸
+    :type base_size: tuple[int, int]
+    :param screen_size: 屏幕尺寸
+    :type screen_size: tuple[int, int]
+    :param strict_mode: 是否启用严格模式
+    :type strict_mode: bool
+    :param use_cache: 是否使用缓存
+    :type use_cache: bool
+    :return: 智能缩放值
+    :rtype: float
+    """
 
 class Button(maliang.Button):
     """

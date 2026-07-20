@@ -67,60 +67,6 @@ colors = {
     "dark": [dark, dark_subtle]
 }
 
-def getAvailableFontFamily(font_candidates: Iterable[str], fallback: str = "sans-serif") -> str:
-    """
-    获取当前系统可用的字体族，优先使用候选字体。.
-
-    :param font_candidates: 字体候选列表
-    :type font_candidates: Iterable[str]
-    :param fallback: 回退字体
-    :type fallback: str
-    :return: 可用字体族名称
-    :rtype: str
-    """
-
-    available_families = tkinter.font.families()
-    if not available_families:
-        return fallback
-
-    available_lookup = {family.lower(): family for family in available_families}
-    for font_name in font_candidates:
-        if not font_name:
-            continue
-        if font_name.lower() in available_lookup:
-            return available_lookup[font_name.lower()]
-
-    if fallback:
-        fallback_lower = fallback.lower()
-        if fallback_lower in available_lookup:
-            return available_lookup[fallback_lower]
-
-    return available_families[0]
-
-
-def resolveFontSpec(font: tuple[str, int] | None = None, *, fallback_family: str = "DengXian", fallback_size: int = 10) -> tuple[str, int]:
-    """
-    将字体规格解析为当前系统可用的字体元组。
-
-    :param font: 传入的字体规格，例如 ("DengXian", 10)
-    :type font: tuple[str, int] | None
-    :param fallback_family: 回退字体族
-    :type fallback_family: str
-    :param fallback_size: 回退字号
-    :type fallback_size: int
-    :return: 可用字体规格
-    :rtype: tuple[str, int]
-    """
-
-    if font is None:
-        family = getAvailableFontFamily([fallback_family, "Microsoft YaHei", "Segoe UI", "Arial", "Helvetica", "sans-serif"], fallback = "sans-serif")
-        return (family, fallback_size)
-
-    family = font[0] if font else fallback_family
-    size = font[1] if len(font) > 1 else fallback_size
-    resolved_family = getAvailableFontFamily([family, fallback_family, "Microsoft YaHei", "Segoe UI", "Arial", "Helvetica", "sans-serif"], fallback = "sans-serif")
-    return (resolved_family, size)
-
 def getSystemDpi() -> float:
     """
     跨平台获取系统 DPI。
@@ -239,6 +185,9 @@ def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     if auto_int:
         result = int(result)
     return result
+
+default_font = tkinter.font.nametofont("TkDefaultFont").copy()
+default_font.configure(size = pxToPt(20))
 
 class Button(maliang.Button):
     """
@@ -552,7 +501,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
-        font = ("Consolas", pxToPt(20)),
+        font: tuple[str, int] | tkinter.font.Font = default_font,
         bg = light,
         fg = dark,
         relief = tkinter.FLAT,
@@ -785,7 +734,7 @@ class Treeview(maliang.Canvas):
         anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
         show: Literal["tree", "headings", "tree headings", ""] = "headings",
         row_height: int = 25,
-        font: tuple[str, int] | None = None,
+        font: tuple[str, int] | tkinter.font.Font = default_font,
         **kwargs
     ):
         """
@@ -803,11 +752,11 @@ class Treeview(maliang.Canvas):
         :param row_height: 行高
         :type row_height: int
         :param font: 字体规格，None 时自动选择当前系统可用字体
-        :type font: tuple[str, int] | None
+        :type font: tuple[str, int] | tkinter.font.Font
         """
 
         self.row_height = row_height
-        self.font = resolveFontSpec(font)
+        self.font = font
 
         super().__init__(master, expand = "xy", auto_update = True)
 

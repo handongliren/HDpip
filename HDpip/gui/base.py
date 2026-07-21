@@ -67,79 +67,36 @@ colors = {
     "dark": [dark, dark_subtle]
 }
 
-def getSystemDpi() -> float:
+def getDpi() -> float:
     """
-    跨平台获取系统 DPI。
+    通过 Tk 根窗口获取系统 DPI。
 
     :return: 当前系统 DPI，默认返回 96
     :rtype: float
     """
 
-    system = platform.system().lower()
-
-    if system == "windows":
-        try:
-            user32 = ctypes.windll.user32
-            hdc = user32.GetDC(None)
-            if hdc:
-                dpi_x = ctypes.windll.gdi32.GetDeviceCaps(hdc, 88)
-                dpi_y = ctypes.windll.gdi32.GetDeviceCaps(hdc, 90)
-                user32.ReleaseDC(None, hdc)
-                if dpi_x and dpi_y:
-                    return float(dpi_x)
-        except Exception:
-            pass
-
-    elif system == "darwin":
-        try:
-            core_graphics = ctypes.cdll.LoadLibrary(ctypes.util.find_library("CoreGraphics"))
-            core_graphics.CGMainDisplayID.restype = ctypes.c_uint32
-            core_graphics.CGDisplayScreenSize.argtypes = [ctypes.c_uint32]
-
-            class CGSize(ctypes.Structure):
-                _fields_ = [("width", ctypes.c_double), ("height", ctypes.c_double)]
-
-            core_graphics.CGDisplayScreenSize.restype = CGSize
-            core_graphics.CGDisplayPixelsWide.argtypes = [ctypes.c_uint32]
-            core_graphics.CGDisplayPixelsWide.restype = ctypes.c_size_t
-            core_graphics.CGDisplayPixelsHigh.argtypes = [ctypes.c_uint32]
-            core_graphics.CGDisplayPixelsHigh.restype = ctypes.c_size_t
-
-            display_id = core_graphics.CGMainDisplayID()
-            size = core_graphics.CGDisplayScreenSize(display_id)
-            if size.width > 0 and size.height > 0:
-                width = core_graphics.CGDisplayPixelsWide(display_id)
-                height = core_graphics.CGDisplayPixelsHigh(display_id)
-                dpi_x = width * 25.4 / size.width
-                dpi_y = height * 25.4 / size.height
-                if dpi_x > 0 and dpi_y > 0:
-                    return float((dpi_x + dpi_y) / 2.0)
-        except Exception:
-            pass
+    try:
+        _ = tkinter.Tk()
+    except Exception:
         return 96.0
 
-    elif system == "linux":
-        env_candidates = [
-            os.environ.get("GDK_SCALE"),
-            os.environ.get("QT_SCALE_FACTOR"),
-            os.environ.get("Xft.dpi"),
-        ]
-        for value in env_candidates:
-            if not value:
-                continue
-            try:
-                scale = float(value)
-                if scale > 0:
-                    if "GDK_SCALE" in os.environ or "QT_SCALE_FACTOR" in os.environ:
-                        return 96.0 * scale
-                    return scale
-            except Exception:
-                pass
+    try:
+        _.withdraw()
+        _.update_idletasks()
+        dpi = _.winfo_fpixels("1i")
+        if dpi > 0:
+            return float(dpi)
+    except Exception:
         return 96.0
+    finally:
+        try:
+            _.destroy()
+        except Exception:
+            pass
 
     return 96.0
 
-def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
+def pxToPt(px: float, dpi: float = getDpi(), *, auto_int: bool = True) -> float:
     """
     将像素大小转换为点数字号。
 
@@ -153,14 +110,12 @@ def pxToPt(px: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     :rtype: float
     """
 
-    if dpi is None:
-        dpi = getSystemDpi()
     result = px * 72.0 / dpi
     if auto_int:
         result = int(result)
     return result
 
-def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> float:
+def ptToPx(pt: float, dpi: float = getDpi(), *, auto_int: bool = True) -> float:
     """
     将点数字号转换为像素大小。
 
@@ -174,8 +129,6 @@ def ptToPx(pt: float, dpi: float | None = None, *, auto_int: bool = True) -> flo
     :rtype: float
     """
 
-    if dpi is None:
-        dpi = getSystemDpi()
     result = pt * dpi / 72.0
     if auto_int:
         result = int(result)

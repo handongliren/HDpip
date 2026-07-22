@@ -7,10 +7,6 @@
 """
 
 from typing import *
-import ctypes
-import ctypes.util
-import os
-import platform
 import tkinter
 import tkinter.font
 import tkinter.scrolledtext
@@ -85,7 +81,7 @@ def getDpi() -> float:
         _.update_idletasks()
         dpi = _.winfo_fpixels("1i")
         if dpi > 0:
-            return float(dpi)
+            return float(round(dpi, 2))
     except Exception:
         return 96.0
     finally:
@@ -147,6 +143,65 @@ _.withdraw()
 default_font = tkinter.font.nametofont("TkDefaultFont").copy()
 default_font.configure(size = pxToPt(20))
 _.destroy()
+
+def getScreenSize() -> tuple[int, int]:
+    """
+    获取当前屏幕分辨率。
+
+    :return: 当前屏幕分辨率
+    :rtype: tuple[int, int]
+    """
+
+    _ = tkinter.Tk()
+    _.withdraw()
+    width = _.winfo_screenwidth()
+    height = _.winfo_screenheight()
+    _.destroy()
+    return (width, height)
+
+_smart_cache: dict[tuple[tuple[int, int], tuple[int, int]], float] | None = None
+
+def getSmartScaleValue(
+        base_size: tuple[int, int] = (1200, 800), 
+        screen_size: tuple[int, int] = getScreenSize(), 
+        *, 
+        strict_mode: bool = True, 
+        use_cache: bool = True
+    ) -> float:
+    """
+    根据屏幕分辨率和基准分辨率计算智能缩放值。
+
+    :param base_size: 基准尺寸
+    :type base_size: tuple[int, int]
+    :param screen_size: 屏幕尺寸
+    :type screen_size: tuple[int, int]
+    :param strict_mode: 是否启用严格模式
+    :type strict_mode: bool
+    :param use_cache: 是否使用缓存
+    :type use_cache: bool
+    :return: 智能缩放值
+    :rtype: float
+    """
+
+    if use_cache and not _smart_cache is None:
+        result =  _smart_cache.get((base_size, screen_size), None)
+        if result is not None:
+            return result
+
+    if strict_mode:
+        x_start = int((screen_size[0] * 0.4) / base_size[0] * 5)
+        x_end = int((screen_size[0] * 0.6) / base_size[0] * 5)
+        y_start = int((screen_size[1] * 0.4) / base_size[1] * 5)
+        y_end = int((screen_size[1] * 0.6) / base_size[1] * 5)
+        start = max(x_start, y_start)
+        end = min(x_end, y_end)
+    else:
+        if (base_size[0] / screen_size[0]) <= (base_size[1] / screen_size[1]):
+            start = int((screen_size[1] * 0.4) / base_size[1] * 5)
+            end = int((screen_size[1] * 1) / base_size[1] * 5)
+        else:
+            start = int((screen_size[0] * 0.4) / base_size[0] * 5)
+            end = int((screen_size[0] * 1) / base_size[0] * 5)
 
 class Button(maliang.Button):
     """

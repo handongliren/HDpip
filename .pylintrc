@@ -3,6 +3,4 @@ disable=
     line-too-long, 
     invalid-name, 
     too-many-ancestors, 
-    unused-argument, 
     unspecified-encoding, 
-    

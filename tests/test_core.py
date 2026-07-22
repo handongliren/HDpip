@@ -101,42 +101,33 @@ class TestUtils:
 class TestGuiBase:
     """GUI 基础函数测试。"""
 
-    def test_get_system_dpi_macos_from_core_graphics(self, monkeypatch):
+    def test_get_system_dpi_from_tk(self, monkeypatch):
         import HDpip.gui.base as gui_base
 
-        class CGSize(gui_base.ctypes.Structure):
-            _fields_ = [("width", gui_base.ctypes.c_double), ("height", gui_base.ctypes.c_double)]
+        class DummyTk:
+            def withdraw(self):
+                pass
 
-        class DummyFunc:
-            def __init__(self, result):
-                self._result = result
-                self.restype = None
-                self.argtypes = None
+            def update_idletasks(self):
+                pass
 
-            def __call__(self, *args):
-                return self._result
+            def winfo_fpixels(self, _):
+                return 100.0
 
-        class DummyCoreGraphics:
-            def __init__(self):
-                self.CGMainDisplayID = DummyFunc(1)
-                self.CGDisplayScreenSize = DummyFunc(CGSize(254.0, 127.0))
-                self.CGDisplayPixelsWide = DummyFunc(1000)
-                self.CGDisplayPixelsHigh = DummyFunc(500)
+            def destroy(self):
+                pass
 
-        dummy = DummyCoreGraphics()
-
-        monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
-        monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
-        monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: dummy)
+        monkeypatch.setattr(gui_base.tkinter, "Tk", lambda: DummyTk())
 
         assert gui_base.getDpi() == 100.0
 
-    def test_get_system_dpi_macos_fallback(self, monkeypatch):
+    def test_get_system_dpi_fallback(self, monkeypatch):
         import HDpip.gui.base as gui_base
 
-        monkeypatch.setattr(gui_base.platform, "system", lambda: "Darwin")
-        monkeypatch.setattr(gui_base.ctypes.util, "find_library", lambda name: "CoreGraphics")
-        monkeypatch.setattr(gui_base.ctypes.cdll, "LoadLibrary", lambda lib: (_ for _ in ()).throw(RuntimeError("load fail")))
+        def raise_tk(*args, **kwargs):
+            raise RuntimeError("tk fail")
+
+        monkeypatch.setattr(gui_base.tkinter, "Tk", raise_tk)
 
         assert gui_base.getDpi() == 96.0
 

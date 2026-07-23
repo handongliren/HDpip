@@ -7,6 +7,8 @@
 """
 
 from typing import *
+import copy
+import decimal
 import tkinter
 import tkinter.font
 import tkinter.scrolledtext
@@ -63,6 +65,8 @@ colors = {
     "dark": [dark, dark_subtle]
 }
 
+_dpi_cache: float | None = None
+
 def getDpi() -> float:
     """
     通过 Tk 根窗口获取系统 DPI。
@@ -70,6 +74,10 @@ def getDpi() -> float:
     :return: 当前系统 DPI，默认返回 96
     :rtype: float
     """
+
+    global _dpi_cache
+    if _dpi_cache is not None:
+        return _dpi_cache
 
     try:
         _ = tkinter.Tk()
@@ -81,7 +89,8 @@ def getDpi() -> float:
         _.update_idletasks()
         dpi = _.winfo_fpixels("1i")
         if dpi > 0:
-            return float(round(dpi, 2))
+            _dpi_cache = float(round(dpi, 2))
+            return _dpi_cache
     except Exception:
         return 96.0
     finally:
@@ -106,9 +115,10 @@ def pxToPt(px: float, dpi: float = getDpi(), *, auto_int: bool = True) -> float:
     :rtype: float
     """
 
-    result = px * 72.0 / dpi
+    result = decimal.Decimal(px) * decimal.Decimal(72.0) / decimal.Decimal(dpi)
+    result = round(result, 2)
     if auto_int:
-        result = int(result)
+        result = result.to_integral_value(rounding = decimal.ROUND_HALF_UP)
     return result
 
 def ptToPx(pt: float, dpi: float = getDpi(), *, auto_int: bool = True) -> float:
@@ -125,13 +135,32 @@ def ptToPx(pt: float, dpi: float = getDpi(), *, auto_int: bool = True) -> float:
     :rtype: float
     """
 
-    result = pt * dpi / 72.0
+    result = decimal.Decimal(pt) * decimal.Decimal(dpi) / decimal.Decimal(72.0)
+    result = round(result, 2)
     if auto_int:
-        result = int(result)
+        result = result.to_integral_value(rounding = decimal.ROUND_HALF_UP)
     return result
 
-_ = tkinter.Tk()
-_.tk.eval("""
+_default_font_cache: dict[int, tkinter.font.Font] = {}
+
+def getDefaultFont(size: int = pxToPt(20), *, use_cache: bool = True) -> tkinter.font.Font:
+    """
+    获取默认字体。
+
+    :param size: 指定字号，None 时使用系统默认字号
+    :type size: int | None
+    :param use_cache: 是否使用缓存，默认 True
+    :type use_cache: bool
+    :return: 默认字体对象
+    :rtype: tkinter.font.Font
+    """
+
+    global _default_font_cache
+    if size in _default_font_cache:
+        return _default_font_cache[size]
+
+    _ = tkinter.Tk()
+    _.tk.eval("""
 proc bgerror {msg} {
     if {[string match "*application has been destroyed*" $msg]} {
         return
@@ -139,10 +168,12 @@ proc bgerror {msg} {
     puts stderr $msg
 }
 """)
-_.withdraw()
-default_font = tkinter.font.nametofont("TkDefaultFont").copy()
-default_font.configure(size = pxToPt(20))
-_.destroy()
+    _.withdraw()
+    default_font = tkinter.font.nametofont("TkDefaultFont").copy()
+    default_font.configure(size = size)
+    _.destroy()
+    _default_font_cache[size] = default_font
+    return default_font
 
 def getScreenSize() -> tuple[int, int]:
     """
@@ -184,24 +215,71 @@ def getSmartScaleValue(
     """
 
     if use_cache:
-        result =  _smart_cache.get((base_size, screen_size), None)
-        if result is not None:
-            return result
+        if (base_size, screen_size, strict_mode) in _smart_cache:
+            return _smart_cache[(base_size, screen_size, strict_mode)]
 
     if strict_mode:
-        x_start = int((screen_size[0] * 0.4) / base_size[0] * 5)
-        x_end = int((screen_size[0] * 0.6) / base_size[0] * 5)
-        y_start = int((screen_size[1] * 0.4) / base_size[1] * 5)
-        y_end = int((screen_size[1] * 0.6) / base_size[1] * 5)
+        x_start = int(decimal.Decimal(screen_size[0] * 0.4) / decimal.Decimal(base_size[0]) * 5)
+        x_end = int(decimal.Decimal(screen_size[0] * 0.6) / decimal.Decimal(base_size[0]) * 5)
+        y_start = int(decimal.Decimal(screen_size[1] * 0.4) / decimal.Decimal(base_size[1]) * 5)
+        y_end = int(decimal.Decimal(screen_size[1] * 0.6) / decimal.Decimal(base_size[1]) * 5)
         start = max(x_start, y_start)
         end = min(x_end, y_end)
     else:
         if (base_size[0] / screen_size[0]) <= (base_size[1] / screen_size[1]):
-            start = int((screen_size[1] * 0.4) / base_size[1] * 5)
-            end = int((screen_size[1] * 1) / base_size[1] * 5)
+            start = int(decimal.Decimal(screen_size[1] * 0.4) / decimal.Decimal(base_size[1]) * 5)
+            end = int(decimal.Decimal(screen_size[1] * 1) / decimal.Decimal(base_size[1]) * 5)
         else:
-            start = int((screen_size[0] * 0.4) / base_size[0] * 5)
-            end = int((screen_size[0] * 1) / base_size[0] * 5)
+            start = int(decimal.Decimal(screen_size[0] * 0.4) / decimal.Decimal(base_size[0]) * 5)
+            end = int(decimal.Decimal(screen_size[0] * 1) / decimal.Decimal(base_size[0]) * 5)
+
+    available_list = [i * 0.2 for i in range(start, end + 1)]
+    seed_list = [i for i in available_list if i.is_integer()]
+
+    if len(seed_list) > 0:
+        result = max(seed_list)
+    elif len(available_list) > 0:
+        result = max(available_list)
+    if len(available_list) == 0 or result < 0.6:
+        if strict_mode:
+            result = getSmartScaleValue(base_size, screen_size, strict_mode = False, use_cache = use_cache)
+        else:
+            result = decimal.Decimal(0.6)
+
+    _smart_cache[(base_size, screen_size, strict_mode)] = result
+    return result
+
+def smartScale(value: float | Iterable[float | int], 
+    base_size: tuple[int, int] = (1200, 800), 
+    screen_size: tuple[int, int] = getScreenSize(), 
+    *, 
+    strict_mode: bool = True, 
+    use_cache: bool = True
+) -> float:
+    """
+    对给定的值进行智能缩放。
+
+    :param value: 要缩放的值
+    :type value: float | Iterable[float | int]
+    :param base_size: 基准尺寸
+    :type base_size: tuple[int, int]
+    :param screen_size: 屏幕尺寸
+    :type screen_size: tuple[int, int]
+    :param strict_mode: 是否启用严格模式
+    :type strict_mode: bool
+    :param use_cache: 是否使用缓存
+    :type use_cache: bool
+    :return: 缩放后的值
+    :rtype: float
+    """
+
+    scale_value = getSmartScaleValue(base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache)
+    if isinstance(value, Iterable):
+        result = copy.deepcopy(value)
+        result.__init__([decimal.Decimal(v) * scale_value for v in value])
+        return result
+    else:
+        return value * scale_value
 
 class Button(maliang.Button):
     """
@@ -515,7 +593,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
-        font: tuple[str, int] | tkinter.font.Font = default_font,
+        font: tuple[str, int] | tkinter.font.Font = getDefaultFont(),
         bg = light,
         fg = dark,
         relief = tkinter.FLAT,
@@ -748,7 +826,7 @@ class Treeview(maliang.Canvas):
         anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
         show: Literal["tree", "headings", "tree headings", ""] = "headings",
         row_height: int = 25,
-        font: tuple[str, int] | tkinter.font.Font = default_font,
+        font: tuple[str, int] | tkinter.font.Font = getDefaultFont(),
         **kwargs
     ):
         """

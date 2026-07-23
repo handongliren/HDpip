@@ -159,7 +159,7 @@ def getScreenSize() -> tuple[int, int]:
     _.destroy()
     return (width, height)
 
-_smart_cache: dict[tuple[tuple[int, int], tuple[int, int]], float] | None = None
+_smart_cache: dict[tuple[tuple[int, int], tuple[int, int], bool], float] = {}
 
 def getSmartScaleValue(
         base_size: tuple[int, int] = (1200, 800), 
@@ -183,7 +183,7 @@ def getSmartScaleValue(
     :rtype: float
     """
 
-    if use_cache and not _smart_cache is None:
+    if use_cache:
         result =  _smart_cache.get((base_size, screen_size), None)
         if result is not None:
             return result

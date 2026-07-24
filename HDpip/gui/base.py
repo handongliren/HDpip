@@ -233,8 +233,8 @@ def getSmartScaleValue(
             start = int(decimal.Decimal(screen_size[0] * 0.4) / decimal.Decimal(base_size[0]) * 5)
             end = int(decimal.Decimal(screen_size[0] * 1) / decimal.Decimal(base_size[0]) * 5)
 
-    available_list = [i * 0.2 for i in range(start, end + 1)]
-    seed_list = [i for i in available_list if i.is_integer()]
+    available_list = [decimal.Decimal(i) * decimal.Decimal(0.2) for i in range(start, end + 1)]
+    seed_list = [i for i in available_list if i == i.to_integral_value()]
 
     if len(seed_list) > 0:
         result = max(seed_list)

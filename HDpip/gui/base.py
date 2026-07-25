@@ -221,7 +221,8 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     screen_size: tuple[int, int] = getScreenSize(), 
     *, 
     strict_mode: bool = True, 
-    use_cache: bool = True
+    use_cache: bool = True, 
+    return_type: Literal["Decimal", "float", "int"] = "float"
 ) -> decimal.Decimal | Iterable[decimal.Decimal]:
     """
     对给定的值进行智能缩放。
@@ -236,15 +237,23 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     :type strict_mode: bool
     :param use_cache: 是否使用缓存
     :type use_cache: bool
+    :param return_type: 返回类型
+    :type return_type: Literal["Decimal", "float", "int"]
     :return: 缩放后的值
     :rtype: decimal.Decimal | Iterable[decimal.Decimal]
     """
 
     scale_value = getSmartScaleValue(base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache)
     if isinstance(value, Iterable):
-        return type(value)([smartScale(v) for v in value])
+        return type(value)([smartScale(v, base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache, return_type = return_type) for v in value])
     else:
-        return decimal.Decimal(value) * scale_value
+        result = decimal.Decimal(value) * scale_value
+        if return_type == "Decimal":
+            return result
+        elif return_type == "float":
+            return float(result)
+        elif return_type == "int":
+            return int(result)
 
 _default_font_cache: dict[decimal.Decimal, tkinter.font.Font] = {}
 

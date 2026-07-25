@@ -222,7 +222,7 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     *, 
     strict_mode: bool = True, 
     use_cache: bool = True, 
-    return_type: Literal["Decimal", "float", "int"] = "float"
+    return_type: Literal["Decimal", "float", "int"] = "int"
 ) -> decimal.Decimal | Iterable[decimal.Decimal]:
     """
     对给定的值进行智能缩放。
@@ -244,9 +244,9 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     """
 
     scale_value = getSmartScaleValue(base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache)
-    if isinstance(value, Iterable):
+    if isinstance(value, Iterable) and not isinstance(value, (str, bytes)):
         return type(value)([smartScale(v, base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache, return_type = return_type) for v in value])
-    else:
+    elif isinstance(value, (int, decimal.Decimal)):
         result = decimal.Decimal(value) * scale_value
         if return_type == "Decimal":
             return result
@@ -254,10 +254,14 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
             return float(result)
         elif return_type == "int":
             return int(result)
+    else:
+        raise TypeError(f"不支持的类型：{type(value).__name__}，仅支持 int、decimal.Decimal 或 Iterable[int | decimal.Decimal]。")
+
+ss = smartScale
 
 _default_font_cache: dict[decimal.Decimal, tkinter.font.Font] = {}
 
-def getDefaultFont(size: int | decimal.Decimal = pxToPt(smartScale(20)), *, use_cache: bool = True) -> tkinter.font.Font:
+def getDefaultFont(size: int | decimal.Decimal = pxToPt(ss(20)), *, use_cache: bool = True) -> tkinter.font.Font:
     """
     获取默认字体。
 
@@ -283,8 +287,13 @@ proc bgerror {msg} {
 }
 """)
     _.withdraw()
-    default_font = tkinter.font.nametofont("TkDefaultFont").copy()
-    default_font.configure(size = size)
+    default_font = tkinter.font.Font(
+        root = _,
+        family = "TkDefaultFont",
+        size = int(size),
+        weight = "normal",
+        slant = "roman"
+    )
     _.destroy()
     _default_font_cache[int(size)] = default_font
     return default_font
@@ -739,7 +748,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         width: int = 1,
         background: str | tuple[int, int, int] = "",
         outline: str | tuple[int, int, int],
-        radius: int = smartScale(5),
+        radius: int = ss(5),
         name: str | None = None,
         anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw",
         gradient_animation: bool = True,
@@ -833,7 +842,7 @@ class Treeview(maliang.Canvas):
         *,
         anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
         show: Literal["tree", "headings", "tree headings", ""] = "headings",
-        row_height: int = smartScale(25),
+        row_height: int = ss(25),
         font: tuple[str, int] | tkinter.font.Font = getDefaultFont(),
         **kwargs
     ):
@@ -924,7 +933,7 @@ class Treeview(maliang.Canvas):
         self.checkbox_enabled = enable
         if enable:
             self.treeview.configure(show = "tree headings")
-            self.treeview.column("#0", width = smartScale(50), minwidth = smartScale(50), stretch = False, anchor = "center")
+            self.treeview.column("#0", width = ss(50), minwidth = ss(50), stretch = False, anchor = "center")
             self.treeview.heading("#0", text = "☐")
             for iid in self.treeview.get_children(""):
                 self.treeview.item(iid, text = "☐")

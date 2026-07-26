@@ -33,11 +33,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://hdlr.maozi.io"
-Repository = "https://gitee.com/handongliren/HDpip"
-Documentation = "https://gitee.com/handongliren/HDpip-doc"
-Changelog = "https://gitee.com/handongliren/HDpip/CHANGELOG.md"
-Issue = "https://gitee.com/handongliren/HDpip/issues"
+Homepage = "https://handongliren.github.io/HDpip"
+Repository = "https://github.com/handongliren/HDpip"
+Documentation = "https://handongliren.github.io/HDpip"
+Changelog = "https://handongliren.github.io/HDpip/CHANGELOG/"
+Issue = "https://github.com/handongliren/HDpip/issues"
 
 [project.gui-scripts]
 HDpip = "HDpip.main:main"

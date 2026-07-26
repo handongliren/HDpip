@@ -11,6 +11,7 @@ from typing import *
 import maliang.theme
 import maliang.core.configs
 import maliang.animation
+import maliang.core.virtual
 
 try:
     from . import core

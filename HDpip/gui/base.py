@@ -102,7 +102,7 @@ def getDpi(use_cache: bool = True) -> decimal.Decimal:
 
     return decimal.Decimal("96.0")
 
-def pxToPt(px: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *, auto_int: bool = True) -> decimal.Decimal:
+def pxToPt(px: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *, auto_int: bool = True) -> decimal.Decimal | int:
     """
     将像素大小转换为点数字号。
 
@@ -113,7 +113,7 @@ def pxToPt(px: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *
     :param auto_int: 是否自动取整为整数点数字号，默认 True
     :type auto_int: bool
     :return: 对应的点数字号
-    :rtype: decimal.Decimal
+    :rtype: decimal.Decimal | int
     """
 
     result = decimal.Decimal(px) * decimal.Decimal("72.0") / decimal.Decimal(dpi)
@@ -122,7 +122,7 @@ def pxToPt(px: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *
         result = result.to_integral_value(rounding = decimal.ROUND_HALF_UP)
     return result
 
-def ptToPx(pt: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *, auto_int: bool = True) -> decimal.Decimal:
+def ptToPx(pt: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *, auto_int: bool = True) -> decimal.Decimal | int:
     """
     将点数字号转换为像素大小。
 
@@ -133,7 +133,7 @@ def ptToPx(pt: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *
     :param auto_int: 是否自动取整为整数像素大小，默认 True
     :type auto_int: bool
     :return: 对应的像素大小
-    :rtype: decimal.Decimal
+    :rtype: decimal.Decimal | int
     """
 
     result = decimal.Decimal(pt) * decimal.Decimal(dpi) / decimal.Decimal("72.0")
@@ -223,7 +223,7 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     strict_mode: bool = True, 
     use_cache: bool = True, 
     return_type: Literal["Decimal", "float", "int"] = "int"
-) -> decimal.Decimal | Iterable[decimal.Decimal]:
+) -> decimal.Decimal | Iterable[decimal.Decimal] | float | Iterable[float] | int | Iterable[int]:
     """
     对给定的值进行智能缩放。
 
@@ -240,7 +240,7 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     :param return_type: 返回类型
     :type return_type: Literal["Decimal", "float", "int"]
     :return: 缩放后的值
-    :rtype: decimal.Decimal | Iterable[decimal.Decimal]
+    :rtype: decimal.Decimal | Iterable[decimal.Decimal] | float | Iterable[float] | int | Iterable[int]
     """
 
     scale_value = getSmartScaleValue(base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache)
@@ -258,45 +258,6 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
         raise TypeError(f"不支持的类型：{type(value).__name__}，仅支持 int、decimal.Decimal 或 Iterable[int | decimal.Decimal]。")
 
 ss = smartScale
-
-_default_font_cache: dict[decimal.Decimal, tkinter.font.Font] = {}
-
-def getDefaultFont(size: int | decimal.Decimal = pxToPt(ss(20)), *, use_cache: bool = True) -> tkinter.font.Font:
-    """
-    获取默认字体。
-
-    :param size: 指定字号，None 时使用系统默认字号
-    :type size: int | decimal.Decimal
-    :param use_cache: 是否使用缓存，默认 True
-    :type use_cache: bool
-    :return: 默认字体对象
-    :rtype: tkinter.font.Font
-    """
-
-    global _default_font_cache
-    if use_cache and int(size) in _default_font_cache:
-        return _default_font_cache[int(size)]
-
-    _ = tkinter.Tk()
-    _.tk.eval("""
-proc bgerror {msg} {
-    if {[string match "*application has been destroyed*" $msg]} {
-        return
-    }
-    puts stderr $msg
-}
-""")
-    _.withdraw()
-    default_font = tkinter.font.Font(
-        root = _,
-        family = "TkDefaultFont",
-        size = int(size),
-        weight = "normal",
-        slant = "roman"
-    )
-    _.destroy()
-    _default_font_cache[int(size)] = default_font
-    return default_font
 
 class Button(maliang.Button):
     """
@@ -610,7 +571,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
-        font: tuple[str, int] | tkinter.font.Font = getDefaultFont(),
+        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", pxToPt(ss(20))),
         bg = light,
         fg = dark,
         relief = tkinter.FLAT,
@@ -843,7 +804,7 @@ class Treeview(maliang.Canvas):
         anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
         show: Literal["tree", "headings", "tree headings", ""] = "headings",
         row_height: int = ss(25),
-        font: tuple[str, int] | tkinter.font.Font = getDefaultFont(),
+        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", pxToPt(ss(20))),
         **kwargs
     ):
         """

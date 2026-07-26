@@ -25,9 +25,10 @@ except ImportError:
 
 try:
     from . import dialog
+    from .base import ss
 except ImportError:
     import dialog
-
+    from base import ss
 
 language_dict = {
     "zh-CN": {
@@ -93,7 +94,7 @@ def exportCommand(*argvs, **kargvs) -> None:
             file.write_text(error, encoding = "utf-8")
 
 dialog_arguments = {
-    "size": (800, 600),
+    "size": (ss(800), ss(600)),
     "position": None,
     "title": language["title"],
     "text": error,

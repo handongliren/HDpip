@@ -13,8 +13,10 @@ import maliang
 
 try:
     from . import base
+    from .base import ss
 except ImportError:
     import base
+    from base import ss
 
 class DialogCanvas(maliang.Canvas):
     """
@@ -70,10 +72,10 @@ class DialogCanvas(maliang.Canvas):
         self.place(x = position[0], y = position[1], anchor = anchor, width = size[0], height = size[1])
 
         self.theme_color = base.colors[theme][0]
-        title_height = 80
-        button_width = 160
-        button_height = 80
-        margin = 20
+        title_height = ss(80)
+        button_width = ss(160)
+        button_height = ss(80)
+        margin = ss(20)
 
         self.create_line(margin, title_height, size[0] - margin, title_height, fill = self.theme_color, width = 1)
         self.create_line(margin, size[1] - button_height, size[0] - margin, size[1] - button_height, fill = self.theme_color, width = 1)
@@ -83,7 +85,7 @@ class DialogCanvas(maliang.Canvas):
 
         if title == None:
             title = theme
-        self.title = maliang.Text(self, (margin, 40), size = [size[0] - 2 * margin, title_height], text = title, fontsize = 50, weight = "bold", anchor = "w", justify = "left", auto_update = True)
+        self.title = maliang.Text(self, (margin, ss(40)), size = [size[0] - 2 * margin, title_height], text = title, fontsize = ss(50), weight = "bold", anchor = "w", justify = "left", auto_update = True)
 
         self.scrolled_text = base.ScrolledText(self)
         self.scrolled_text.place(x = size[0] / 2, y = size[1] / 2, width = size[0] - 4 * margin, height = size[1] - 2 * margin - title_height - button_height, anchor = "center")
@@ -123,7 +125,7 @@ class DialogToplevel(maliang.Toplevel):
     def __init__(
         self,
         master: maliang.Tk | maliang.Toplevel | None = None,
-        size: tuple[int, int] = (800, 600),
+        size: tuple[int, int] = (ss(800), ss(600)),
         position: tuple[int, int] | None = None,
         *,
         title: str | None = None,
@@ -178,7 +180,7 @@ class DialogTk(maliang.Tk):
 
     def __init__(
         self,
-        size: tuple[int, int] = (800, 600),
+        size: tuple[int, int] = (ss(800), ss(600)),
         position: tuple[int, int] | None = None,
         *,
         title: str | None = None,

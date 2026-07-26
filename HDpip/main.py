@@ -15,9 +15,11 @@ import maliang.animation
 try:
     from . import core
     from . import gui
+    from .gui.base import ss
 except ImportError:
     import core
     import gui
+    from gui.base import ss
 
 def needWelcome(data_manager: core.base.DataManager = core.base.DataManager()) -> bool:
     """
@@ -87,11 +89,11 @@ class AboutCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.image = maliang.Image(self, (25, 25), (50, 50), image = self.master.icon_)
-        self.title = maliang.Text(self, (100, 25), None, anchor = "w", fontsize = 32)
-        self.version = maliang.Text(self, (100, 75), None, anchor = "w", fontsize = 30, text = core.base.getVersion())
+        self.image = maliang.Image(self, (ss(25), ss(25)), (ss(50), ss(50)), image = self.master.icon_)
+        self.title = maliang.Text(self, (ss(100), ss(25)), None, anchor = "w", fontsize = ss(32))
+        self.version = maliang.Text(self, (ss(100), ss(75)), None, anchor = "w", fontsize = ss(30), text = core.base.getVersion())
         self.version.style.set(fg = gui.base.primary)
-        self.description = maliang.Text(self, (25, 125), None, anchor = "w", fontsize = 25)
+        self.description = maliang.Text(self, (ss(25), ss(125)), None, anchor = "w", fontsize = ss(25))
 
         self.renderLanguage()
 
@@ -192,7 +194,7 @@ class Main(maliang.Tk):
         self.data_manager = data_manager
         self.data_manager.init()
 
-        super().__init__((1200, 800), title = "寒冬pip(HDpip)")
+        super().__init__((ss(1200), ss(800)), title = "寒冬pip(HDpip)")
         gui.base.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         self.icon_ = maliang.PhotoImage(file = str(core.base.getBaseDir() / "asset" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)
@@ -204,7 +206,7 @@ class Main(maliang.Tk):
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
         self.about_canvas = AboutCanvas(self, data_manager)
-        self.about_canvas.place(x = 0, y = 0, width = 350, height = 150)
+        self.about_canvas.place(x = 0, y = 0, width = ss(350), height = ss(150))
 
 @gui.error_catcher.catch
 def main(data_manager: core.base.DataManager = core.base.DataManager()) -> None:

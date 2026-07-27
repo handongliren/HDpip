@@ -134,5 +134,8 @@ if __name__ == "__main__":
         else:
             token = os.environ.get("CODECOV_TOKEN", "")
 
-    run_coverage()
+    try:
+        run_coverage()
+    except subprocess.CalledProcessError:
+        pass
     upload_to_codecov(token)

@@ -20,8 +20,8 @@
 
 * Add the documentation site: <https://handongliren.github.io/HDpip/>
 
-新增了文档站：<https://handongliren.github.io/HDpip/>
+* 新增了文档站：<https://handongliren.github.io/HDpip/>
 
 * Add smart scale function, which can automatically scale the size of the interface according to the screen resolution.
 
-新增了智能缩放功能，可以根据屏幕分辨率自动缩放界面大小。
+* 新增了智能缩放功能，可以根据屏幕分辨率自动缩放界面大小。

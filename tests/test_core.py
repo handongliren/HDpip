@@ -117,6 +117,7 @@ class TestGuiBase:
             def destroy(self):
                 pass
 
+        gui_base._dpi_cache = None
         monkeypatch.setattr(gui_base.tkinter, "Tk", lambda: DummyTk())
 
         assert gui_base.getDpi() == 100.0
@@ -127,6 +128,7 @@ class TestGuiBase:
         def raise_tk(*args, **kwargs):
             raise RuntimeError("tk fail")
 
+        gui_base._dpi_cache = None
         monkeypatch.setattr(gui_base.tkinter, "Tk", raise_tk)
 
         assert gui_base.getDpi() == 96.0

@@ -709,7 +709,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         width: int = 1,
         background: str | tuple[int, int, int] = "",
         outline: str | tuple[int, int, int],
-        radius: int = ss(5),
+        radius: int = ss(10),
         name: str | None = None,
         anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw",
         gradient_animation: bool = True,

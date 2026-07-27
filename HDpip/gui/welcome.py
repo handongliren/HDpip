@@ -246,7 +246,7 @@ class ThemeCanvas(maliang.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
-        self.value: int = None
+        self.value = 0
 
         self.tip = maliang.Text(self, (ss(400), ss(-400)), (ss(600), ss(200)), fontsize = ss(40), anchor = "center", auto_update = True)
         self.renderLanguage((ss(800), ss(-400)))

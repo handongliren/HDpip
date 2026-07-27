@@ -3,11 +3,10 @@ import sys
 import json
 import urllib.request
 import subprocess
-
+import importlib.util
 
 def run_coverage():
     """运行 pytest 并生成覆盖率报告。"""
-    import importlib.util
 
     has_pytest_cov = importlib.util.find_spec("pytest_cov") is not None
     has_coverage = importlib.util.find_spec("coverage") is not None
@@ -40,7 +39,6 @@ def upload_to_codecov(token: str):
         return
 
     # 如果安装了 codecov 包，优先使用其 CLI（更可靠）。
-    import importlib.util
     if importlib.util.find_spec("codecov") is not None:
         print("使用已安装的 codecov 包上传 coverage.xml")
         try:
@@ -136,6 +134,9 @@ if __name__ == "__main__":
 
     try:
         run_coverage()
-    except subprocess.CalledProcessError:
-        pass
-    upload_to_codecov(token)
+        upload_to_codecov(token)
+    except subprocess.CalledProcessError as exc:
+        print(f"测试失败，退出码: {exc.returncode}")
+        # 但仍尝试上传已有的覆盖率文件
+        upload_to_codecov(token)
+        sys.exit(exc.returncode)

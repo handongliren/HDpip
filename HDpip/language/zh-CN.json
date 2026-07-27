@@ -27,6 +27,10 @@
         "done": "完成"
     }, 
     "main": {
-        "description": "一个基于马良框架的pip GUI"
+        "description": "一个基于马良框架的pip GUI", 
+        "install_button": "安装", 
+        "uninstall_button": "卸载", 
+        "upgrade_button": "升级", 
+        "setting_button": "设置"
     }
 }

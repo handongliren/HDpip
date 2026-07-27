@@ -146,6 +146,8 @@ class ControlCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
+        self.install_button = gui.base.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"])
+
         self.renderLanguage()
 
 class Main(maliang.Tk):
@@ -208,6 +210,8 @@ class Main(maliang.Tk):
 
         self.about_canvas = AboutCanvas(self, data_manager)
         self.about_canvas.place(x = 0, y = 0, width = ss(350), height = ss(150))
+        self.control_canvas = ControlCanvas(self, data_manager)
+        self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
 
 @gui.error_catcher.catch
 def main(data_manager: core.base.DataManager = core.base.DataManager()) -> None:

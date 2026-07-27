@@ -31,12 +31,12 @@ class TestTreeview:
         root, canvas = tk_root
         tv = HDpip.gui.base.Treeview(canvas, (10, 10), (780, 300),
             columns = ("package", "version", "status"), show = "headings", height = 8)
-        tv.heading("package", text = "包名")
-        tv.heading("version", text = "版本")
-        tv.heading("status", text = "状态")
-        tv.column("package", width = 280, minwidth = 80)
-        tv.column("version", width = 120, minwidth = 60)
-        tv.column("status", width = 100, minwidth = 60)
+        tv.treeview.heading("package", text = "包名")
+        tv.treeview.heading("version", text = "版本")
+        tv.treeview.heading("status", text = "状态")
+        tv.treeview.column("package", width = 280, minwidth = 80)
+        tv.treeview.column("version", width = 120, minwidth = 60)
+        tv.treeview.column("status", width = 100, minwidth = 60)
 
     def test_insert_and_get_children(self, tk_root, ):
         import HDpip
@@ -48,7 +48,7 @@ class TestTreeview:
         for name, ver, st in self.PACKAGES:
             tv.insert("", "end", values = (name, ver, st))
 
-        children = tv.get_children()
+        children = tv.treeview.get_children()
         assert len(children) == len(self.PACKAGES)
 
     def test_checkbox_enable(self, tk_root, ):
@@ -75,9 +75,9 @@ class TestTreeview:
         for name, ver, st in self.PACKAGES:
             tv.insert("", "end", values = (name, ver, st))
 
-        children = tv.get_children()
-        tv.selection_set(children[0])
-        assert children[0] in tv.selection()
+        children = tv.treeview.get_children()
+        tv.treeview.selection_set(children[0])
+        assert children[0] in tv.treeview.selection()
 
     def test_get_selected_values_empty(self, tk_root, ):
         import HDpip
@@ -97,9 +97,9 @@ class TestTreeview:
             columns = ("package", "version", "status"), show = "headings", height = 8)
         tv.insert("", "end", values = ("pip", "25.3", "已安装"))
 
-        children = tv.get_children()
+        children = tv.treeview.get_children()
         tv.treeview.set(children[0], "status", "已更新")
-        values = tv.item(children[0], "values")
+        values = tv.treeview.item(children[0], "values")
         assert values[2] == "已更新"
 
 
@@ -126,12 +126,12 @@ if __name__ == "__main__":
 
     tv = HDpip.gui.base.Treeview(main, (12, 104), (976, 420),
         columns = ("package", "version", "status"), show = "headings", height = 14, selectmode = "extended")
-    tv.heading("package", text = "包名")
-    tv.heading("version", text = "版本")
-    tv.heading("status", text = "状态")
-    tv.column("package", width = 280, minwidth = 80)
-    tv.column("version", width = 120, minwidth = 60)
-    tv.column("status", width = 100, minwidth = 60)
+    tv.treeview.heading("package", text = "包名")
+    tv.treeview.heading("version", text = "版本")
+    tv.treeview.heading("status", text = "状态")
+    tv.treeview.column("package", width = 280, minwidth = 80)
+    tv.treeview.column("version", width = 120, minwidth = 60)
+    tv.treeview.column("status", width = 100, minwidth = 60)
 
     packages = [
         ("pip", "25.3", "已安装"),
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     show_headings = True
 
     def refresh_selection_info():
-        sel = tv.selection()
+        sel = tv.treeview.selection()
         info = f"选中 {len(sel)} 项 | 勾选 {len(sel)} 项: {', '.join(sel)}"
         sel_label.set(info)
 
@@ -185,11 +185,11 @@ if __name__ == "__main__":
         global counter
         counter += 1
         tv.insert("", "end", values = (f"new_pkg_{counter}", f"0.{counter}.0", "新增"))
-        tv.see(tv.get_children()[-1])
+        tv.treeview.see(tv.treeview.get_children()[-1])
 
     def delete_selected():
-        for iid in list(tv.selection()):
-            tv.delete(iid)
+        for iid in list(tv.treeview.selection()):
+            tv.treeview.delete(iid)
         refresh_selection_info()
 
     def toggle_theme():
@@ -207,7 +207,7 @@ if __name__ == "__main__":
             btn_hide_head.set("显示标题")
 
     def scroll_bottom():
-        tv.yview_moveto(1.0)
+        tv.treeview.yview_moveto(1.0)
 
     def show_selection_info():
         sel = tv.getSelectedValues()
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     def on_select(_event):
         refresh_selection_info()
 
-    tv.bind("<<TreeviewSelect>>", on_select)
+    tv.treeview.bind("<<TreeviewSelect>>", on_select)
 
     toolbar = maliang.Canvas(main, expand = "", auto_update = True)
     toolbar.place(x = 12, y = 60, width = 976, height = 36)

@@ -445,7 +445,7 @@ class Button(maliang.Button):
         ] = "default",
         text: str = "",
         family: str | None = None,
-        fontsize: int | None = None,
+        fontsize: int | None = ss(20),
         weight: Literal['normal', 'bold'] = "normal",
         slant: Literal['roman', 'italic'] = "roman",
         underline: bool = False,
@@ -842,16 +842,6 @@ class Treeview(maliang.Canvas):
 
         self.treeview = tkinter.ttk.Treeview(self, show = show, **kwargs)
         self.treeview.place(x = 0, y = 0, width = tree_width, height = tree_height)
-
-        self.heading = self.treeview.heading
-        self.column = self.treeview.column
-        self.item = self.treeview.item
-        self.selection = self.treeview.selection
-        self.selection_set = self.treeview.selection_set
-        self.selection_add = self.treeview.selection_add
-        self.selection_remove = self.treeview.selection_remove
-        self.see = self.treeview.see
-        self.get_children = self.treeview.get_children
 
         self.vbar.configure(command = self.treeview.yview)
         self.vbar.place(x = tree_width, y = 0, width = scrollbar_width, height = tree_height)

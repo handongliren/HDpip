@@ -28,6 +28,23 @@ class TestButtonCreation:
             btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), theme = theme, text = theme)
             assert btn is not None
 
+    def test_button_text(self, tk_root, ):
+        import HDpip
+
+        root, canvas = tk_root
+        btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), text = "测试按钮")
+        assert btn is not None
+
+    def test_button_disable(self, tk_root, ):
+        import HDpip
+
+        root, canvas = tk_root
+        btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), theme = "primary", text = "test")
+        btn.disable(True)
+        assert btn.disabled is True
+        btn.disable(False)
+        assert btn.disabled is False
+
 
 if __name__ == "__main__":
     import maliang

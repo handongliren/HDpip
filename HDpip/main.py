@@ -146,7 +146,10 @@ class ControlCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.install_button = gui.base.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"])
+        self.install_button = gui.base.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"], fontsize = ss(30))
+        self.uninstall_button = gui.base.Button(self, ss((190, 40)), ss((120, 60)), theme = "outline-danger", text = self.data_manager.language["main"]["uninstall_button"], fontsize = ss(30))
+        self.upgrade_button = gui.base.Button(self, ss((40, 140)), ss((120, 60)), theme = "outline-primary", text = self.data_manager.language["main"]["upgrade_button"], fontsize = ss(30))
+        self.setting_button = gui.base.Button(self, ss((190, 140)), ss((120, 60)), theme = "outline-secondary", text = self.data_manager.language["main"]["setting_button"], fontsize = ss(30))
 
         self.renderLanguage()
 

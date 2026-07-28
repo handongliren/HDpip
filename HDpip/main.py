@@ -211,10 +211,14 @@ class Main(maliang.Tk):
         self.resizable(False, False)
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
+        self.line_canvas = maliang.Canvas(self, expand = "xy", auto_zoom = True, auto_update = True)
+        self.line_canvas.place(x = 0, y = 0, width = ss(1200), height = ss(800))
         self.about_canvas = AboutCanvas(self, data_manager)
         self.about_canvas.place(x = 0, y = 0, width = ss(350), height = ss(150))
         self.control_canvas = ControlCanvas(self, data_manager)
         self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
+
+        self.line_canvas.create_line(ss((350, 0, 350, 800)), width = 1)
 
 @gui.error_catcher.catch
 def main(data_manager: core.base.DataManager = core.base.DataManager()) -> None:

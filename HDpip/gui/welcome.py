@@ -18,6 +18,7 @@ import maliang.core.configs
 import maliang.theme
 import maliang.animation
 import maliang.core.virtual
+import maliang.table
 
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 
@@ -268,8 +269,10 @@ class InfoCanvas(maliang.Canvas):
         """
 
         self.tip.set(self.data_manager.language["welcome"]["info_tip"])
-        self.treeview.treeview.heading("item", text = self.data_manager.language["welcome"]["item"])
-        self.treeview.treeview.heading("value", text = self.data_manager.language["welcome"]["value"])
+        self.treeview.headers([
+            self.data_manager.language["welcome"]["item"],
+            self.data_manager.language["welcome"]["value"],
+        ])
 
         info_data = [
             core.base.getSystemVersion(),
@@ -279,15 +282,18 @@ class InfoCanvas(maliang.Canvas):
             core.pip_api.pip_head,
             str(core.base.getVersion())
         ]
-        self.treeview.treeview.delete(*self.treeview.treeview.get_children())
+        self.treeview.set_sheet_data([])
         for i in range(0, len(info_data)):
-            self.treeview.treeview.insert("", "end", values = (self.data_manager.language["welcome"]["info_treeview"][i], info_data[i]))
+            self.treeview.insert_row([
+                self.data_manager.language["welcome"]["info_treeview"][i],
+                info_data[i],
+            ])
 
     def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
         """
         语言更改的回调函数。
 
-        :param self: `LicenseCanvas`类
+        :param self: `InfoCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -301,7 +307,7 @@ class InfoCanvas(maliang.Canvas):
         """
         销毁控件。
 
-        :param self: `LicenseCanvas`类
+        :param self: `InfoCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -320,9 +326,16 @@ class InfoCanvas(maliang.Canvas):
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
         self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(300), ss(50)), fontsize = ss(40), anchor = "center")
-        self.treeview = base.Treeview(self, (ss(600), ss(-400)), (ss(1000), ss(500)), columns = ("item", "value"), show = "headings", selectmode = "extended", anchor = "center")
-        self.treeview.treeview.column("item", width = ss(250), minwidth = ss(60))
-        self.treeview.treeview.column("value", width = ss(650), minwidth = ss(60))
+        self.treeview = maliang.table.TkTable(
+            self,
+            header = ["item", "value"],
+            total_rows = 0,
+            total_columns = 2,
+            show_vertical_grid = True,
+            show_horizontal_grid = True,
+        )
+        self.treeview.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
+        self.treeview.set_column_widths([ss(280), ss(720)])
         self.renderLanguage()
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveTkWidget(self.treeview, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)

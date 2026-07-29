@@ -15,6 +15,7 @@ requires-python = ">=3.10"
 dependencies = [
     "pip>=25.2",
     "maliang[opt]>=3.1.0",
+    "maliang-table",
     "pyyaml",
     "pipdeptree>=2.0.0"
 ]

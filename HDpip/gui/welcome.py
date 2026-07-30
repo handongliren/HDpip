@@ -269,7 +269,7 @@ class InfoCanvas(maliang.Canvas):
         """
 
         self.tip.set(self.data_manager.language["welcome"]["info_tip"])
-        self.treeview.headers([
+        self.table.headers([
             self.data_manager.language["welcome"]["item"],
             self.data_manager.language["welcome"]["value"],
         ])
@@ -282,9 +282,9 @@ class InfoCanvas(maliang.Canvas):
             core.pip_api.pip_head,
             str(core.base.getVersion())
         ]
-        self.treeview.set_sheet_data([])
+        self.table.set_sheet_data([])
         for i in range(0, len(info_data)):
-            self.treeview.insert_row([
+            self.table.insert_row([
                 self.data_manager.language["welcome"]["info_treeview"][i],
                 info_data[i],
             ])
@@ -326,19 +326,24 @@ class InfoCanvas(maliang.Canvas):
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
         self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(300), ss(50)), fontsize = ss(40), anchor = "center")
-        self.treeview = maliang.table.TkTable(
+        table_width = ss(1000)
+        self.table = maliang.table.TkTable(
             self,
             header = ["item", "value"],
-            total_rows = 0,
+            total_rows = 6,
             total_columns = 2,
             show_vertical_grid = True,
             show_horizontal_grid = True,
         )
-        self.treeview.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
-        self.treeview.set_column_widths([ss(280), ss(720)])
+        self.table.place(x = ss(600), y = ss(-400), width = table_width, height = ss(500), anchor = "center")
+        self.after_idle(lambda: (
+            self.table.set_index_width(ss(50)),
+            self.table.set_column_widths([ss(250), ss(700)]),
+        ))
+        self.table.hide("x_scrollbar")
         self.renderLanguage()
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.rebound, fps = 60).start()
-        maliang.animation.MoveTkWidget(self.treeview, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)
+        maliang.animation.MoveTkWidget(self.table, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)
 
 class EndCanvas(maliang.Canvas):
     """
@@ -440,9 +445,9 @@ class EndCanvas(maliang.Canvas):
         self.renderLanguage()
         self.after(2000, self.renderLanguage)
 
-class ContentCanvas(maliang.Canvas):
+class PageCanvas(maliang.Canvas):
     """
-    内容画布，包含欢迎页面的主要内容区域。
+    页面画布，包含欢迎页面的主要内容区域。
     """
 
     def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
@@ -472,7 +477,7 @@ class ContentCanvas(maliang.Canvas):
         """
         切换至指定画布。
 
-        :param self: `ContentCanvas`类
+        :param self: `PageCanvas`类
         :param index: 索引
         :type index: int
         """
@@ -498,7 +503,7 @@ class ContentCanvas(maliang.Canvas):
         """
         相对步进画布。
 
-        :param self: `ContentCanvas`类
+        :param self: `PageCanvas`类
         :param index: 索引
         :type index: int
         """
@@ -555,7 +560,7 @@ class ButtonCanvas(maliang.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
         self.data_manager = data_manager
         data_manager.language.registerEvent(self.onLanguageChange)
-        self.content_canvas: ContentCanvas = None
+        self.content_canvas: PageCanvas = None
         self.button: base.Button = None
         self.back_button: base.Button = None
         self.next_button: base.Button = None
@@ -578,7 +583,7 @@ class ButtonCanvas(maliang.Canvas):
                     back_button = self.back_button = base.Button(self, (ss(100), ss(150)), (ss(100), ss(50)), theme = "outline-light", text = "上一步", anchor = "center", command = back)
                     next_button = self.next_button = base.Button(self, (ss(1100), ss(150)), (ss(100), ss(50)), theme = "outline-light", text = "下一步", anchor = "center", command = next)
                     self.content_canvas.destroy()
-                    content_canvas = self.content_canvas = ContentCanvas(self.master, self.data_manager)
+                    content_canvas = self.content_canvas = PageCanvas(self.master, self.data_manager)
                     content_canvas.button_canvas = self
                     content_canvas.place(x = 0, y = 0, width = ss(1200) * len(content_canvas.canvas_list), height = ss(700))
                     content_canvas.switchCanvas(0)

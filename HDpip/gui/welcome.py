@@ -313,6 +313,34 @@ class InfoCanvas(maliang.Canvas):
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         super().destroy()
 
+    def _onColumnResize(self, event) -> None:
+        """列宽拖拽后自动填满剩余空间。"""
+        self.after_idle(self._doAutofill)
+
+    def _doAutofill(self) -> None:
+        """将最后一列拉伸/收缩填满容器宽度，保持最小列宽。"""
+        widget_w = self.table.winfo_width()
+        if widget_w <= 1:
+            return
+        available = widget_w - self._index_width
+        if available <= self._index_width:
+            return
+        widths = list(self.table.get_column_widths())
+        if len(widths) < 2:
+            return
+        gap = available - sum(widths)
+        if gap == 0:
+            return
+        min_col_w = ss(80)
+        new_last = widths[-1] + gap
+        if new_last < min_col_w:
+            widths[-2] -= min_col_w - new_last
+            new_last = min_col_w
+        if widths[-2] < min_col_w:
+            return
+        widths[-1] = new_last
+        self.table.set_column_widths(widths)
+
     def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
         """
         :param master: 父控件
@@ -327,6 +355,7 @@ class InfoCanvas(maliang.Canvas):
 
         self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(300), ss(50)), fontsize = ss(40), anchor = "center")
         table_width = ss(1000)
+        self._index_width = ss(50)
         self.table = maliang.table.TkTable(
             self,
             header = ["item", "value"],
@@ -337,10 +366,12 @@ class InfoCanvas(maliang.Canvas):
         )
         self.table.place(x = ss(600), y = ss(-400), width = table_width, height = ss(500), anchor = "center")
         self.after_idle(lambda: (
-            self.table.set_index_width(ss(50)),
+            self.table.set_index_width(self._index_width),
             self.table.set_column_widths([ss(250), ss(700)]),
         ))
         self.table.hide("x_scrollbar")
+        self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
+        self.table.extra_bindings("column_width_resize", self._onColumnResize)
         self.renderLanguage()
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveTkWidget(self.table, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)

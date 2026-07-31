@@ -90,7 +90,7 @@ class AboutCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.image = maliang.Image(self, (ss(25), ss(25)), (ss(50), ss(50)), image = self.master.icon_)
+        self.image = maliang.Image(self, (ss(25), ss(25)), (ss(50), ss(50)), image = self.winfo_toplevel().icon_)
         self.title = maliang.Text(self, (ss(100), ss(25)), None, anchor = "w", fontsize = ss(32))
         self.version = maliang.Text(self, (ss(100), ss(75)), None, anchor = "w", fontsize = ss(30), text = core.base.getVersion())
         self.version.style.set(fg = gui.base.primary)
@@ -211,14 +211,21 @@ class Main(maliang.Tk):
         self.resizable(False, False)
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.line_canvas = maliang.Canvas(self, expand = "xy", auto_zoom = True, auto_update = True)
-        self.line_canvas.place(x = 0, y = 0, width = ss(1200), height = ss(800))
-        self.about_canvas = AboutCanvas(self, data_manager)
+        self.base_canvas = maliang.Canvas(self, expand = "xy", auto_zoom = True, auto_update = True)
+        self.base_canvas.place(x = 0, y = 0, width = ss(1200), height = ss(800))
+        self.about_canvas = AboutCanvas(self.base_canvas, data_manager)
         self.about_canvas.place(x = 0, y = 0, width = ss(350), height = ss(150))
-        self.control_canvas = ControlCanvas(self, data_manager)
-        self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
+        self.about_canvas.create_line(ss((0, 149, 350, 149)), width = 1, fill = gui.base.gray_500)
 
-        self.line_canvas.create_line(ss((350, 0, 350, 800)), width = 1)
+        self.control_canvas = ControlCanvas(self.base_canvas, data_manager)
+        self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
+        self.control_canvas.create_line(ss((0, 240, 350, 240)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((0, 390, 350, 390)), width = 1, fill = gui.base.gray_500)
+
+        self.base_canvas.create_line(ss((350, 0, 350, 800)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((700, 0, 700, 800)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((0, 540, 350, 540)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((700, 400, 1200, 400)), width = 1, fill = gui.base.gray_500)
 
 @gui.error_catcher.catch
 def main(data_manager: core.base.DataManager = core.base.DataManager()) -> None:

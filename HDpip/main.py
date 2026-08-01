@@ -219,13 +219,12 @@ class Main(maliang.Tk):
 
         self.control_canvas = ControlCanvas(self.base_canvas, data_manager)
         self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
-        self.control_canvas.create_line(ss((0, 240, 350, 240)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((0, 390, 350, 390)), width = 1, fill = gui.base.gray_500)
+        self.control_canvas.create_line(ss((0, 239, 350, 239)), width = 1, fill = gui.base.gray_500)
 
-        self.base_canvas.create_line(ss((350, 0, 350, 800)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((700, 0, 700, 800)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((0, 540, 350, 540)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((700, 400, 1200, 400)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((0, 539, 350, 539)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((349, 0, 349, 800)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((699, 0, 699, 800)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((699, 399, 1199, 399)), width = 1, fill = gui.base.gray_500)
 
 @gui.error_catcher.catch
 def main(data_manager: core.base.DataManager = core.base.DataManager()) -> None:

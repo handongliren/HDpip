@@ -13,20 +13,23 @@ HDpip 是一个基于 maliang UI 框架（tkinter 基础）的图形化 pip 包�
 ```txt
 HDpip/                 # 主包
 ├── core/              # 核心逻辑
-│   ├── base.py        # 数据管理器、Version 类、shell 工具、错误类型
-│   ├── pip.py         # Pip 命令包装器和包操作
-│   └── pyi.py         # （可能是类型存根生成）
+│   ├── util.py        # HDpipError, unfinished, Version, multipleSpilt
+│   ├── system.py      # shell, shellDecode, getBaseDir, getPythonPath,
+│   │                  #   get*Version, getSystemVersion, openInExplorer, isDev
+│   ├── data.py        # Data, DataManager, isBelongedToHDpip
+│   ├── pip_api.py     # Pip 命令包装器和包操作
+│   └── __init__.py    # _BaseProxy 透明代理 core.base.X → util/system/data
 ├── gui/               # 基于 Maliang 的 GUI 组件
-│   ├── base.py        # Bootstrap 风格按钮、滚动文本框、动画
-│   ├── welcome.py     # 欢迎/向导窗口
-│   ├── buttons.py     # （额外的按钮变体）
-│   ├── treeview_.py   # 树形视图组件
-│   ├── new.py         # （新的 GUI 面板）
-│   └── old.py         # （旧版 GUI 面板）
+│   ├── base.py        # Button(主题), ScrolledText, RoundedRectangle, Line,
+│   │                  #   WindowFadeIn/Out, smartScale/ss, getDpi/pxToPt/ptToPx
+│   ├── welcome.py     # 欢迎/向导窗口（Canvas 序列）
+│   ├── dialog.py      # DialogCanvas / DialogToplevel / DialogTk
+│   ├── error_dialog.py # 错误捕捉对话框
+│   └── error_catcher.py # @catch 装饰器
 ├── setting/           # 默认 JSON 设置（global.json, auto.*.json）
 ├── language/          # i18n JSON 文件
 ├── asset/             # 图片/图标
-└── main.py            # 入口点（检测首次运行 → 欢迎界面）
+└── main.py            # 入口点（AboutCanvas, ControlCanvas, Main）
 ```
 
 顶层文件：
@@ -50,11 +53,10 @@ HDpip/                 # 主包
 | 构建分发压缩包 | `python dist.py` |
 | 本地安装测试 | `python local_install.py` |
 | 运行临时测试 | `python test.py` |
-| 检查 Python/pip 版本 | `python -c "from HDpip.core.base import getPythonVersion, getPipVersion; print(getPythonVersion(), getPipVersion())"` |
-| 列出已安装包 | `python -c "import HDpip.core.pip; print(HDpip.core.pip.list())"` |
-| 打开包目录 | `python -c "import HDpip.core.base; HDpip.core.base.openInExplorer('HDpip')"` |
-
-**注意：** 没有正式的测试套件或代码检查配置。`test.py` 文件包含核心功能的临时测试。
+| 检查 Python/pip 版本 | `python -c "from HDpip.core.system import getPythonVersion, getPipVersion; print(getPythonVersion(), getPipVersion())"` |
+| 列出已安装包 | `python -c "import HDpip.core.pip_api; print(HDpip.core.pip_api.list_())"` |
+| 打开包目录 | `python -c "from HDpip.core.system import openInExplorer; openInExplorer('HDpip')"` |
+| 运行测试 | `python -m pytest`（仅在用户明确要求时运行） |
 
 ## 开发设置
 
@@ -138,21 +140,22 @@ python test.py
 
 ### 数据管理
 
-- `HDpip.core.base.Data` – JSON 文件包装器，带有事件系统（`open`、`load`、`save`、`__getitem__` 等）。支持通过元组进行嵌套键访问。
-- `HDpip.core.base.DataManager` – 管理用户设置和语言文件。首次运行时初始化默认配置。设置更改时自动重新加载语言。
+- `HDpip.core.data.Data` – JSON 文件包装器，带有事件系统。支持元组嵌套键访问 `d["a", 0]`。
+- `HDpip.core.data.DataManager` – 管理用户设置和语言文件。`init()` 首次运行时创建默认配置。
 
 ### 版本处理
 
-- `HDpip.core.base.Version` – 语义版本类，具有丰富的比较、格式化和多条件匹配（`multipleCompare`）。用于 Python/pip 版本检测。
+- `HDpip.core.util.Version` – 继承 pip 的 Version，支持 PEP 440。`isCloseTo()` 约等于，`multipleCompare()` 多重富比较。
 
 ### Pip 集成
 
-- `HDpip.core.pip` – 包装 `pip list`、`pip show`、`pip install`、`pip uninstall`，支持实时输出捕获和镜像源。
+- `HDpip.core.pip_api` – 包装 `pip list`、`pip show`、`pip install`、`pip uninstall`。`pip_head` 为全局执行头。
 
 ### GUI 框架
 
-- 基于 **maliang**（一个 tkinter 基础的 UI 库）。`gui.base` 模块提供 Bootstrap 风格的组件（`Button`、`ScrolledText`），支持浅色/深色主题。
-- 窗口使用淡入/淡出动画（`WindowFadeIn`、`WindowFadeOut`）。
+- 基于 **maliang**（tkinter 基础）。`gui.base` 提供 Bootstrap 风格 `Button`（`theme` 参数）、`ScrolledText`、`RoundedRectangle`、`WindowFadeIn`/`WindowFadeOut`。
+- **表格控件**：直接用 `maliang.table.TkTable`（tksheet），不封装。`headers()`/`insert_row()`/`set_column_widths()`/`get_selected_rows()` 等原生 API。
+- **智能缩放**：`smartScale(value)` / `ss(value)` 按屏幕分辨率缩放 pos/size/fontsize/height/width。
 - 欢迎流程（`gui.welcome.Welcome`）在首次启动或未接受许可证时运行。
 
 ### 国际化
@@ -169,7 +172,12 @@ python test.py
 
 ## 注意事项
 
-- PyQt6 GUI (`pipgui.py`) 是一个独立的工具，**不**构建到 HDpip 包中。
-- `HDpip.core.base.HDpipError` 异常用于内部错误；`unfinished()` 为未实现的功能引发错误。
-- 镜像源定义在 `HDpip/setting/auto.*.json` 中，可以在运行时选择。
-- 项目使用 GPL-3.0 许可证（参见 `setup.py` 分类器）。
+- PyQt6 GUI (`pipgui.py`) 是独立工具，**不**构建到 HDpip 包中。
+- `HDpip.core.util.HDpipError` 用于内部错误；`unfinished()` 为未实现功能抛错。
+- `core/base.py` 已删除，旧 `core.base.X` 引用通过 `core/__init__.py` 的 `_BaseProxy` 透明代理到 `util`/`system`/`data`。
+- 表格控件直接使用 `maliang.table.TkTable`（tksheet），不使用 ttk.Treeview。
+- 所有 UI 尺寸（pos/size/fontsize/height/width）必须用 `ss()` 缩放，在 `gui.base` 中已定义 `ss = smartScale`。
+- 分隔线用 `create_line` 画在对应子 canvas 上（被 widget 遮挡的部分画在子 canvas 自身，无遮挡的留在父 canvas）。
+- **不要在没有明确要求时运行 pytest。**
+- 镜像源定义在 `HDpip/setting/auto.*.json` 中，运行时可选。
+- 项目使用 GPL-3.0 许可证。

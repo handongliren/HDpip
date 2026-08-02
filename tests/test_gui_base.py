@@ -1,7 +1,6 @@
 import pytest
 import HDpip
 
-
 class TestGuiBase:
     """GUI 基础函数测试。"""
 

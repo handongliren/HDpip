@@ -1,7 +1,6 @@
 import pytest
 import HDpip
 
-
 class TestVersion:
     """Version 类单元测试。"""
 

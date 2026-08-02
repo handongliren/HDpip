@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QColor, QAction
 
-
 class PipManager(QMainWindow):
     """PIP图形化管理工具主窗口类"""
 
@@ -885,14 +884,12 @@ class PipManager(QMainWindow):
         self.save_config()
         event.accept()
 
-
 def main():
     """主程序入口"""
     app = QApplication(sys.argv)
     window = PipManager()
     window.show()
     sys.exit(app.exec())
-
 
 if __name__ == '__main__':
     main()

@@ -40,7 +40,6 @@ def getBaseDir() -> pathlib.Path:
 
     return pathlib.Path(__file__).parents[1]
 
-
 def getPythonPath() -> pathlib.Path:
     """
     获取运行HDpip的Python的路径。
@@ -50,7 +49,6 @@ def getPythonPath() -> pathlib.Path:
     """
 
     return pathlib.Path(sys.executable)
-
 
 def getPythonVersion() -> Version:
     """
@@ -62,7 +60,6 @@ def getPythonVersion() -> Version:
 
     return Version(platform.python_version_tuple())
 
-
 def getPipVersion() -> Version:
     """
     获取运行HDpip的Python所对应的pip的版本。
@@ -73,7 +70,6 @@ def getPipVersion() -> Version:
 
     return Version(pip.__version__)
 
-
 def getVersion() -> Version:
     """
     获取HDpip的版本。
@@ -83,7 +79,6 @@ def getVersion() -> Version:
     """
 
     return Version(version)
-
 
 def getSystemVersion() -> str:
     """
@@ -105,7 +100,6 @@ def getSystemVersion() -> str:
     else:
         release = platform.release()
         return f"Linux {release} ({machine})"
-
 
 def openInExplorer(path: str | pathlib.Path) -> None:
     """
@@ -136,7 +130,6 @@ def openInExplorer(path: str | pathlib.Path) -> None:
         traceback.print_exception(error)
         raise util.HDpipError(f"打开\"{path}\"失败！\n错误如上。")
 
-
 def isDev() -> bool:
     """
     检测是否是开发模式，如果启用，请在父目录创建`dev`文件。
@@ -148,7 +141,6 @@ def isDev() -> bool:
     """
 
     return (pathlib.Path(f"{getBaseDir}").parent / "dev").resolve().is_file()
-
 
 def shellDecode(raw: str | bytes) -> str:
     """
@@ -168,7 +160,6 @@ def shellDecode(raw: str | bytes) -> str:
         except UnicodeDecodeError:
             continue
     return bytes(raw).decode("latin-1", errors="replace")
-
 
 def shell(command: str, realtime: bool = True, callback = print) -> str:
     """

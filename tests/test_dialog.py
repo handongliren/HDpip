@@ -7,7 +7,6 @@ import pathlib
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 sys.path.insert(0, str(base_dir))
 
-
 class TestDialogCanvas:
     """DialogCanvas 创建测试。"""
 
@@ -17,7 +16,6 @@ class TestDialogCanvas:
         root, canvas = tk_root
         dialog = HDpip.gui.dialog.DialogCanvas(canvas, (200, 150), (300, 200), title = "提示", text = "Hello world!\n你好世界！", anchor = "center")
         assert dialog is not None
-
 
 if __name__ == "__main__":
     import maliang

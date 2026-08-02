@@ -15,7 +15,6 @@ BUTTON_TYPES = [
     "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark",
 ]
 
-
 class TestButtonCreation:
     """Button 创建测试。"""
 
@@ -44,7 +43,6 @@ class TestButtonCreation:
         assert btn.disabled is True
         btn.disable(False)
         assert btn.disabled is False
-
 
 if __name__ == "__main__":
     import maliang

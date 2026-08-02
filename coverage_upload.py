@@ -31,7 +31,6 @@ def run_coverage():
         "Missing pytest-cov or coverage. Install with `pip install pytest-cov coverage`."
     )
 
-
 def upload_to_codecov(token: str):
     """上传 coverage.xml 到 Codecov。"""
     if not token:
@@ -112,7 +111,6 @@ def upload_to_codecov(token: str):
             f"Codecov upload failed: {exc.code} {exc.reason}\n{error_body}"
         ) from exc
 
-
 def _get_commit_sha() -> str:
     try:
         return subprocess.check_output(
@@ -120,7 +118,6 @@ def _get_commit_sha() -> str:
         ).strip()
     except Exception:
         return ""
-
 
 if __name__ == "__main__":
     try:

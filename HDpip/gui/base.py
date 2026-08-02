@@ -159,10 +159,10 @@ def getScreenSize() -> tuple[int, int]:
 _smart_cache: dict[tuple[tuple[int, int], tuple[int, int], bool], decimal.Decimal] = {}
 
 def getSmartScaleValue(
-        base_size: tuple[int, int] = (1200, 800), 
-        screen_size: tuple[int, int] = getScreenSize(), 
-        *, 
-        strict_mode: bool = True, 
+        base_size: tuple[int, int] = (1200, 800),
+        screen_size: tuple[int, int] = getScreenSize(),
+        *,
+        strict_mode: bool = True,
         use_cache: bool = True
     ) -> decimal.Decimal:
     """
@@ -215,12 +215,12 @@ def getSmartScaleValue(
     _smart_cache[(base_size, screen_size, strict_mode)] = result
     return result
 
-def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal], 
-    base_size: tuple[int, int] = (1200, 800), 
-    screen_size: tuple[int, int] = getScreenSize(), 
-    *, 
-    strict_mode: bool = True, 
-    use_cache: bool = True, 
+def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
+    base_size: tuple[int, int] = (1200, 800),
+    screen_size: tuple[int, int] = getScreenSize(),
+    *,
+    strict_mode: bool = True,
+    use_cache: bool = True,
     return_type: Literal["Decimal", "float", "int"] = "int"
 ) -> decimal.Decimal | Iterable[decimal.Decimal] | float | Iterable[float] | int | Iterable[int]:
     """
@@ -700,9 +700,9 @@ class RoundedRectangle(maliang.core.virtual.Widget):
     """
 
     def setAppearance(
-        self, 
-        outline: str | tuple[int, int, int], 
-        background: str | tuple[int, int, int] = "", 
+        self,
+        outline: str | tuple[int, int, int],
+        background: str | tuple[int, int, int] = "",
         width: int = 1
     ) -> None:
         """

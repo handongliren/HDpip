@@ -285,7 +285,6 @@ class Data():
             except Exception as error:
                 traceback.print_exception(error)
 
-
 class DataManager():
     def importSetting(self, path: str | pathlib.Path) -> None:
         """
@@ -411,7 +410,6 @@ class DataManager():
         self.language = Data()
         self.getLanguage(self.setting["language"])
         self.setting.registerEvent(self.onLanguageChange)
-
 
 def isBelongedToHDpip(path: pathlib.Path) -> bool:
     """

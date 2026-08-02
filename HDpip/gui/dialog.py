@@ -163,7 +163,6 @@ class DialogToplevel(maliang.Toplevel):
             i.setdefault("command", self.closeCommand)
         self.dialog_canvas = DialogCanvas(self, (0, 0), size, outline = False, title = title, text = text, button = button, theme = theme, closeCommand = self.closeCommand)
 
-
 class DialogTk(maliang.Tk):
     """
     对话框控件，基于`maliang.Tk`，内嵌`DialogCanvas`。

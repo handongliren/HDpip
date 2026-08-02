@@ -1,7 +1,6 @@
 import pytest
 import HDpip
 
-
 class TestPipApi:
     """pip API 测试（非破坏性）。"""
 

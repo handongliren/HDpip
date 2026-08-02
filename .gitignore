@@ -10,3 +10,4 @@ junit.xml
 /**/.cache/
 dist/
 pylint_report.*
+.pytest_cache/

@@ -25,14 +25,12 @@ class HDpipError(Exception):
         self.message = message
         super().__init__(self.message)
 
-
 def unfinished() -> None:
     """
     用于未完成功能的占位，使用`HDpipError`抛出一个错误。
     """
 
     raise HDpipError("不是，哥们，你写了这个功能吗？！")
-
 
 class Version(pip._vendor.packaging.version.Version):
     """
@@ -125,7 +123,6 @@ class Version(pip._vendor.packaging.version.Version):
             elif mode == "<=" and not self <= value:
                 return False
         return True
-
 
 def multipleSpilt(string: str, spilt_symbol: str | list[str]) -> list[str]:
     """

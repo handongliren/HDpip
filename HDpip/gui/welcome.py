@@ -628,7 +628,6 @@ class ButtonCanvas(maliang.Canvas):
             self.delete(self.button_bar)
         maliang.animation.GradientItem(self, self.button_bar, "fill", (base.light, base.primary), 500, controller = maliang.animation.smooth, fps = 60, end = _).start(delay = 2500)
 
-
 class Welcome(maliang.Tk):
     """
     欢迎窗口，HDpip的主欢迎界面。

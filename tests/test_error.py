@@ -10,27 +10,22 @@ sys.path.insert(0, str(base_dir))
 import pytest
 from HDpip.gui.error_catcher import catch
 
-
 @catch(auto_close = 500)
 def raise_value_error():
     raise ValueError("这是一个测试错误！")
 
-
 @catch(auto_close = 500)
 def divide_by_zero():
     return 1 / 0
-
 
 @catch(auto_close = 500)
 def key_error():
     d = {}
     return d["missing"]
 
-
 @catch(auto_close = 500)
 def normal_return():
     return 42
-
 
 class TestErrorCatcher:
     """@catch 装饰器单元测试。"""
@@ -46,7 +41,6 @@ class TestErrorCatcher:
 
     def test_passes_through_normal(self, ):
         assert normal_return() == 42
-
 
 if __name__ == "__main__":
     import maliang

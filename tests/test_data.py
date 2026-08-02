@@ -3,7 +3,6 @@ import pathlib
 import pytest
 import HDpip
 
-
 class TestData:
     """Data 类单元测试。"""
 

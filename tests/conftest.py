@@ -5,7 +5,6 @@ import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).parents[1].resolve()))
 
-
 @pytest.fixture(scope = "session")
 def tk_root():
     """创建 Tk 窗口和 Canvas，所有测试结束后自动销毁。"""

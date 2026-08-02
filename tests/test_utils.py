@@ -1,7 +1,6 @@
 import pytest
 import HDpip
 
-
 class TestUtils:
     """工具函数测试。"""
 

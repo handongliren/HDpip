@@ -10,7 +10,6 @@ sys.path.insert(0, str(base_dir))
 import maliang
 import maliang.table
 
-
 def _make_table(master, columns, height=8, selectmode="extended", width=780, height_px=300):
     """创建 TkTable 的工厂函数。"""
     t = maliang.table.TkTable(
@@ -28,7 +27,6 @@ def _make_table(master, columns, height=8, selectmode="extended", width=780, hei
         "column_width_resize", "double_click_column_resize", "copy",
     )
     return t
-
 
 class TestTable:
     """Table 控件测试。"""
@@ -96,7 +94,6 @@ class TestTable:
 
         t.see(19)
         t.yview_moveto(1.0)
-
 
 if __name__ == "__main__":
     import maliang.theme

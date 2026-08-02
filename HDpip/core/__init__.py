@@ -12,7 +12,6 @@ from . import data as _data
 from . import system as _system
 from . import util as _util
 
-
 class _BaseProxy:
     """兼容旧 core.base 引用，透明代理到 util / system / data。"""
 
@@ -23,7 +22,6 @@ class _BaseProxy:
             if hasattr(mod, name):
                 return getattr(mod, name)
         raise AttributeError(f"module 'HDpip.core.base' has no attribute '{name}'")
-
 
 base = _BaseProxy()
 _sys.modules["HDpip.core.base"] = base

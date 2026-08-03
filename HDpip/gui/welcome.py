@@ -8,6 +8,7 @@
 
 import difflib
 from typing import *
+
 import pathlib
 import locale
 import tkinter.filedialog
@@ -699,7 +700,7 @@ class Welcome(maliang.Tk):
         self.title_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "寒冬pip(HDpip)", fontsize = ss(40), weight = "bold", anchor = "center")
         maliang.animation.MoveWidget(self.icon_show, (0, ss(200) - ss(350)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1250)
         maliang.animation.MoveWidget(self.title_, (0, ss(400) - ss(1000)), 500, controller = maliang.animation.smooth, fps =60).start(delay = 1250)
-        self.subtitle_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "一个基于马良框架的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
+        self.subtitle_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "一个基于maliang框架的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
         maliang.animation.MoveWidget(self.subtitle_, (0, ss(500) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1500)
         self.button_canvas.start()
 

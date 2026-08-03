@@ -9,6 +9,7 @@
 import tkinter
 from typing import *
 
+
 import maliang
 
 try:
@@ -32,6 +33,7 @@ class DialogCanvas(maliang.Canvas):
 
         self.after(1, self.destroy)
 
+    
     def __init__(
         self,
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
@@ -122,6 +124,7 @@ class DialogToplevel(maliang.Toplevel):
 
         self.after(1, self.destroy)
 
+    
     def __init__(
         self,
         master: maliang.Tk | maliang.Toplevel | None = None,
@@ -177,6 +180,7 @@ class DialogTk(maliang.Tk):
 
         self.after(1, self.destroy)
 
+    
     def __init__(
         self,
         size: tuple[int, int] = (ss(800), ss(600)),

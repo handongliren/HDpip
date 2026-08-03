@@ -40,6 +40,11 @@ class Version(pip._vendor.packaging.version.Version):
     0.1.0
     """
 
+    @overload
+    def __init__(self, version: str): ...
+    @overload
+    def __init__(self, version: tuple[str, int] | list[str | int]): ...
+    
     def __init__(self, version: str | tuple[str, int] | list[str | int]):
         if isinstance(version, (tuple, list)):
             version = ".".join(str(x) for x in version)

@@ -103,6 +103,10 @@ class Data():
     def __next__(self):
         return self.data.__next__()
 
+    @overload
+    def __getitem__(self, key: str | int): ...
+    @overload
+    def __getitem__(self, key: tuple | list): ...
     def __getitem__(self, key: str | int | tuple | list):
         if isinstance(key, str | int):
             result = value = self.data.__getitem__(key)
@@ -114,6 +118,10 @@ class Data():
         self.notifyEvent("__getitem__", {"key": key, "value": value})
         return result
 
+    @overload
+    def __setitem__(self, key: str | int, value: Any): ...
+    @overload
+    def __setitem__(self, key: tuple | list, value: Any): ...
     def __setitem__(self, key: str | int | tuple | list, value: Any):
         if isinstance(key, str | int):
             old_value = self.data.__getitem__(key) or None
@@ -129,6 +137,10 @@ class Data():
         self.notifyEvent("__setitem__", {"key": key, "value": value, "old_value": old_value})
         return result
 
+    @overload
+    def __delitem__(self, key: str | int): ...
+    @overload
+    def __delitem__(self, key: tuple | list): ...
     def __delitem__(self, key: str | int | tuple | list):
         if isinstance(key, str | int):
             old_value = self.data[key] or None

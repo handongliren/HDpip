@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     root = maliang.Tk((1000, 620), title="Table Demo (tksheet)")
     root.center()
-    icon = maliang.PhotoImage(file=str(HDpip.core.base.getBaseDir() / "asset" / "image" / "icon.png"))
+    icon = maliang.PhotoImage(file=str(HDpip.core.system.getBaseDir() / "asset" / "image" / "icon.png"))
     root.iconphoto(True, icon)
     maliang.theme.customize_window(root, disable_maximize_button=True)
 

@@ -7,6 +7,7 @@
 """
 
 from typing import *
+from typing_extensions import override
 
 import decimal
 import tkinter
@@ -264,6 +265,7 @@ class Button(maliang.Button):
     继承自`maliang.Button`，添加了bootstrap配色，使用`theme`参数指定主题。
     """
 
+    @override
     def switchTheme(
         self,
         theme: Literal[
@@ -417,7 +419,8 @@ class Button(maliang.Button):
                             ol = colors[color][1]
                         )
 
-    
+
+    @override
     def __init__(
         self,
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
@@ -526,7 +529,8 @@ class Button(maliang.Button):
         self.switchTheme(theme, False)
         self.update()
 
-    
+
+    @override
     def disable(self, value: bool = True) -> None:
         """
         修改`Button`类的禁用状态。
@@ -568,7 +572,8 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
             case "system":
                 self.switchTheme("dark" if darkdetect.isDark() else "light")
 
-    
+
+    @override
     def __init__(
         self,
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
@@ -614,7 +619,8 @@ class WindowFadeIn(maliang.animation.Animation):
     针对`maliang`的窗口写的渐入动画。
     """
 
-    
+
+    @override
     def __init__(
         self,
         window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel],
@@ -659,7 +665,8 @@ class WindowFadeOut(maliang.animation.Animation):
     针对`maliang`的窗口写的渐出动画。
     """
 
-    
+
+    @override
     def __init__(
         self,
         window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel],
@@ -731,7 +738,8 @@ class RoundedRectangle(maliang.core.virtual.Widget):
             elif 10 <= i < 14:
                 self.master.itemconfigure(self.shape.items[i], outline = outline, width = width)
 
-    
+
+    @override
     def __init__(
         self,
         master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,

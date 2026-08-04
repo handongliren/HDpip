@@ -1,6 +1,6 @@
 ---
 name: core-modules
-description: core/base.py 已拆分到 util.py / system.py / data.py，_BaseProxy 兼容旧引用
+description: core/base.py 已拆分到 util.py / system.py / data.py，兼容代理已移除
 metadata:
   type: project
 ---
@@ -11,8 +11,8 @@ metadata:
 - **`system.py`** — shellDecode, shell, getBaseDir, getPythonPath, Version(import), getPythonVersion, getPipVersion, getVersion, getSystemVersion, openInExplorer, isDev
 - **`data.py`** — Data, DataManager, isBelongedToHDpip
 
-兼容方案：`core/__init__.py` 中的 `_BaseProxy` 类透明代理 `core.base.X` → util/system/data，并注入 `sys.modules["HDpip.core.base"]` 使 `import HDpip.core.base` 仍然有效。
+`core/__init__.py` 只做简单导出：`from . import data, pip_api, system, util`。`_BaseProxy` 兼容代理和 `sys.modules["HDpip.core.base"]` 注入已移除，`import HDpip.core.base` 会报 ModuleNotFoundError。
 
-**Why:** 原 base.py 过于臃肿，按职责拆分。_BaseProxy 保证外部代码零改动。
+**Why:** 原 base.py 过于臃肿，按职责拆分。过渡期用 _BaseProxy 保证零改动，现已收尾移除，代码全部直接引用具体子模块。
 
-**How to apply:** 新代码应直接从子模块导入：`from HDpip.core.util import Version`、`from HDpip.core.data import Data, DataManager` 等，而非继续使用 `core.base.X`。
+**How to apply:** 从具体子模块导入：`from HDpip.core.util import Version`、`from HDpip.core.data import Data, DataManager`、`from HDpip.core.system import shell, getBaseDir`。不要使用 `core.base.X`。

@@ -8,6 +8,7 @@
 
 import pip._vendor.packaging.version
 from typing import *
+from typing_extensions import override, overload
 
 class HDpipError(Exception):
     """
@@ -15,7 +16,7 @@ class HDpipError(Exception):
 
     例如：
     ```
-    raise HDpip.core.base.HDpipError("炸了！")
+    raise HDpip.core.util.HDpipError("炸了！")
     ```
 
     ***您不应该使用它**，如果您不是HDpip的开发者。*
@@ -44,21 +45,29 @@ class Version(pip._vendor.packaging.version.Version):
     def __init__(self, version: str): ...
     @overload
     def __init__(self, version: tuple[str, int] | list[str | int]): ...
-    
+    @override
     def __init__(self, version: str | tuple[str, int] | list[str | int]):
         if isinstance(version, (tuple, list)):
             version = ".".join(str(x) for x in version)
         super().__init__(version)
 
+    @override
     def __len__(self):
         return len(self.release)
 
+    @override
     def __iter__(self):
         return iter(self.release)
 
+    @override
     def __getitem__(self, key):
         return self.release[key]
 
+    @overload
+    def isCloseTo(self, value: str): ...
+    @overload
+    def isCloseTo(self, value: tuple[int, str] | list[str | int]): ...
+    @override
     def isCloseTo(self, value: str | tuple[int, str] | list[str | int]) -> bool:
         """
         富比较中的约等于（默认比较前两位）。

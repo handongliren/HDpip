@@ -16,11 +16,13 @@ import urllib.request
 from pip._vendor.packaging.utils import parse_sdist_filename, parse_wheel_filename
 
 try:
-    from . import base
+    from . import system
+    from . import util
 except ImportError:
-    import base
+    import system
+    import util
 
-def getPip(python: str | pathlib.Path = base.getPythonPath()) -> str:
+def getPip(python: str | pathlib.Path = system.getPythonPath()) -> str:
     """
     获取指定Python对应的pip执行头（例如`"D:\\Program Files\\Python310\\python.exe" -m pip`。），默认为运行HDpip的，您也可以直接使用变量`HDpip.core.pip.pip_head`。
 
@@ -33,41 +35,41 @@ def getPip(python: str | pathlib.Path = base.getPythonPath()) -> str:
 
 pip_head = getPip()
 
-def version(pip_head: str = pip_head) -> dict[str, base.Version | pathlib.Path]:
+def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
     """
-    返回运行`pip -V`的结果，参见`HDpip.core.base.shell()`。
+    返回运行`pip -V`的结果，参见`HDpip.core.system.shell()`。
 
     结果应为如下字典：
     ```
     {
-        "pip_version": base.Version("25.3"),
+        "pip_version": util.Version("25.3"),
         "pip_path": pathlib.Path("D:\\Program Files\\Python310\\lib\\site-packages\\pip"),
-        "python_version": base.Version("3.10")
+        "python_version": util.Version("3.10")
     }
     ```
 
     :param pip_head: pip执行头
     :type pip_head: str
     :return: 数据字典
-    :rtype: dict[str: base.Version, str: pathlib.Path]
+    :rtype: dict[str: util.Version, str: pathlib.Path]
     """
 
-    string = base.shell(f"{pip_head} -V", False)
-    string = base.multipleSpilt(string, ["pip ", " from ", " (python ", ")", "\r", "\n"])
+    string = system.shell(f"{pip_head} -V", False)
+    string = util.multipleSpilt(string, ["pip ", " from ", " (python ", ")", "\r", "\n"])
     string_ = []
     for i in string:
         if not i == "":
             string_.append(i)
     result = {
-        "pip_version": base.Version(string_[0]),
+        "pip_version": util.Version(string_[0]),
         "pip_path": pathlib.Path(string_[1]),
-        "python_version": base.Version(string_[2])
+        "python_version": util.Version(string_[2])
     }
     return result
 
 def list_(option: str | None = None, pip_head: str = pip_head) -> list:
     """
-    返回运行`pip list --format=json`的结果，参见`HDpip.core.base.shell()`。
+    返回运行`pip list --format=json`的结果，参见`HDpip.core.system.shell()`。
 
     结果应为如下列表：
     ```
@@ -88,11 +90,11 @@ def list_(option: str | None = None, pip_head: str = pip_head) -> list:
         option = f" {option}"
     else:
         option = ""
-    return json.loads(base.shell(f"{pip_head} list --format=json{option}", False))
+    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False))
 
 def show(package: str, pip_head: str = pip_head) -> dict:
     """
-    返回运行`pip show`的结果，参见`HDpip.core.base.shell()`。
+    返回运行`pip show`的结果，参见`HDpip.core.system.shell()`。
 
     结果应为如下字典：
     ```
@@ -112,9 +114,9 @@ def show(package: str, pip_head: str = pip_head) -> dict:
     :rtype: dict
     """
 
-    return yaml.safe_load(base.shell(f"{pip_head} show {package}", False))
+    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False))
 
-def getPackageDir(package: str, pythonPath: pathlib.Path  | str = base.getPythonPath()) -> pathlib.Path:
+def getPackageDir(package: str, pythonPath: pathlib.Path  | str = system.getPythonPath()) -> pathlib.Path:
     """
     返回包路径。
 
@@ -126,14 +128,14 @@ def getPackageDir(package: str, pythonPath: pathlib.Path  | str = base.getPython
 
     pythonPath = pathlib.Path(pythonPath)
 
-    if not base.isDev():
-        return (base.getBaseDir().parent / package).resolve()
+    if not system.isDev():
+        return (system.getBaseDir().parent / package).resolve()
     else:
         return (pythonPath.parent / "Lib" / "site-packages"/ package).resolve()
 
 def install(package: str, callback = print, index: str | None = None, pip_head: str = pip_head) -> subprocess.Popen:
     """
-    返回运行`pip install`的结果，参见`HDpip.core.base.shell()`。
+    返回运行`pip install`的结果，参见`HDpip.core.system.shell()`。
 
     :param package: 包名
     :type package: str
@@ -150,11 +152,11 @@ def install(package: str, callback = print, index: str | None = None, pip_head: 
         option = f" -i {index} --trusted-host {host}"
     else:
         option = ""
-    return base.shell(f"{pip_head} install {package}{option}", True, callback)
+    return system.shell(f"{pip_head} install {package}{option}", True, callback)
 
 def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subprocess.Popen:
     """
-    返回运行`pip uninstall`的结果，参见`HDpip.core.base.shell()`。
+    返回运行`pip uninstall`的结果，参见`HDpip.core.system.shell()`。
 
     :param package: 包名
     :type package: str
@@ -164,7 +166,7 @@ def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subpr
     :rtype: subprocess.Popen
     """
 
-    return base.shell(f"{pip_head} uninstall {package} --yes")
+    return system.shell(f"{pip_head} uninstall {package} --yes")
 
 def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[str, str | float]]:
     """
@@ -191,7 +193,7 @@ def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[s
 
     return sorted(results, key = lambda x: x["time"])
 
-def getLatestVersion(package: str, mirror: str | None = None) -> base.Version | None:
+def getLatestVersion(package: str, mirror: str | None = None) -> util.Version | None:
     """
     通过 PyPI Simple API 获取指定包的最新版本，使用 pip 原生解析器。
 
@@ -200,7 +202,7 @@ def getLatestVersion(package: str, mirror: str | None = None) -> base.Version | 
     :param mirror: 镜像地址（如 auto.json 中的 url 字段），默认官方 PyPI
     :type mirror: str | None
     :return: 最新版本，失败返回 None
-    :rtype: base.Version | None
+    :rtype: util.Version | None
     """
 
     if not mirror:
@@ -225,6 +227,6 @@ def getLatestVersion(package: str, mirror: str | None = None) -> base.Version | 
                         pass
         if not versions:
             return None
-        return base.Version(str(max(base.Version(v) for v in versions)))
+        return util.Version(str(max(util.Version(v) for v in versions)))
     except Exception:
         return None

@@ -87,7 +87,7 @@ def exportCommand(*argvs, **kargvs) -> None:
         initialdir = str(base_dir.parents[0])
     )).resolve()
     if not file.is_dir():
-        if core.base.isBelongedToHDpip(file):
+        if core.data.isBelongedToHDpip(file):
             tkinter.messagebox.showwarning(language["warning"], language["export_reject"])
             exportCommand()
         else:

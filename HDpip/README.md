@@ -1,6 +1,6 @@
 # 寒冬pip HDpip
 
-## 一个基于maliang框架的**pip GUI**
+## 一个基于maliang的**pip GUI**
 
 ## **A pip GUI** based on maliang
 

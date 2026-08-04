@@ -11,7 +11,7 @@ class TestPipApi:
     def test_version(self, ):
         v = HDpip.core.pip_api.version()
         assert "pip_version" in v
-        assert isinstance(v["pip_version"], HDpip.core.base.Version)
+        assert isinstance(v["pip_version"], HDpip.core.util.Version)
         assert "python_version" in v
 
     def test_list(self, ):

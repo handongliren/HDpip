@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         def __init__(self, ):
             super().__init__((1400, 1000), title = "HDpip 按钮演示 - Button Demo")
-            self.icon_ = maliang.PhotoImage(file = str(HDpip.core.base.getBaseDir() / "asset" / "image" / "icon.png"))
+            self.icon_ = maliang.PhotoImage(file = str(HDpip.core.system.getBaseDir() / "asset" / "image" / "icon.png"))
             self.iconphoto(True, self.icon_)
             self.wm_iconphoto(True, self.icon_)
 

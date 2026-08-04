@@ -144,7 +144,7 @@ def isDev() -> bool:
 
 def shellDecode(raw: str | bytes) -> str:
     """
-    对`HDpip.core.base.shell`的输出进行解码。
+    对`HDpip.core.system.shell`的输出进行解码。
 
     :param raw: 原始数据
     :type raw: str | bytes
@@ -170,7 +170,7 @@ def shell(command: str, realtime: bool = True, callback = print) -> str:
     例如：
     ```
     with open("result.txt", "a", encoding = "utf-8") as file:
-        print(HDpip.core.base.shell(
+        print(HDpip.core.system.shell(
             "ping 127.0.0.1",
             lambda line: file.write(f"{line}\n")
         ).returncode)

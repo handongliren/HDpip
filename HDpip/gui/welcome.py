@@ -8,6 +8,7 @@
 
 import difflib
 from typing import *
+from typing_extensions import override
 
 import pathlib
 import locale
@@ -79,18 +80,19 @@ class LanguageCanvas(maliang.Canvas):
         :param self: `LanguageCanvas`类
         """
 
-        file = pathlib.Path(tkinter.filedialog.askopenfilename(filetypes = [("语言文件 Language file", ".json"), ("所有文件 All files", ".*")], title = "选择一个语言文件以导入 Chose a language file to import", initialdir = core.base.getBaseDir())).resolve()
+        file = pathlib.Path(tkinter.filedialog.askopenfilename(filetypes = [("语言文件 Language file", ".json"), ("所有文件 All files", ".*")], title = "选择一个语言文件以导入 Chose a language file to import", initialdir = core.system.getBaseDir())).resolve()
         if file.is_file():
             self.data_manager.importLanguage(file)
             self.option.destroy()
             self.renderOption((ss(800), ss(250)))
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -142,6 +144,7 @@ class LicenseCanvas(maliang.Canvas):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -156,12 +159,13 @@ class LicenseCanvas(maliang.Canvas):
         self.data_manager.setting["license"] = True
         self.master.button_canvas.next_button.disable(not agree)
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -169,7 +173,7 @@ class LicenseCanvas(maliang.Canvas):
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
         self.license = base.ScrolledText(self)
-        text = (core.base.getBaseDir() / "LICENSE").read_text(encoding = "utf-8")
+        text = (core.system.getBaseDir() / "LICENSE").read_text(encoding = "utf-8")
         self.license.delete(1.0, tkinter.END)
         self.license.insert(1.0, text)
         self.license.tag_configure("center", justify = "center")
@@ -221,6 +225,7 @@ class ThemeCanvas(maliang.Canvas):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -237,12 +242,13 @@ class ThemeCanvas(maliang.Canvas):
         maliang.theme.set_color_mode(theme_list[index])
         self.value = index
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -276,12 +282,12 @@ class InfoCanvas(maliang.Canvas):
         ])
 
         info_data = [
-            core.base.getSystemVersion(),
-            str(core.base.getPythonVersion()),
-            str(core.base.getPythonPath()),
-            str(core.base.getPipVersion()),
+            core.system.getSystemVersion(),
+            str(core.system.getPythonVersion()),
+            str(core.system.getPythonPath()),
+            str(core.system.getPipVersion()),
             core.pip_api.pip_head,
-            str(core.base.getVersion())
+            str(core.system.getVersion())
         ]
         self.table.set_sheet_data([])
         for i in range(0, len(info_data)):
@@ -304,6 +310,7 @@ class InfoCanvas(maliang.Canvas):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -342,12 +349,13 @@ class InfoCanvas(maliang.Canvas):
         widths[-1] = new_last
         self.table.set_column_widths(widths)
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -406,6 +414,7 @@ class EndCanvas(maliang.Canvas):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -453,12 +462,13 @@ class EndCanvas(maliang.Canvas):
             )
         self.after(1000, _)
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -482,12 +492,13 @@ class PageCanvas(maliang.Canvas):
     页面画布，包含欢迎页面的主要内容区域。
     """
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -571,6 +582,7 @@ class ButtonCanvas(maliang.Canvas):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -581,12 +593,13 @@ class ButtonCanvas(maliang.Canvas):
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         super().destroy()
 
-    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param master: 父控件
         :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
@@ -657,6 +670,7 @@ class Welcome(maliang.Tk):
         if event_type == "load":
             self.renderLanguage()
 
+    @override
     def destroy(self) -> None:
         """
         销毁控件。
@@ -667,10 +681,11 @@ class Welcome(maliang.Tk):
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         base.WindowFadeOut(self, 500, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
-    def __init__(self, data_manager: core.base.DataManager = core.base.DataManager()):
+    @override
+    def __init__(self, data_manager: core.data.DataManager = core.data.DataManager()):
         """
         :param data_manager: 数据管理器
-        :type data_manager: core.base.DataManager
+        :type data_manager: core.data.DataManager
         """
 
         self.data_manager = data_manager
@@ -678,7 +693,7 @@ class Welcome(maliang.Tk):
 
         super().__init__((ss(1200), ss(800)), title = data_manager.language["program_name"] + "(" + data_manager.language["program_subname"] + ")")
         base.WindowFadeIn(self, 500, controller = maliang.animation.smooth, fps = 60).start()
-        self.icon_ = maliang.PhotoImage(file = str(core.base.getBaseDir() / "asset" / "image" / "icon.png"))
+        self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "asset" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
@@ -700,7 +715,7 @@ class Welcome(maliang.Tk):
         self.title_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "寒冬pip(HDpip)", fontsize = ss(40), weight = "bold", anchor = "center")
         maliang.animation.MoveWidget(self.icon_show, (0, ss(200) - ss(350)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1250)
         maliang.animation.MoveWidget(self.title_, (0, ss(400) - ss(1000)), 500, controller = maliang.animation.smooth, fps =60).start(delay = 1250)
-        self.subtitle_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "一个基于maliang框架的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
+        self.subtitle_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "一个基于maliang的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
         maliang.animation.MoveWidget(self.subtitle_, (0, ss(500) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1500)
         self.button_canvas.start()
 

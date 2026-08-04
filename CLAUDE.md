@@ -18,7 +18,7 @@ HDpip/                 # 主包
 │   │                  #   get*Version, getSystemVersion, openInExplorer, isDev
 │   ├── data.py        # Data, DataManager, isBelongedToHDpip
 │   ├── pip_api.py     # Pip 命令包装器和包操作
-│   └── __init__.py    # _BaseProxy 透明代理 core.base.X → util/system/data
+│   └── __init__.py    # 导出 data/pip_api/system/util 子模块
 ├── gui/               # 基于 Maliang 的 GUI 组件
 │   ├── base.py        # Button(主题), ScrolledText, RoundedRectangle, Line,
 │   │                  #   WindowFadeIn/Out, smartScale/ss, getDpi/pxToPt/ptToPx
@@ -38,8 +38,7 @@ HDpip/                 # 主包
 - `dist.py` – 构建脚本，清理目录并运行 `python setup.py sdist`
 - `local_install.py` – 开发安装脚本（清除缓存、卸载旧版本、从 `dist/` 安装）
 - `pipgui.py` – 独立的 PyQt6 GUI（不是 HDpip 包的一部分）
-- `test.py` – 核心功能的临时测试
-- `dev` – 空文件，启用开发模式（`HDpip.core.base.isDev()`）
+- `dev` – 空文件，启用开发模式（`HDpip.core.system.isDev()`）
 
 **注意：** 包 README (`HDpip/README.md`) 用于 PyPI 分发，与仓库级别的 README 是分开的。
 
@@ -52,7 +51,6 @@ HDpip/                 # 主包
 | 运行独立的 PyQt6 GUI | `python pipgui.py` |
 | 构建分发压缩包 | `python dist.py` |
 | 本地安装测试 | `python local_install.py` |
-| 运行临时测试 | `python test.py` |
 | 检查 Python/pip 版本 | `python -c "from HDpip.core.system import getPythonVersion, getPipVersion; print(getPythonVersion(), getPipVersion())"` |
 | 列出已安装包 | `python -c "import HDpip.core.pip_api; print(HDpip.core.pip_api.list_())"` |
 | 打开包目录 | `python -c "from HDpip.core.system import openInExplorer; openInExplorer('HDpip')"` |
@@ -128,13 +126,13 @@ python local_install.py
 
 ## 测试
 
-仓库包含 `test.py` 用于核心功能的临时测试。运行：
+正式测试套件在 `tests/`，使用 pytest（pyproject.toml 已配置）。运行：
 
 ```bash
-python test.py
+python -m pytest
 ```
 
-没有正式的测试套件（pytest, unittest）。`test.py` 中的测试演示了 `HDpip.core.base.Version`、`HDpip.core.base.Data`、`HDpip.core.pip` 和其他工具的使用。
+测试文件按职责拆分：`test_version.py`（Version）、`test_data.py`（Data）、`test_utils.py`（工具函数）、`test_gui_base.py`（DPI/缩放）、`test_pip_api.py`（pip API）、`test_buttons.py`、`test_dialog.py`、`test_error.py`、`test_treeview.py`（TkTable）。共享 fixture（Tk 窗口）在 `conftest.py`。
 
 ## 架构亮点
 
@@ -164,7 +162,7 @@ python test.py
 
 ### 仅开发行为
 
-- 当 `dev` 文件存在时，`HDpip.core.base.isDev()` 返回 `True`。可用于启用调试功能或备用路径。
+- 当 `dev` 文件存在时，`HDpip.core.system.isDev()` 返回 `True`。可用于启用调试功能或备用路径。
 
 ### 类型存根生成
 
@@ -174,7 +172,7 @@ python test.py
 
 - PyQt6 GUI (`pipgui.py`) 是独立工具，**不**构建到 HDpip 包中。
 - `HDpip.core.util.HDpipError` 用于内部错误；`unfinished()` 为未实现功能抛错。
-- `core/base.py` 已删除，旧 `core.base.X` 引用通过 `core/__init__.py` 的 `_BaseProxy` 透明代理到 `util`/`system`/`data`。
+- `core/base.py` 已删除，`_BaseProxy` 兼容代理也已移除，直接从 `core.util` / `core.system` / `core.data` 导入。
 - 表格控件直接使用 `maliang.table.TkTable`（tksheet），不使用 ttk.Treeview。
 - 所有 UI 尺寸（pos/size/fontsize/height/width）必须用 `ss()` 缩放，在 `gui.base` 中已定义 `ss = smartScale`。
 - 分隔线用 `create_line` 画在对应子 canvas 上（被 widget 遮挡的部分画在子 canvas 自身，无遮挡的留在父 canvas）。

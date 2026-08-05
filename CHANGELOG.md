@@ -16,6 +16,10 @@
 
 🕓 *Release Date / 发布日期 : 2026-xx-xx*
 
+> [!IMPORTANT]  
+> We will **refactor** `HDpip/gui` in the next version, please pay attention to the changes in function calls.  
+> 我们将在下一个版本**全面重构**`HDpip/gui`，请注意调用变动。  
+
 🟢 **Added / 新增**
 
 * Add the documentation site: <https://handongliren.github.io/HDpip/>

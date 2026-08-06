@@ -24,8 +24,8 @@ categories:
     commits:
       - 'del:'
   # Deprecated 暂无对应 commit，保留用于未来扩展
-  - title: '🟠 Deprecated / 弃用'
-    commits: []  # 留空，后续如有需要可添加对应前缀
+  #- title: '🟠 Deprecated / 弃用'
+  #  commits: []  # 留空，后续如有需要可添加对应前缀
 
 version-resolver:
   major:

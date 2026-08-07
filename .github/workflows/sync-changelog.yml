@@ -1,0 +1,56 @@
+name: Sync Changelog to Release
+
+on:
+  release:
+    types: [opened, edited]   # 去掉了 prereleased
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract changelog for this version
+        id: extract
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"   # 去掉开头的 v
+          
+          awk -v ver="$VERSION" '
+            BEGIN { found=0; output="" }
+            /^## 🔖 `[0-9]+\.[0-9]+\.[0-9]+`/ {
+              gsub(/^## 🔖 `/, "", $0)
+              gsub(/`.*$/, "", $0)
+              if ($0 == ver) { found=1; next }
+              if (found) { exit }
+            }
+            found { output = output $0 "\n" }
+            END {
+              gsub(/^[ \t\n]+/, "", output)
+              gsub(/[ \t\n]+$/, "", output)
+              print output
+            }
+          ' CHANGELOG.md > changelog_entry.md
+          
+          if [ ! -s changelog_entry.md ]; then
+            echo "⚠️ 未在 CHANGELOG.md 中找到版本 \`$VERSION\` 的条目，请手动编辑此 Release Body。" > changelog_entry.md
+          fi
+
+      - name: Update Release Body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('changelog_entry.md', 'utf8');
+            
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id,
+              body: body
+            });

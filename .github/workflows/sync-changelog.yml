@@ -1,12 +1,15 @@
 name: Sync Changelog to Release
 
+# release 发布后（正式版或预览版，published 均触发）自动从 CHANGELOG.md
+# 提取对应版本的条目并写入 release body。draft 阶段不触发（GitHub 平台限制），
+# 需要手动同步时可用 workflow_dispatch 触发。
 on:
   release:
-    types: [created, edited, published]
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: '版本号（如 v0.0.5，不带 v 前缀）'
+        description: '版本号（如 0.0.5，不带 v 前缀）'
         required: true
         default: ''
         type: string
@@ -63,19 +66,25 @@ jobs:
             }
           ' CHANGELOG.md > changelog_entry.md
           
-          # 设置步骤输出
-          CONTENT=$(cat changelog_entry.md)
-          echo "content=$CONTENT" >> $GITHUB_OUTPUT
+          # 使用多行输出语法
+          {
+            echo 'content<<EOF'
+            cat changelog_entry.md
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          
           echo "提取的内容："
-          echo "$CONTENT"
+          cat changelog_entry.md
 
       - name: Update Release Body
         uses: actions/github-script@v7
+        env:
+          CONTENT: ${{ steps.extract.outputs.content }}
         with:
           script: |
-            const content = `${{ steps.extract.outputs.content }}`;
+            const content = process.env.CONTENT;
             
-            if (!content.trim() || content.trim().startsWith('未找到版本')) {
+            if (!content || !content.trim() || content.trim().startsWith('未找到版本')) {
               console.log('未找到对应版本的 CHANGELOG 条目，跳过更新。');
               return;
             }
@@ -90,11 +99,9 @@ jobs:
               });
               console.log('✅ Release Body 已更新');
             } else {
-              // 手动触发时，输出到日志
+              // 手动触发时，输出到日志和摘要
               console.log('📝 手动触发模式，提取的内容如下：');
-              console.log('--- 开始 ---');
               console.log(content);
-              console.log('--- 结束 ---');
             }
 
       - name: Summary output (manual mode)

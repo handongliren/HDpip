@@ -3,6 +3,7 @@ name: Sync Changelog to Release
 on:
   release:
     types: [created, edited]
+  workflow_dispatch:
 
 permissions:
   contents: write

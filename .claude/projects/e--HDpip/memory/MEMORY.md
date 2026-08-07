@@ -1,3 +1,5 @@
 - [core 模块拆分](core-modules.md) — base.py 已删除，内容分布到 util/system/data
 - [不要自动运行 pytest](no-auto-pytest.md) — 没有明确要求时，修改后不要自动跑测试
 - [Line 准备废弃](line-deprecated.md) — 分隔线用 create_line，不用 gui.base.Line
+- [版本单一来源](version-single-source.md) — 版本只改 HDpip/__init__.py，pyproject 动态读取
+- [CHANGELOG 约定](changelog-conventions.md) — 倒序、标题与版本号严格一致、7 色中英双语、workflow 行为

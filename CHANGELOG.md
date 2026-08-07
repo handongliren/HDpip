@@ -12,17 +12,41 @@
 > - 🟠 **Deprecated / 弃用**
 > - 🟤 **Refactored / 重构**
 
+---
+
+## 🔖 `0.0.5.post1`
+
+🕓 *Release Date / 发布日期 : 2026-8-7*
+
+🟢 **Added / 新增**
+
+- Add `darkdetect` as an explicit dependency.
+
+- 将 `darkdetect` 添加为显式依赖。
+
+🟡 **Changed / 变更**
+
+- Read the package version dynamically from `HDpip.version` in `pyproject.toml`, keeping a single source of truth.
+
+- `pyproject.toml` 中的版本号改为从 `HDpip.version` 动态读取，保持单一版本来源。
+
+---
+
 ## 🔖 `0.0.5`
 
-🕓 *Release Date / 发布日期 : 2026-8-6*
+🕓 *Release Date / 发布日期 : 2026-8-7*
 
 > [!IMPORTANT]  
 > We will **refactor** `HDpip/gui` in the next version, please pay attention to the changes in function calls.  
 > 我们将在下一个版本**全面重构**`HDpip/gui`，请注意调用变动。  
 
+---
+
 > [!CAUTION]  
 > We have **completely refactored** `HDpip/base.py`, and the call to `HDpip.base` is **no longer available**, please import from `HDpip.core.util`, `HDpip.core.system`, and `HDpip.core.data` instead.  
 > 我们对`HDpip/base.py`进行了**全面重构**，`HDpip.base`的调用**已不可用**，请改为从`HDpip.core.util`、`HDpip.core.system`、`HDpip.core.data`中导入。  
+
+---
 
 🟢 **Added / 新增**
 

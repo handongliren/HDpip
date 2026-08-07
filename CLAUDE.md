@@ -86,10 +86,10 @@ HDpip/                 # 主包
 
 ## 构建和分发
 
-构建过程使用 `HDpip.main.version` 中的版本号：
+**版本单一来源：`HDpip/__init__.py` 中的 `version` 变量。** 升版本只改这一处：
 
-1. `setup.py` 从 `HDpip` 模块导入 `version`（该模块重新导出 `HDpip.main.version`）。
-2. `dist.py` 清理构建目录并运行 `python setup.py sdist`。
+1. `pyproject.toml` 用 `dynamic = ["version"]` + `[tool.setuptools.dynamic]` 从 `HDpip.version` 自动读取（无 `setup.py`）。
+2. `dist.py` 清理构建目录并运行 `python -m build` / `setup.py sdist`。
 3. 生成的压缩包重命名为小写（`hdpip-{version}.tar.gz`）。
 4. **本地安装**（用于测试）通过 `local_install.py` 完成，它会清除 pip 缓存、卸载现有的 HDpip，并从 `dist/` 安装新构建的包。
 
@@ -113,6 +113,7 @@ python local_install.py
 - **不要重复造轮子** – 除非现有抽象已损坏，否则使用代码库中的现有抽象
 - **`key = value` 传参** — 等号左右必须有空格；逗号后加空格（`"a", "b"`）
 - **`from typing import *`** — 允许使用，不需要显式导入
+- **`@override` / `@overload`** — 覆写父类方法用 `@override`，多形态输入用 `@overload`；从 `typing_extensions` 导入（Python 3.10 的 `typing` 没有 `override`）
 - **参数列表** — 每个参数末尾加逗号（包括最后一个），`self` 后也加
 - **`super().__init__`** — 单行传全部参数，不换行
 - **不写 `**kwargs`** — 显式列出所有参数，不用通配
@@ -167,6 +168,13 @@ python -m pytest
 ### 类型存根生成
 
 - `HDpip.core.pyi` 包含从 Python 源代码生成 `.pyi` 类型存根文件的工具。内部用于开发。
+
+## CHANGELOG 约定
+
+- **倒序**：最新版本条目在最上方。
+- 版本标题（`## 🔖 \`0.0.5.post1\``）必须与 `HDpip/__init__.py` 的 `version` **完全一致**（含 post 后缀）。
+- 条目结构：发布日期 → 提示块 → 7 色分类（🟢Added / 🔴Removed / 🟡Changed / 🔵Optimized / 🟣Fixed / 🟠Deprecated / 🟤Refactored），每条英文 + 中文对照。
+- `.github/workflows/sync-changelog.yml` 在 release `published`（正式/预览版发布）后自动把对应条目写入 release body；draft 阶段需手动 `workflow_dispatch`。
 
 ## 注意事项
 

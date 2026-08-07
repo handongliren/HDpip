@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "HDpip"
-version = "0.0.4"
+dynamic = ["version"]
 description = "寒冬pip(HDpip)"
 readme = "HDpip/README.md"
 license = { file = "LICENSE" }
@@ -15,6 +15,7 @@ requires-python = ">=3.10"
 dependencies = [
     "pip>=25.2",
     "typing-extensions",
+    "darkdetect",
     "maliang[opt]>=3.1.0",
     "maliang-table",
     "pyyaml",
@@ -44,6 +45,9 @@ Issue = "https://github.com/handongliren/HDpip/issues"
 [project.gui-scripts]
 HDpip = "HDpip.main:main"
 hdpip = "HDpip.main:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "HDpip.version"}
 
 [tool.setuptools.packages.find]
 include = ["HDpip*"]

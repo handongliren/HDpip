@@ -1767,16 +1767,42 @@ version 2.1, available at
 <li>🟤 <strong>Refactored / 重构</strong></li>
 </ul>
 </div>
+<hr>
+<h2 id="changelog--005post1">🔖 <code>0.0.5.post1</code><a class="headerlink" href="#changelog--005post1">¶</a></h2>
+<p>🕓 <em>Release Date / 发布日期 : 2026-8-7</em></p>
+<p>🟢 <strong>Added / 新增</strong></p>
+<ul>
+<li>
+<p>Add <code>darkdetect</code> as an explicit dependency.</p>
+</li>
+<li>
+<p>将 <code>darkdetect</code> 添加为显式依赖。</p>
+</li>
+</ul>
+<p>🟡 <strong>Changed / 变更</strong></p>
+<ul>
+<li>
+<p>Read the package version dynamically from <code>HDpip.version</code> in <code>pyproject.toml</code>, keeping a single source of truth.</p>
+</li>
+<li>
+<p><code>pyproject.toml</code> 中的版本号改为从 <code>HDpip.version</code> 动态读取，保持单一版本来源。</p>
+</li>
+</ul>
+<hr>
 <h2 id="changelog--005">🔖 <code>0.0.5</code><a class="headerlink" href="#changelog--005">¶</a></h2>
-<p>🕓 <em>Release Date / 发布日期 : 2026-8-6</em></p>
+<p>🕓 <em>Release Date / 发布日期 : 2026-8-7</em></p>
 <blockquote>
 <p>[!IMPORTANT]<br>
 We will <strong>refactor</strong> <code>HDpip/gui</code> in the next version, please pay attention to the changes in function calls.<br>
 我们将在下一个版本<strong>全面重构</strong><code>HDpip/gui</code>，请注意调用变动。  </p>
+</blockquote>
+<hr>
+<blockquote>
 <p>[!CAUTION]<br>
 We have <strong>completely refactored</strong> <code>HDpip/base.py</code>, and the call to <code>HDpip.base</code> is <strong>no longer available</strong>, please import from <code>HDpip.core.util</code>, <code>HDpip.core.system</code>, and <code>HDpip.core.data</code> instead.<br>
 我们对<code>HDpip/base.py</code>进行了<strong>全面重构</strong>，<code>HDpip.base</code>的调用<strong>已不可用</strong>，请改为从<code>HDpip.core.util</code>、<code>HDpip.core.system</code>、<code>HDpip.core.data</code>中导入。  </p>
 </blockquote>
+<hr>
 <p>🟢 <strong>Added / 新增</strong></p>
 <ul>
 <li>

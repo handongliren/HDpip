@@ -2,8 +2,14 @@ name: Sync Changelog to Release
 
 on:
   release:
-    types: [created, edited]
+    types: [created, edited, published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: '版本号（如 v0.0.5，不带 v 前缀）'
+        required: true
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -11,42 +17,90 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+          else
+            VERSION="${{ inputs.tag }}"
+          fi
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "使用的版本号: $VERSION"
 
       - name: Extract changelog for this version
         id: extract
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -z "$VERSION" ]; then
+            echo "未找到版本号" > changelog_entry.md
+            exit 0
+          fi
           
           awk -v ver="$VERSION" '
             BEGIN { found=0; output="" }
             /^## 🔖 `[0-9]+\.[0-9]+\.[0-9]+`/ {
-              gsub(/^## 🔖 `/, "", $0)
-              gsub(/`.*$/, "", $0)
-              if ($0 == ver) { found=1; next }
+              line = $0
+              gsub(/^## 🔖 `/, "", line)
+              gsub(/`.*$/, "", line)
+              if (line == ver) { found=1; next }
               if (found) { exit }
             }
             found { output = output $0 "\n" }
             END {
-              gsub(/^[ \t\n]+/, "", output)
-              gsub(/[ \t\n]+$/, "", output)
-              print output
+              if (found) {
+                gsub(/^[ \t\n]+/, "", output)
+                gsub(/[ \t\n]+$/, "", output)
+                print output
+              } else {
+                print "未找到版本 " ver
+              }
             }
           ' CHANGELOG.md > changelog_entry.md
+          
+          # 设置步骤输出
+          CONTENT=$(cat changelog_entry.md)
+          echo "content=$CONTENT" >> $GITHUB_OUTPUT
+          echo "提取的内容："
+          echo "$CONTENT"
 
       - name: Update Release Body
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const body = fs.readFileSync('changelog_entry.md', 'utf8');
-            if (body.trim()) {
+            const content = `${{ steps.extract.outputs.content }}`;
+            
+            if (!content.trim() || content.trim().startsWith('未找到版本')) {
+              console.log('未找到对应版本的 CHANGELOG 条目，跳过更新。');
+              return;
+            }
+            
+            // 如果是 release 事件，更新对应的 release
+            if (context.eventName === 'release') {
               await github.rest.repos.updateRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 release_id: context.payload.release.id,
-                body: body
+                body: content
               });
+              console.log('✅ Release Body 已更新');
+            } else {
+              // 手动触发时，输出到日志
+              console.log('📝 手动触发模式，提取的内容如下：');
+              console.log('--- 开始 ---');
+              console.log(content);
+              console.log('--- 结束 ---');
             }
+
+      - name: Summary output (manual mode)
+        run: |
+          echo "## 📋 提取的 CHANGELOG 内容" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```markdown' >> $GITHUB_STEP_SUMMARY
+          cat changelog_entry.md >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

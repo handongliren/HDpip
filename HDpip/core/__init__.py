@@ -6,7 +6,4 @@
 本模块是本包核心。
 """
 
-from . import data
-from . import pip_api
-from . import system
-from . import util
+from . import data, pip_api, system, util

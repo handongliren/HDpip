@@ -55,11 +55,11 @@ if __name__ == "__main__":
     canvas = maliang.Canvas(root, expand = "xy", auto_zoom = True, auto_update = True)
     canvas.place(width = 400, height = 300)
 
-    btn1 = HDpip.gui.base.Button(canvas, (50, 50), (300, 50), text = "触发 ValueError",
+    btn1 = HDpip.gui.custom.widgets.Button(canvas, (50, 50), (300, 50), text = "触发 ValueError",
                                   theme = "danger", command = raise_value_error)
-    btn2 = HDpip.gui.base.Button(canvas, (50, 120), (300, 50), text = "触发 ZeroDivisionError",
+    btn2 = HDpip.gui.custom.widgets.Button(canvas, (50, 120), (300, 50), text = "触发 ZeroDivisionError",
                                   theme = "warning", command = divide_by_zero)
-    btn3 = HDpip.gui.base.Button(canvas, (50, 190), (300, 50), text = "触发 KeyError",
+    btn3 = HDpip.gui.custom.widgets.Button(canvas, (50, 190), (300, 50), text = "触发 KeyError",
                                   theme = "info", command = key_error)
 
     root.mainloop()

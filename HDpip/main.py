@@ -18,11 +18,11 @@ import maliang.core.virtual
 try:
     from . import core
     from . import gui
-    from .gui.base import ss
+    from .gui.custom.utility import ss
 except ImportError:
     import core
     import gui
-    from gui.base import ss
+    from gui.custom.utility import ss
 
 def needWelcome(data_manager: core.data.DataManager = core.data.DataManager()) -> bool:
     """
@@ -97,7 +97,7 @@ class AboutCanvas(maliang.Canvas):
         self.image = maliang.Image(self, (ss(25), ss(25)), (ss(50), ss(50)), image = self.winfo_toplevel().icon_)
         self.title = maliang.Text(self, (ss(100), ss(25)), None, anchor = "w", fontsize = ss(32))
         self.version = maliang.Text(self, (ss(100), ss(75)), None, anchor = "w", fontsize = ss(30), text = core.system.getVersion())
-        self.version.style.set(fg = gui.base.primary)
+        self.version.style.set(fg = gui.custom.color.primary)
         self.description = maliang.Text(self, (ss(25), ss(125)), None, anchor = "w", fontsize = ss(25))
 
         self.renderLanguage()
@@ -152,10 +152,10 @@ class ControlCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.install_button = gui.base.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"], fontsize = ss(30))
-        self.uninstall_button = gui.base.Button(self, ss((190, 40)), ss((120, 60)), theme = "outline-danger", text = self.data_manager.language["main"]["uninstall_button"], fontsize = ss(30))
-        self.upgrade_button = gui.base.Button(self, ss((40, 140)), ss((120, 60)), theme = "outline-primary", text = self.data_manager.language["main"]["upgrade_button"], fontsize = ss(30))
-        self.setting_button = gui.base.Button(self, ss((190, 140)), ss((120, 60)), theme = "outline-secondary", text = self.data_manager.language["main"]["setting_button"], fontsize = ss(30))
+        self.install_button = gui.custom.widgets.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"], fontsize = ss(30))
+        self.uninstall_button = gui.custom.widgets.Button(self, ss((190, 40)), ss((120, 60)), theme = "outline-danger", text = self.data_manager.language["main"]["uninstall_button"], fontsize = ss(30))
+        self.upgrade_button = gui.custom.widgets.Button(self, ss((40, 140)), ss((120, 60)), theme = "outline-primary", text = self.data_manager.language["main"]["upgrade_button"], fontsize = ss(30))
+        self.setting_button = gui.custom.widgets.Button(self, ss((190, 140)), ss((120, 60)), theme = "outline-secondary", text = self.data_manager.language["main"]["setting_button"], fontsize = ss(30))
 
         self.renderLanguage()
 
@@ -196,7 +196,7 @@ class Main(maliang.Tk):
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        gui.base.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
+        gui.custom.animations.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
     @override
     def __init__(self, data_manager: core.data.DataManager = core.data.DataManager()):
@@ -209,7 +209,7 @@ class Main(maliang.Tk):
         self.data_manager.init()
 
         super().__init__((ss(1200), ss(800)), title = "寒冬pip(HDpip)")
-        gui.base.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
+        gui.custom.animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "asset" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)
         maliang.core.configs.Env.system = "Windows11"
@@ -223,17 +223,17 @@ class Main(maliang.Tk):
         self.base_canvas.place(x = 0, y = 0, width = ss(1200), height = ss(800))
         self.about_canvas = AboutCanvas(self.base_canvas, data_manager)
         self.about_canvas.place(x = 0, y = 0, width = ss(350), height = ss(150))
-        self.about_canvas.create_line(ss((0, 149, 350, 149)), width = 1, fill = gui.base.gray_500)
+        self.about_canvas.create_line(ss((0, 149, 350, 149)), width = 1, fill = gui.custom.color.gray_500)
 
         self.control_canvas = ControlCanvas(self.base_canvas, data_manager)
         self.control_canvas.place(x = 0, y = ss(150), width = ss(350), height = ss(240))
-        self.control_canvas.create_line(ss((0, 240, 350, 240)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((0, 390, 350, 390)), width = 1, fill = gui.base.gray_500)
+        self.control_canvas.create_line(ss((0, 240, 350, 240)), width = 1, fill = gui.custom.color.gray_500)
+        self.base_canvas.create_line(ss((0, 390, 350, 390)), width = 1, fill = gui.custom.color.gray_500)
 
-        self.base_canvas.create_line(ss((350, 0, 350, 800)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((700, 0, 700, 800)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((0, 540, 350, 540)), width = 1, fill = gui.base.gray_500)
-        self.base_canvas.create_line(ss((700, 400, 1200, 400)), width = 1, fill = gui.base.gray_500)
+        self.base_canvas.create_line(ss((350, 0, 350, 800)), width = 1, fill = gui.custom.color.gray_500)
+        self.base_canvas.create_line(ss((700, 0, 700, 800)), width = 1, fill = gui.custom.color.gray_500)
+        self.base_canvas.create_line(ss((0, 540, 350, 540)), width = 1, fill = gui.custom.color.gray_500)
+        self.base_canvas.create_line(ss((700, 400, 1200, 400)), width = 1, fill = gui.custom.color.gray_500)
 
 @gui.error_catcher.catch
 def main(data_manager: core.data.DataManager = core.data.DataManager()) -> None:

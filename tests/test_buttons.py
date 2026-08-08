@@ -24,21 +24,21 @@ class TestButtonCreation:
         root, canvas = tk_root
 
         for theme in BUTTON_TYPES:
-            btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), theme = theme, text = theme)
+            btn = HDpip.gui.custom.widgets.Button(canvas, (10, 10), (100, 30), theme = theme, text = theme)
             assert btn is not None
 
     def test_button_text(self, tk_root, ):
         import HDpip
 
         root, canvas = tk_root
-        btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), text = "测试按钮")
+        btn = HDpip.gui.custom.widgets.Button(canvas, (10, 10), (100, 30), text = "测试按钮")
         assert btn is not None
 
     def test_button_disable(self, tk_root, ):
         import HDpip
 
         root, canvas = tk_root
-        btn = HDpip.gui.base.Button(canvas, (10, 10), (100, 30), theme = "primary", text = "test")
+        btn = HDpip.gui.custom.widgets.Button(canvas, (10, 10), (100, 30), theme = "primary", text = "test")
         btn.disable(True)
         assert btn.disabled is True
         btn.disable(False)
@@ -90,10 +90,10 @@ if __name__ == "__main__":
             total_width = 2 * switch_width + switch_spacing
             start_x = (1400 - total_width) // 2
 
-            self.theme_switch = HDpip.gui.base.Button(self.canvas, (start_x, control_y),
+            self.theme_switch = HDpip.gui.custom.widgets.Button(self.canvas, (start_x, control_y),
                 (switch_width, switch_height), theme = "primary",
                 text = "🌓 明暗主题切换", command = self.toggle_theme)
-            self.disable_switch = HDpip.gui.base.Button(self.canvas,
+            self.disable_switch = HDpip.gui.custom.widgets.Button(self.canvas,
                 (start_x + switch_width + switch_spacing, control_y),
                 (switch_width, switch_height), theme = "warning",
                 text = "⏸️ 全体禁用切换", command = self.toggle_all_disabled)
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                         "outline-info": "轮廓-信息", "outline-warning": "轮廓-警告",
                         "outline-danger": "轮廓-危险", "outline-light": "轮廓-浅色", "outline-dark": "轮廓-深色",
                     }
-                    button = HDpip.gui.base.Button(self.canvas, (x, y),
+                    button = HDpip.gui.custom.widgets.Button(self.canvas, (x, y),
                         (button_width, button_height), theme = btn_type, text = texts[btn_type],
                         anchor = "center", command = lambda bt = btn_type: self.on_button_click(bt))
                     self.all_buttons.append(button)

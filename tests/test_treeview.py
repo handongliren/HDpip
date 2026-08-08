@@ -150,7 +150,7 @@ if __name__ == "__main__":
     info_bar = maliang.Text(main, (12, 540), (976, 24),
                             text="提示: 拖拽列分隔线调整列宽 | Ctrl+点击多选 | 滚轮滚动",
                             fontsize=11, anchor="w")
-    info_bar.style.set(fg=HDpip.gui.base.gray_800)
+    info_bar.style.set(fg=HDpip.gui.custom.color.gray_800)
 
     sel_label = maliang.Text(main, (12, 568), (976, 24),
                              text="当前选中: 无", fontsize=11, anchor="w")
@@ -189,13 +189,13 @@ if __name__ == "__main__":
     toolbar = maliang.Canvas(main, expand="", auto_update=True)
     toolbar.place(x=12, y=28, width=976, height=36)
 
-    HDpip.gui.base.Button(toolbar, (0, 0), (80, 30), text="添加", theme="primary",
+    HDpip.gui.custom.widgets.Button(toolbar, (0, 0), (80, 30), text="添加", theme="primary",
                            command=add_package)
-    HDpip.gui.base.Button(toolbar, (90, 0), (80, 30), text="删除选中", theme="danger",
+    HDpip.gui.custom.widgets.Button(toolbar, (90, 0), (80, 30), text="删除选中", theme="danger",
                            command=delete_selected)
-    HDpip.gui.base.Button(toolbar, (180, 0), (80, 30), text="滚到底",
+    HDpip.gui.custom.widgets.Button(toolbar, (180, 0), (80, 30), text="滚到底",
                            theme="outline-warning", command=scroll_bottom)
-    HDpip.gui.base.Button(toolbar, (270, 0), (80, 30), text="查看选中",
+    HDpip.gui.custom.widgets.Button(toolbar, (270, 0), (80, 30), text="查看选中",
                            theme="outline-primary", command=show_selection_info)
 
     refresh_selection_info()

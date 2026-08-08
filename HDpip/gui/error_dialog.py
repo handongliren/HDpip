@@ -25,7 +25,7 @@ except ImportError:
 
 try:
     from . import dialog
-    from .base import ss
+    from .custom.utility import ss
 except ImportError:
     import dialog
     from base import ss

@@ -14,11 +14,11 @@ from typing_extensions import override
 import maliang
 
 try:
-    from . import base
-    from .base import ss
+    from . import custom
+    from .custom.utility import ss
 except ImportError:
-    import base
-    from base import ss
+    import custom
+    from custom import ss
 
 class DialogCanvas(maliang.Canvas):
     """
@@ -75,7 +75,7 @@ class DialogCanvas(maliang.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
         self.place(x = position[0], y = position[1], anchor = anchor, width = size[0], height = size[1])
 
-        self.theme_color = base.colors[theme][0]
+        self.theme_color = custom.color.colors[theme][0]
         title_height = ss(80)
         button_width = ss(160)
         button_height = ss(80)
@@ -85,13 +85,13 @@ class DialogCanvas(maliang.Canvas):
         self.create_line(margin, size[1] - button_height, size[0] - margin, size[1] - button_height, fill = self.theme_color, width = 1)
 
         if outline:
-            self.outline = base.RoundedRectangle(self, (0, 0), (size[0] - 2, size[1] - 2), outline = self.theme_color)
+            self.outline = custom.shapes.RoundedRectangle(self, (0, 0), (size[0] - 2, size[1] - 2), outline = self.theme_color)
 
         if title == None:
             title = theme
         self.title = maliang.Text(self, (margin, ss(40)), size = [size[0] - 2 * margin, title_height], text = title, fontsize = ss(50), weight = "bold", anchor = "w", justify = "left", auto_update = True)
 
-        self.scrolled_text = base.ScrolledText(self)
+        self.scrolled_text = custom.texts.ScrolledText(self)
         self.scrolled_text.place(x = size[0] / 2, y = size[1] / 2, width = size[0] - 4 * margin, height = size[1] - 2 * margin - title_height - button_height, anchor = "center")
         self.scrolled_text.delete(1.0, tkinter.END)
         self.scrolled_text.insert(1.0, text)
@@ -101,14 +101,14 @@ class DialogCanvas(maliang.Canvas):
         self.button_canvas = maliang.Canvas(self, auto_update = True)
         self.button_canvas.place(x = (size[0] - buttons_width) / 2, y = size[1] - button_height + margin / 4, anchor = "nw", width = buttons_width, height = button_height - margin / 2)
 
-        self.button_list: list[base.Button] = []
+        self.button_list: list[custom.widgets.Button] = []
         for i in range(0, len(button)):
             button[i].setdefault("theme", theme)
             cmd = closeCommand if closeCommand else self.closeCommand
             button[i].setdefault("command", cmd)
 
             self.button_list.append(
-                base.Button(self.button_canvas, [i * (button_width + margin), (button_height - margin / 2) / 2], [button_width, button_height - margin], anchor = "w", text = button[i]["text"], theme = button[i]["theme"])
+                custom.widgets.Button(self.button_canvas, [i * (button_width + margin), (button_height - margin / 2) / 2], [button_width, button_height - margin], anchor = "w", text = button[i]["text"], theme = button[i]["theme"])
             )
             self.button_list[i].bind("<Button-1>", button[i]["command"])
 

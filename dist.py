@@ -9,4 +9,4 @@ except Exception:
     pass
 
 # 运行构建命令
-os.system("python -m build --wheel --no-isolation")
+os.system("python -m build --sdist --wheel --no-isolation")

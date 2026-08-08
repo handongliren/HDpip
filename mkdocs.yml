@@ -34,6 +34,7 @@ markdown_extensions:
   # - nl2br # 换行符会直接换行
 
   - admonition # 提示框
+  - gh_alerts:GitHubAlertExtension # GitHub 风格 alerts（> [!NOTE]）兼容
   - meta # 元数据
   - sane_lists # 理智列表，避免原版 Markdown 列表错误渲染
   - smarty # 优化部分字符串为特殊符号

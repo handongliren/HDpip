@@ -4,7 +4,7 @@ import shutil
 # 清理旧的构建目录
 try:
     shutil.rmtree("dist")
-    shutil.rmtree("HDpip.egg-info")
+    shutil.rmtree("hdpip.egg-info")
 except Exception:
     pass
 

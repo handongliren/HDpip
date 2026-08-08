@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "HDpip"
+name = "hdpip"
 dynamic = ["version"]
 description = "寒冬pip(HDpip)"
 readme = "HDpip/README.md"

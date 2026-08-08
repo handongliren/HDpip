@@ -3,3 +3,4 @@
 - [Line 准备废弃](line-deprecated.md) — 分隔线用 create_line，不用 gui.base.Line
 - [版本单一来源](version-single-source.md) — 版本只改 HDpip/__init__.py，pyproject 动态读取
 - [CHANGELOG 约定](changelog-conventions.md) — 倒序、标题与版本号严格一致、7 色中英双语、workflow 行为
+- [version 先于 import](version-before-import.md) — __init__.py 的 version 必须定义在 import 前（顺序敏感设计）

@@ -6,4 +6,4 @@
 本模块是自定义 GUI 组件。
 """
 
-from . import color, utility, widgets, texts, animations, shapes
+from . import color, icons, utility, widgets, texts, animations, shapes

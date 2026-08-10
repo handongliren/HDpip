@@ -94,11 +94,11 @@ class AboutCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.image = maliang.Image(self, (ss(25), ss(25)), (ss(50), ss(50)), image = self.winfo_toplevel().icon_)
-        self.title = maliang.Text(self, (ss(100), ss(25)), None, anchor = "w", fontsize = ss(32))
-        self.version = maliang.Text(self, (ss(100), ss(75)), None, anchor = "w", fontsize = ss(30), text = core.system.getVersion())
+        self.image = maliang.Image(self, ss((25, 25)), ss((50, 50)), image = self.winfo_toplevel().icon_)
+        self.title = maliang.Text(self, ss((100, 25)), None, anchor = "w", fontsize = ss(32))
+        self.version = maliang.Text(self, ss((100, 75)), None, anchor = "w", fontsize = ss(30), text = core.system.getVersion())
         self.version.style.set(fg = gui.custom.color.primary)
-        self.description = maliang.Text(self, (ss(25), ss(125)), None, anchor = "w", fontsize = ss(25))
+        self.description = maliang.Text(self, ss((25, 125)), None, anchor = "w", fontsize = ss(25))
 
         self.renderLanguage()
 
@@ -208,7 +208,7 @@ class Main(maliang.Tk):
         self.data_manager = data_manager
         self.data_manager.init()
 
-        super().__init__((ss(1200), ss(800)), title = "寒冬pip(HDpip)")
+        super().__init__(ss((1200, 800)), title = "寒冬pip(HDpip)")
         gui.custom.animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "asset" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)

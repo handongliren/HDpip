@@ -7,7 +7,7 @@
 """
 
 from typing import *
-from typing_extensions import override
+from typing_extensions import override, deprecated
 
 import maliang
 import maliang.standard.shapes
@@ -93,6 +93,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         self.shape = maliang.standard.shapes.RoundedRectangle(self, (0, 0), size, radius = radius, name = name, gradient_animation = gradient_animation, **kwargs)
         self.setAppearance(outline = outline, background = background, width = width)
 
+@deprecated("绘制层级不够高，建议使用原生方法。")
 class Line(maliang.core.virtual.Widget):
     """
     直线的易用封装。

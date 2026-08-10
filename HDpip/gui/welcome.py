@@ -36,7 +36,7 @@ try:
     from .custom.utility import ss
 except ImportError:
     import custom
-    from custom import ss
+    from custom.utility import ss
 
 class LanguageCanvas(maliang.Canvas):
     """
@@ -54,7 +54,7 @@ class LanguageCanvas(maliang.Canvas):
 
         self.data_manager.setting["language"] = self.language_code_list[index]
 
-    def renderOption(self, position: tuple[int, int] = (ss(800), ss(-400))) -> None:
+    def renderOption(self, position: tuple[int, int] = ss((800, -400))) -> None:
         """
         渲染选项按钮。
 
@@ -71,7 +71,7 @@ class LanguageCanvas(maliang.Canvas):
             except KeyError:
                 self.language_list.append(i)
             self.language_code_list.append(i)
-        self.option = maliang.OptionButton(self, position, (ss(250), ss(80)), fontsize = ss(30), text = self.language_list, anchor = "center", command = self.chose, auto_update = True)
+        self.option = maliang.OptionButton(self, position, ss((250, 80)), fontsize = ss(30), text = self.language_list, anchor = "center", command = self.chose, auto_update = True)
 
     def import_(self):
         """
@@ -84,7 +84,7 @@ class LanguageCanvas(maliang.Canvas):
         if file.is_file():
             self.data_manager.importLanguage(file)
             self.option.destroy()
-            self.renderOption((ss(800), ss(250)))
+            self.renderOption(ss((800, 250)))
 
     @override
     def __init__(self, master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
@@ -98,7 +98,7 @@ class LanguageCanvas(maliang.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
         self.data_manager = data_manager
 
-        self.tip = maliang.Text(self, (ss(400), ss(-400)), (ss(600), ss(200)), text = "选择一个语言\nSelect a language", fontsize = ss(40), anchor = "center", auto_update = True)
+        self.tip = maliang.Text(self, ss((400, -400)), ss((600, 200)), text = "选择一个语言\nSelect a language", fontsize = ss(40), anchor = "center", auto_update = True)
         self.renderOption()
         local_language = locale.getdefaultlocale()[0]
         possible_language = difflib.get_close_matches(local_language, self.language_code_list, n = 1)
@@ -108,12 +108,12 @@ class LanguageCanvas(maliang.Canvas):
         maliang.animation.MoveWidget(self.tip, (0, ss(650)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveWidget(self.option, (0, ss(650)), 1000, controller = maliang.animation.ease_out, fps = 60).start()
 
-        self.card = custom.shapes.RoundedRectangle(self, (ss(600), ss(-400)), (ss(800), ss(100)), outline = custom.color.primary, anchor = "center")
+        self.card = custom.shapes.RoundedRectangle(self, ss((600, -400)), ss((800, 100)), outline = custom.color.primary, anchor = "center")
         maliang.animation.MoveWidget(self.card, (0, ss(850)), 1000, controller = maliang.animation.smooth, fps = 60).start()
-        self.import_tip = maliang.Text(self, (ss(-400), ss(450)), (ss(600), ss(100)), text = "没有您的语言？\nHaven't found your language?", fontsize = ss(30), anchor = "center", auto_update = True)
+        self.import_tip = maliang.Text(self, ss((-400, 450)), ss((600, 100)), text = "没有您的语言？\nHaven't found your language?", fontsize = ss(30), anchor = "center", auto_update = True)
         self.import_tip.style.set(fg = custom.color.primary)
         maliang.animation.MoveWidget(self.import_tip, (ss(840), 0), 1000, controller = maliang.animation.ease_out, fps = 60).start(delay = 1000)
-        self.import_button = custom.widgets.Button(self, (ss(1600), ss(450)), (ss(300), ss(50)), text = "导入语言 Import language", theme = "outline-primary", anchor = "center", command = self.import_, auto_update = True)
+        self.import_button = custom.widgets.Button(self, ss((1600, 450)), ss((300, 50)), text = "导入语言 Import language", theme = "outline-primary", anchor = "center", command = self.import_, auto_update = True)
         maliang.animation.MoveWidget(self.import_button, (ss(-780), 0), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 1000)
 
 class LicenseCanvas(maliang.Canvas):
@@ -182,8 +182,8 @@ class LicenseCanvas(maliang.Canvas):
         self.license.place(x = ss(600), y = ss(-500), width = ss(1000), height = ss(500), anchor = "center")
         maliang.animation.MoveTkWidget(self.license, (0, ss(800)), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 500)
 
-        self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(300), ss(50)), fontsize = ss(40), anchor = "center")
-        self.checkbox = maliang.CheckBox(self, (ss(200), ss(-200)), length = ss(50), default = False, command = self.command, anchor = "center")
+        self.tip = maliang.Text(self, ss((600, -200)), ss((300, 50)), fontsize = ss(40), anchor = "center")
+        self.checkbox = maliang.CheckBox(self, ss((200, -200)), length = ss(50), default = False, command = self.command, anchor = "center")
         maliang.animation.MoveWidget((self.tip, self.checkbox), (0, ss(800)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 1000)
 
         self.renderLanguage()
@@ -193,7 +193,7 @@ class ThemeCanvas(maliang.Canvas):
     主题画布。
     """
 
-    def renderLanguage(self, option_position: tuple[int, int] = (ss(800), ss(350))) -> None:
+    def renderLanguage(self, option_position: tuple[int, int] = ss((800, 350))) -> None:
         """
         渲染语言。
 
@@ -207,7 +207,7 @@ class ThemeCanvas(maliang.Canvas):
             self.option.destroy()
         except AttributeError:
             pass
-        self.option = maliang.OptionButton(self, option_position, (ss(250), ss(80)), fontsize = ss(30), text = self.data_manager.language["welcome", "theme_list"], command = self.command, anchor = "center", auto_update = True)
+        self.option = maliang.OptionButton(self, option_position, ss((250, 80)), fontsize = ss(30), text = self.data_manager.language["welcome", "theme_list"], command = self.command, anchor = "center", auto_update = True)
         if isinstance(self.value, int):
             self.option.set(self.value)
 
@@ -256,8 +256,8 @@ class ThemeCanvas(maliang.Canvas):
         self.data_manager.language.registerEvent(self.onLanguageChange)
         self.value = 0
 
-        self.tip = maliang.Text(self, (ss(400), ss(-400)), (ss(600), ss(200)), fontsize = ss(40), anchor = "center", auto_update = True)
-        self.renderLanguage((ss(800), ss(-400)))
+        self.tip = maliang.Text(self, ss((400, -400)), ss((600, 200)), fontsize = ss(40), anchor = "center", auto_update = True)
+        self.renderLanguage(ss((800, -400)))
         maliang.animation.MoveWidget(self.tip, (0, ss(750)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveWidget(self.option, (0, ss(750)), 1000, controller = maliang.animation.ease_out, fps = 60).start()
 
@@ -266,7 +266,7 @@ class InfoCanvas(maliang.Canvas):
     信息画布。
     """
 
-    def renderLanguage(self, option_position: tuple[int, int] = (ss(800), ss(350))) -> None:
+    def renderLanguage(self, option_position: tuple[int, int] = ss((800, 350))) -> None:
         """
         渲染语言。
 
@@ -362,7 +362,7 @@ class InfoCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(300), ss(50)), fontsize = ss(40), anchor = "center")
+        self.tip = maliang.Text(self, ss((600, -200)), ss((300, 50)), fontsize = ss(40), anchor = "center")
         table_width = ss(1000)
         self._index_width = ss(50)
         self.table = maliang.table.TkTable(
@@ -376,7 +376,7 @@ class InfoCanvas(maliang.Canvas):
         self.table.place(x = ss(600), y = ss(-400), width = table_width, height = ss(500), anchor = "center")
         self.after_idle(lambda: (
             self.table.set_index_width(self._index_width),
-            self.table.set_column_widths([ss(250), ss(700)]),
+            self.table.set_column_widths(ss([250, 700])),
         ))
         self.table.hide("x_scrollbar")
         self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
@@ -475,10 +475,10 @@ class EndCanvas(maliang.Canvas):
         self.data_manager = data_manager
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
-        self.tip = maliang.Text(self, (ss(600), ss(-200)), (ss(600), ss(40)), fontsize = ss(40), anchor = "center", auto_update = True)
+        self.tip = maliang.Text(self, ss((600, -200)), ss((600, 40)), fontsize = ss(40), anchor = "center", auto_update = True)
         self.scrolled_text = custom.texts.ScrolledText(self, state = tkinter.DISABLED)
         self.scrolled_text.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
-        self.button = custom.widgets.Button(self, (ss(600), ss(800)), (ss(250), ss(50)), theme = "outline-primary", anchor = "center")
+        self.button = custom.widgets.Button(self, ss((600, 800)), ss((250, 50)), theme = "outline-primary", anchor = "center")
         self.button.bind("<Button-1>", self.command)
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.ease_out, fps = 60).start()
         maliang.animation.MoveTkWidget(self.scrolled_text, (0, ss(750)), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 500)
@@ -625,8 +625,8 @@ class ButtonCanvas(maliang.Canvas):
                         content_canvas.walkCanvas(-1)
                     def next() -> None:
                         content_canvas.walkCanvas(1)
-                    back_button = self.back_button = custom.widgets.Button(self, (ss(100), ss(150)), (ss(100), ss(50)), theme = "outline-light", text = "上一步", anchor = "center", command = back)
-                    next_button = self.next_button = custom.widgets.Button(self, (ss(1100), ss(150)), (ss(100), ss(50)), theme = "outline-light", text = "下一步", anchor = "center", command = next)
+                    back_button = self.back_button = custom.widgets.Button(self, ss((100, 150)), ss((100, 50)), theme = "outline-light", text = "上一步", anchor = "center", command = back)
+                    next_button = self.next_button = custom.widgets.Button(self, ss((1100, 150)), ss((100, 50)), theme = "outline-light", text = "下一步", anchor = "center", command = next)
                     self.content_canvas.destroy()
                     content_canvas = self.content_canvas = PageCanvas(self.master, self.data_manager)
                     content_canvas.button_canvas = self
@@ -636,7 +636,7 @@ class ButtonCanvas(maliang.Canvas):
                 maliang.animation.MoveTkWidget(self.content_canvas, (0, ss(-1000)), 1000, controller = maliang.animation.ease_in, end = _, fps = 60).start()
                 maliang.animation.MoveElement(self.button, (0, ss(200)), 500, controller = maliang.animation.smooth, end = self.button.destroy, fps = 60).start()
 
-            self.button = custom.widgets.Button(self, (ss(600), ss(50)), (ss(400), ss(50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", anchor = "center", command = _)
+            self.button = custom.widgets.Button(self, ss((600, 50)), ss((400, 50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", anchor = "center", command = _)
             self.configure(bg = custom.color.primary)
             maliang.theme.register_event(lambda _: self.configure(bg = custom.color.primary))
             self.delete(self.button_bar)
@@ -691,7 +691,7 @@ class Welcome(maliang.Tk):
         self.data_manager = data_manager
         self.data_manager.init()
 
-        super().__init__((ss(1200), ss(800)), title = data_manager.language["program_name"] + "(" + data_manager.language["program_subname"] + ")")
+        super().__init__(ss((1200, 800)), title = data_manager.language["program_name"] + "(" + data_manager.language["program_subname"] + ")")
         custom.animations.WindowFadeIn(self, 500, controller = maliang.animation.smooth, fps = 60).start()
         self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "asset" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)
@@ -710,12 +710,12 @@ class Welcome(maliang.Tk):
         self.button_canvas.content_canvas = self.content_canvas
         self.button_canvas.place(width = ss(1200), height = ss(100), x = 0, y = ss(700))
 
-        self.icon_show = maliang.Image(self.content_canvas, (ss(600), ss(1000)), (ss(256), ss(256)), image = self.icon_, anchor = "center")
+        self.icon_show = maliang.Image(self.content_canvas, ss((600, 1000)), ss((256, 256)), image = self.icon_, anchor = "center")
         maliang.animation.MoveWidget(self.icon_show, (0, ss(350) - ss(1000)), 1000, controller = maliang.animation.rebound, fps = 60).start()
-        self.title_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "寒冬pip(HDpip)", fontsize = ss(40), weight = "bold", anchor = "center")
+        self.title_ = maliang.Text(self.content_canvas, ss((600, 1000)), ss((1200, 50)), text = "寒冬pip(HDpip)", fontsize = ss(40), weight = "bold", anchor = "center")
         maliang.animation.MoveWidget(self.icon_show, (0, ss(200) - ss(350)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1250)
         maliang.animation.MoveWidget(self.title_, (0, ss(400) - ss(1000)), 500, controller = maliang.animation.smooth, fps =60).start(delay = 1250)
-        self.subtitle_ = maliang.Text(self.content_canvas, (ss(600), ss(1000)), (ss(1200), ss(50)), text = "一个基于maliang的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
+        self.subtitle_ = maliang.Text(self.content_canvas, ss((600, 1000)), ss((1200, 50)), text = "一个基于maliang的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
         maliang.animation.MoveWidget(self.subtitle_, (0, ss(500) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1500)
         self.button_canvas.start()
 

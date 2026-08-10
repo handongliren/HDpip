@@ -66,66 +66,60 @@ class Button(maliang.Button):
             color_ = _[1]
             outline = True
 
-        light = color.light
-        dark = color.dark
-        light_subtle = color.light_subtle
-        dark_subtle = color.dark_subtle
-        colors = color.colors
-
         if not disabled:
             if not outline:
                 match color_:
                     case "default":
                         self.style.set(
                             "light",
-                            fg = (light, light, light_subtle),
-                            bg = (dark, dark, dark_subtle),
-                            ol = (dark, dark, dark_subtle)
+                            fg = (color.light, color.light, color.light_subtle),
+                            bg = (color.dark, color.dark, color.dark_subtle),
+                            ol = (color.dark, color.dark, color.dark_subtle)
                         )
                         self.style.set(
                             "dark",
-                            fg = (dark, dark, dark_subtle),
-                            bg = (light, light, light_subtle),
-                            ol = (light, light, light_subtle)
+                            fg = (color.dark, color.dark, color.dark_subtle),
+                            bg = (color.light, color.light, color.light_subtle),
+                            ol = (color.light, color.light, color.light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (dark, dark, dark_subtle),
-                            bg = (light, light, light_subtle),
-                            ol = (light, light, light_subtle)
+                            fg = (color.dark, color.dark, color.dark_subtle),
+                            bg = (color.light, color.light, color.light_subtle),
+                            ol = (color.light, color.light, color.light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (light, light, light_subtle),
-                            bg = (colors[color_][0], colors[color_][0], colors[color_][1]),
-                            ol = (colors[color_][0], colors[color_][0], colors[color_][1])
+                            fg = (color.light, color.light, color.light_subtle),
+                            bg = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1]),
+                            ol = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1])
                         )
             else:
                 match color_:
                     case "default":
                         self.style.set(
                             "light",
-                            fg = (dark, light, light_subtle),
-                            bg = ("", dark, dark_subtle),
-                            ol = (dark, dark, dark_subtle)
+                            fg = (color.dark, color.light, color.light_subtle),
+                            bg = ("", color.dark, color.dark_subtle),
+                            ol = (color.dark, color.dark, color.dark_subtle)
                         )
                         self.style.set(
                             "dark",
-                            fg = (light, dark, dark_subtle),
-                            bg = ("", light, light_subtle),
-                            ol = (light, light, light_subtle)
+                            fg = (color.light, color.dark, color.dark_subtle),
+                            bg = ("", color.light, color.light_subtle),
+                            ol = (color.light, color.light, color.light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (light, dark, dark_subtle),
-                            bg = ("", light, light_subtle),
-                            ol = (light, light, light_subtle)
+                            fg = (color.light, color.dark, color.dark_subtle),
+                            bg = ("", color.light, color.light_subtle),
+                            ol = (color.light, color.light, color.light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (colors[color_][0], light, light_subtle),
-                            bg = ("", colors[color_][0], colors[color_][1]),
-                            ol = (colors[color_][0], colors[color_][0], colors[color_][1])
+                            fg = (color.colors[color_][0], color.light, color.light_subtle),
+                            bg = ("", color.colors[color_][0], color.colors[color_][1]),
+                            ol = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1])
                         )
         else:
             if not outline:
@@ -133,54 +127,54 @@ class Button(maliang.Button):
                     case "default":
                         self.style.set(
                             "light",
-                            fg = light_subtle,
-                            bg = dark_subtle,
-                            ol = dark_subtle
+                            fg = color.light_subtle,
+                            bg = color.dark_subtle,
+                            ol = color.dark_subtle
                         )
                         self.style.set(
                             "dark",
-                            fg = dark_subtle,
-                            bg = light_subtle,
-                            ol = light_subtle
+                            fg = color.dark_subtle,
+                            bg = color.light_subtle,
+                            ol = color.light_subtle
                         )
                     case "light":
                         self.style.set(
-                            fg = dark_subtle,
-                            bg = light_subtle,
-                            ol = light_subtle
+                            fg = color.dark_subtle,
+                            bg = color.light_subtle,
+                            ol = color.light_subtle
                         )
                     case _:
                         self.style.set(
-                            fg = light_subtle,
-                            bg = colors[color_][1],
-                            ol = colors[color_][1]
+                            fg = color.light_subtle,
+                            bg = color.colors[color_][1],
+                            ol = color.colors[color_][1]
                         )
             else:
                 match color_:
                     case "default":
                         self.style.set(
                             "light",
-                            fg = dark_subtle,
+                            fg = color.dark_subtle,
                             bg = "",
-                            ol = dark_subtle
+                            ol = color.dark_subtle
                         )
                         self.style.set(
                             "dark",
-                            fg = light_subtle,
+                            fg = color.light_subtle,
                             bg = "",
-                            ol = light_subtle
+                            ol = color.light_subtle
                         )
                     case "light":
                         self.style.set(
-                            fg = light_subtle,
+                            fg = color.light_subtle,
                             bg = "",
-                            ol = light_subtle
+                            ol = color.light_subtle
                         )
                     case _:
                         self.style.set(
-                            fg = colors[color_][1],
+                            fg = color.colors[color_][1],
                             bg = "",
-                            ol = colors[color_][1]
+                            ol = color.colors[color_][1]
                         )
 
     @override

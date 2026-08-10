@@ -18,7 +18,7 @@ try:
     from .custom.utility import ss
 except ImportError:
     import custom
-    from custom import ss
+    from custom.utility import ss
 
 class DialogCanvas(maliang.Canvas):
     """
@@ -131,7 +131,7 @@ class DialogToplevel(maliang.Toplevel):
     def __init__(
         self,
         master: maliang.Tk | maliang.Toplevel | None = None,
-        size: tuple[int, int] = (ss(800), ss(600)),
+        size: tuple[int, int] = ss((800, 600)),
         position: tuple[int, int] | None = None,
         *,
         title: str | None = None,
@@ -187,7 +187,7 @@ class DialogTk(maliang.Tk):
     @override
     def __init__(
         self,
-        size: tuple[int, int] = (ss(800), ss(600)),
+        size: tuple[int, int] = ss((800, 600)),
         position: tuple[int, int] | None = None,
         *,
         title: str | None = None,

@@ -210,7 +210,7 @@ class Main(maliang.Tk):
 
         super().__init__(ss((1200, 800)), title = "寒冬pip(HDpip)")
         gui.custom.animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
-        self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "asset" / "image" / "icon.png"))
+        self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
         self.iconphoto(True, self.icon_)
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True

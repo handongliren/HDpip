@@ -6,12 +6,15 @@
 本文件用于生成.pyi文件。
 """
 
-import traceback
-import shutil
 import ast
 import pathlib
+import shutil
+import traceback
 
-def extractDocstring(node: ast.AST) -> str:
+# 存根中保留的装饰器（其余丢弃，如 @override）
+_KEEP_DECORATORS = {"overload", "classmethod", "staticmethod", "property", "abstractmethod", "final"}
+
+def getDocstring(node: ast.AST) -> str:
     """
     提取节点的docstring。
 
@@ -34,7 +37,7 @@ def formatDocstring(docstring: str, indent_level: int = 0) -> str:
     :param docstring: 要格式化的docstring文本
     :type docstring: str
     :param indent_level: 缩进级别，0表示无缩进，1表示4空格缩进，依此类推
-    :type indent_level: int, optional
+    :type indent_level: int
     :return: 格式化后的多行docstring
     :rtype: str
     """
@@ -43,22 +46,15 @@ def formatDocstring(docstring: str, indent_level: int = 0) -> str:
         return ""
 
     indent = " " * (indent_level * 4)
-    lines = docstring.strip().split('\n')
-
-    # 如果只有一行，直接返回多行格式
-    if len(lines) == 1:
-        return f'{indent}"""\n{indent}{lines[0]}\n{indent}"""'
-
-    # 多行docstring
+    lines = docstring.strip().splitlines()
     result = [f'{indent}"""']
-    for line in lines:
-        result.append(f'{indent}{line}')
+    result.extend(f"{indent}{line}" for line in lines)
     result.append(f'{indent}"""')
-    return '\n'.join(result)
+    return "\n".join(result)
 
 def formatArg(arg: ast.arg) -> str:
     """
-    格式化参数。
+    格式化参数（含注解）。
 
     :param arg: AST参数节点
     :type arg: ast.arg
@@ -66,10 +62,134 @@ def formatArg(arg: ast.arg) -> str:
     :rtype: str
     """
 
-    try:
-        return ast.unparse(arg)
-    except:
-        return arg.arg if hasattr(arg, 'arg') else str(arg)
+    text = arg.arg
+    if arg.annotation is not None:
+        try:
+            text += f": {ast.unparse(arg.annotation)}"
+        except Exception:
+            pass
+    return text
+
+def formatArgs(args_node: ast.arguments) -> str:
+    """
+    格式化参数列表，正确处理 `/` 与 `*` 分隔符。
+
+    :param args_node: 参数节点
+    :type args_node: ast.arguments
+    :return: 参数列表字符串
+    :rtype: str
+    """
+
+    parts = []
+    if args_node.posonlyargs:
+        parts.extend(formatArg(arg) for arg in args_node.posonlyargs)
+        parts.append("/")
+    parts.extend(formatArg(arg) for arg in args_node.args)
+    if args_node.vararg:
+        parts.append(f"*{args_node.vararg.arg}")
+    if args_node.kwonlyargs:
+        if args_node.vararg is None:
+            parts.append("*")
+        parts.extend(formatArg(arg) for arg in args_node.kwonlyargs)
+    if args_node.kwarg:
+        parts.append(f"**{args_node.kwarg.arg}")
+    return ", ".join(parts)
+
+def formatSignature(node: ast.FunctionDef | ast.AsyncFunctionDef, *, indent_level: int) -> list[str]:
+    """
+    生成函数或方法的存根行（装饰器 + 签名 + docstring 或 `...`）。
+
+    :param node: 函数节点
+    :type node: ast.FunctionDef | ast.AsyncFunctionDef
+    :param indent_level: 缩进级别
+    :type indent_level: int
+    :return: 存根行列表
+    :rtype: list[str]
+    """
+
+    lines = []
+    indent = " " * (indent_level * 4)
+    for decorator in node.decorator_list:
+        try:
+            name = ast.unparse(decorator)
+        except Exception:
+            continue
+        base = name.split(".")[-1].split("(")[0]
+        if base in _KEEP_DECORATORS:
+            lines.append(f"{indent}@{name}")
+    prefix = "async def" if isinstance(node, ast.AsyncFunctionDef) else "def"
+    signature = f"{prefix} {node.name}({formatArgs(node.args)})"
+    if node.returns is not None:
+        try:
+            signature += f" -> {ast.unparse(node.returns)}"
+        except Exception:
+            pass
+    lines.append(f"{indent}{signature}:")
+    docstring = getDocstring(node)
+    if docstring:
+        lines.append(formatDocstring(docstring, indent_level + 1))
+    else:
+        lines.append(f"{indent}    ...")
+    return lines
+
+def formatClass(node: ast.ClassDef) -> list[str]:
+    """
+    生成类的存根行（基类 + docstring + 属性 + 方法）。
+
+    :param node: 类节点
+    :type node: ast.ClassDef
+    :return: 存根行列表
+    :rtype: list[str]
+    """
+
+    lines = []
+    bases = []
+    for base in node.bases:
+        try:
+            bases.append(ast.unparse(base))
+        except Exception:
+            bases.append("Any")
+    class_def = f"class {node.name}"
+    if bases:
+        class_def += f"({', '.join(bases)})"
+    class_def += ":"
+    lines.append(class_def)
+
+    docstring = getDocstring(node)
+    if docstring:
+        lines.append(formatDocstring(docstring, 1))
+        lines.append("")
+
+    has_content = False
+    for item in node.body:
+        if isinstance(item, ast.AnnAssign):
+            try:
+                target = ast.unparse(item.target)
+                annotation = ast.unparse(item.annotation)
+                if item.value is not None:
+                    lines.append(f"    {target}: {annotation} = {ast.unparse(item.value)}")
+                else:
+                    lines.append(f"    {target}: {annotation}")
+                has_content = True
+            except Exception:
+                pass
+        elif isinstance(item, ast.Assign):
+            for target in item.targets:
+                if isinstance(target, ast.Name):
+                    try:
+                        lines.append(f"    {target.id} = {ast.unparse(item.value)}")
+                    except Exception:
+                        lines.append(f"    {target.id} = ...")
+                    has_content = True
+        elif isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if item.name.startswith("_") and not (item.name.startswith("__") and item.name.endswith("__")):
+                continue
+            lines.extend(formatSignature(item, indent_level = 1))
+            has_content = True
+
+    if not has_content:
+        lines.append("    ...")
+    return lines
 
 def generatePyi(source: str) -> str:
     """
@@ -84,215 +204,42 @@ def generatePyi(source: str) -> str:
     try:
         tree = ast.parse(source)
     except SyntaxError as e:
-        print(f"  语法错误: {e}")
-        return '"""类型存根文件解析错误"""\n'
+        return f'"""类型存根文件解析错误: {e}"""\n'
 
-    lines = []
+    blocks = []
+    docstring = getDocstring(tree)
+    blocks.append(formatDocstring(docstring, 0) if docstring else '"""存根文件"""')
 
-    # 提取模块级docstring
-    module_docstring = ""
-    if (tree.body and isinstance(tree.body[0], ast.Expr) and
-        isinstance(tree.body[0].value, ast.Constant) and
-        isinstance(tree.body[0].value.value, str)):
-        module_docstring = tree.body[0].value.value
-
-    if module_docstring:
-        lines.append(formatDocstring(module_docstring, 0))
-    else:
-        lines.append(formatDocstring(f"存根文件", 0))
-    lines.append('')
-
-    # 处理导入
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                lines.append(f"import {alias.name}")
-        elif isinstance(node, ast.ImportFrom):
-            module = node.module or ''
-            if node.level > 0:
-                module = '.' * node.level + module
-            if node.names[0].name == '*':
-                lines.append(f"from {module} import *")
-            else:
-                names = ', '.join(alias.name for alias in node.names)
-                lines.append(f"from {module} import {names}")
-
-    # 添加空行（如果有导入）
-    if any(line.startswith('import ') or line.startswith('from ') for line in lines[2:]):
-        lines.append('')
-
-    # 处理类定义
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ClassDef):
-            class_lines = []
-
-            # 类定义
-            bases = []
-            for base in node.bases:
-                try:
-                    bases.append(ast.unparse(base))
-                except:
-                    bases.append("Any")
-
-            class_def = f"class {node.name}"
-            if bases:
-                class_def += f"({', '.join(bases)})"
-            class_def += ":"
-            class_lines.append(class_def)
-
-            # 类docstring
-            docstring = extractDocstring(node)
-            if docstring:
-                # 添加docstring，确保后面有空行
-                class_lines.append(formatDocstring(docstring, 1))
-                class_lines.append('')
-
-            # 类属性
-            for item in node.body:
-                if isinstance(item, ast.AnnAssign):
-                    # 带类型注解的属性
+    for node in tree.body:
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            try:
+                blocks.append(ast.unparse(node))
+            except Exception:
+                pass
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+            try:
+                annotation = ast.unparse(node.annotation)
+                if node.value is not None:
+                    blocks.append(f"{node.target.id}: {annotation} = {ast.unparse(node.value)}")
+                else:
+                    blocks.append(f"{node.target.id}: {annotation}")
+            except Exception:
+                pass
+        elif isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
                     try:
-                        target = ast.unparse(item.target)
-                        annotation = ast.unparse(item.annotation)
-                        class_lines.append(f"    {target}: {annotation}")
-                    except:
-                        pass
+                        blocks.append(f"{target.id} = {ast.unparse(node.value)}")
+                    except Exception:
+                        blocks.append(f"{target.id} = ...")
+        elif isinstance(node, ast.ClassDef):
+            blocks.append("\n".join(formatClass(node)))
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if node.name.startswith("_"):
+                continue
+            blocks.append("\n".join(formatSignature(node, indent_level = 0)))
 
-                elif isinstance(item, ast.Assign):
-                    # 不带类型注解的属性
-                    for target in item.targets:
-                        if isinstance(target, ast.Name):
-                            try:
-                                value = ast.unparse(item.value)
-                                class_lines.append(f"    {target.id} = {value}")
-                            except:
-                                class_lines.append(f"    {target.id} = ...")
-
-            # 类方法
-            methods_added = False
-            for item in node.body:
-                if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    # 跳过私有方法（但不是特殊方法）
-                    if item.name.startswith('_') and not (item.name.startswith('__') and item.name.endswith('__')):
-                        continue
-
-                    # 检查装饰器
-                    decorators = []
-                    for decorator in item.decorator_list:
-                        try:
-                            decorator_str = ast.unparse(decorator)
-                            if decorator_str == "classmethod":
-                                decorators.append("@classmethod")
-                            elif decorator_str == "staticmethod":
-                                decorators.append("@staticmethod")
-                            else:
-                                decorators.append(f"@{decorator_str}")
-                        except:
-                            pass
-
-                    # 方法签名
-                    try:
-                        # 提取方法定义行
-                        if isinstance(item, ast.AsyncFunctionDef):
-                            def_line = f"async def {item.name}"
-                        else:
-                            def_line = f"def {item.name}"
-
-                        # 参数
-                        args = []
-                        for arg in item.args.posonlyargs:
-                            args.append(formatArg(arg))
-                        for arg in item.args.args:
-                            args.append(formatArg(arg))
-                        if item.args.vararg:
-                            args.append(f"*{formatArg(item.args.vararg)}")
-                        for arg in item.args.kwonlyargs:
-                            args.append(formatArg(arg))
-                        if item.args.kwarg:
-                            args.append(f"**{formatArg(item.args.kwarg)}")
-
-                        def_line += f"({', '.join(args)})"
-
-                        # 返回类型
-                        if item.returns:
-                            returns = ast.unparse(item.returns)
-                            def_line += f" -> {returns}"
-
-                        # 提取方法docstring
-                        method_docstring = extractDocstring(item)
-
-                        # 添加装饰器和方法
-                        for decorator in decorators:
-                            class_lines.append(f"    {decorator}")
-                        class_lines.append(f"    {def_line}:")
-                        if method_docstring:
-                            class_lines.append(formatDocstring(method_docstring, 2))
-                        else:
-                            class_lines.append("        ...")
-                        methods_added = True
-
-                    except:
-                        pass
-
-            # 如果没有内容，添加省略号
-            if len(class_lines) == 1 or (len(class_lines) == 2 and class_lines[1] == ''):
-                class_lines.append("    ...")
-
-            lines.extend(class_lines)
-            lines.append('')
-
-    # 处理模块级函数
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            # 检查是否在类中
-            in_class = False
-            for parent in ast.walk(tree):
-                if isinstance(parent, ast.ClassDef) and node in parent.body:
-                    in_class = True
-                    break
-
-            if not in_class and not node.name.startswith('_'):
-                try:
-                    # 函数签名
-                    if isinstance(node, ast.AsyncFunctionDef):
-                        def_line = f"async def {node.name}"
-                    else:
-                        def_line = f"def {node.name}"
-
-                    # 参数
-                    args = []
-                    for arg in node.args.posonlyargs:
-                        args.append(formatArg(arg))
-                    for arg in node.args.args:
-                        args.append(formatArg(arg))
-                    if node.args.vararg:
-                        args.append(f"*{formatArg(node.args.vararg)}")
-                    for arg in node.args.kwonlyargs:
-                        args.append(formatArg(arg))
-                    if node.args.kwarg:
-                        args.append(f"**{formatArg(node.args.kwarg)}")
-
-                    def_line += f"({', '.join(args)})"
-
-                    # 返回类型
-                    if node.returns:
-                        returns = ast.unparse(node.returns)
-                        def_line += f" -> {returns}"
-
-                    # 提取函数docstring
-                    func_docstring = extractDocstring(node)
-
-                    lines.append(f"{def_line}:")
-                    if func_docstring:
-                        lines.append(formatDocstring(func_docstring, 1))
-                    else:
-                        lines.append("    ...")
-                    lines.append('')
-
-                except:
-                    pass
-
-    return '\n'.join(lines)
+    return "\n\n".join(blocks) + "\n"
 
 def generatePyiByFile(source: pathlib.Path | str, target: pathlib.Path | str, *, encoding: str = "utf-8") -> None:
     """
@@ -317,7 +264,7 @@ def generatePyiByDir(source: pathlib.Path | str, target: pathlib.Path | str, *, 
     :param source: 源目录
     :type source: pathlib.Path | str
     :param target: 目标目录
-    :type target: pathlib.Path
+    :type target: pathlib.Path | str
     :param encoding: 文件编码
     :type encoding: str
     :param copy_existed_pyi: 是否复制已存在的.pyi文件

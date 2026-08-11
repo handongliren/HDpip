@@ -96,7 +96,13 @@ class TestGuiBase:
     def test_get_screen_size(self, ):
         import HDpip.gui.custom as gui_custom
 
-        utility._dpi_cache = None
+        utility._screen_size_cache = None
         w, h = utility.getScreenSize()
         assert w > 0
         assert h > 0
+
+    def test_get_screen_size_cached(self, ):
+        utility._screen_size_cache = (100, 100)
+        w, h = utility.getScreenSize()
+        assert (w, h) == (100, 100)
+        utility._screen_size_cache = None

@@ -88,20 +88,29 @@ def ptToPx(pt: int | decimal.Decimal, dpi: float | decimal.Decimal = getDpi(), *
         result = result.to_integral_value(rounding = decimal.ROUND_HALF_UP)
     return result
 
-def getScreenSize() -> tuple[int, int]:
+_screen_size_cache: tuple[int, int] | None = None
+
+def getScreenSize(use_cache: bool = True) -> tuple[int, int]:
     """
     获取当前屏幕分辨率。
 
+    :param use_cache: 是否使用缓存，默认 True
+    :type use_cache: bool
     :return: 当前屏幕分辨率
     :rtype: tuple[int, int]
     """
+
+    global _screen_size_cache
+    if use_cache and _screen_size_cache is not None:
+        return _screen_size_cache
 
     _ = tkinter.Tk()
     _.withdraw()
     width = _.winfo_screenwidth()
     height = _.winfo_screenheight()
     _.destroy()
-    return (width, height)
+    _screen_size_cache = (width, height)
+    return _screen_size_cache
 
 _smart_cache: dict[tuple[tuple[int, int], tuple[int, int], bool], decimal.Decimal] = {}
 
@@ -163,17 +172,17 @@ def getSmartScaleValue(
     return result
 
 @overload
-def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = (1200, 800), screen_size: tuple[int, int] = ..., *, strict_mode: bool = True, use_cache: bool = True, return_type: Literal["Decimal"] = "Decimal") -> decimal.Decimal: ...
+def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["int"] = "int") -> int: ...
 @overload
-def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["float"]) -> float: ...
+def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["Decimal"] = "Decimal") -> decimal.Decimal: ...
 @overload
-def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["int"]) -> int: ...
+def smartScale(value: int | decimal.Decimal, base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["float"] = "float") -> float: ...
 @overload
-def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["Decimal"]) -> Iterable[decimal.Decimal]: ...
+def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["int"] = "int") -> Iterable[int]: ...
 @overload
-def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["float"]) -> Iterable[float]: ...
+def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["Decimal"] = "Decimal") -> Iterable[decimal.Decimal]: ...
 @overload
-def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["int"]) -> Iterable[int]: ...
+def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["float"] = "float") -> Iterable[float]: ...
 def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     base_size: tuple[int, int] = (1200, 800),
     screen_size: tuple[int, int] = getScreenSize(),

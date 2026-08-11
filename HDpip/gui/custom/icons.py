@@ -30,15 +30,16 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
     def prase(self, color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]) -> None:
         for color_name, color_value in color_dict.items():
             self[color_name] = self._temp.copy()
-            for x in range(self._temp.width()):
-                for y in range(self._temp.height()):
-                    if not self._temp.transparency_get(x, y):
-                        self[color_name].put(color_value, (x, y))
+            if color_value is not None:
+                for x in range(self._temp.width()):
+                    for y in range(self._temp.height()):
+                        if not self._temp.transparency_get(x, y):
+                            self[color_name].put(color_value, (x, y))
 
     @override
     def __init__(
         self,
-        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle},
+        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle},
         *,
         file: str | pathlib.Path | None = None,
         data: str | bytes | bytearray | memoryview | None = None,
@@ -71,10 +72,12 @@ class BootstrapIcon(Icon):
     def __init__(
         self, 
         bi: str, 
-        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle}, 
+        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle}, 
         *, 
         size: tuple[int, int] = ss((32, 32))
     ):
-        svg = base_dir / f"assets/icons/bootstrap-icons/{bi}.png"
+        svg = base_dir / f"assets/icons/bootstrap-icons/{bi}.svg"
         if svg.is_file():
             super().__init__(color_dict = color_dict, file = svg, size = size)
+        else:
+            raise FileNotFoundError(f"Bootstrap Icons '{bi}' 未找到。")

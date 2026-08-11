@@ -28,7 +28,7 @@ HDpip/                 # 主包
 │   └── error_catcher.py # @catch 装饰器
 ├── setting/           # 默认 JSON 设置（global.json, auto.*.json）
 ├── language/          # i18n JSON 文件
-├── asset/             # 图片/图标
+├── assets/             # 图片/图标
 └── main.py            # 入口点（AboutCanvas, ControlCanvas, Main）
 ```
 

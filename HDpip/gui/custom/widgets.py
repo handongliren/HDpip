@@ -14,9 +14,11 @@ import maliang
 try:
     from . import color
     from . import utility
+    from . import icons
 except ImportError:
     import color
     import utility
+    import icons
 
 class Button(maliang.Button):
     """
@@ -300,3 +302,83 @@ class Button(maliang.Button):
         self.update("normal")
         super().disable(value)
         self.disabled = value
+
+class IconButton(Button):
+    """
+    继承自`Button`，用于图标按钮。
+    """
+
+    @override
+    def __init__(
+        self,
+        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
+        position: tuple[int, int],
+        size: tuple[int, int] | None = None,
+        *,
+        theme: Literal[
+            "default",
+            "primary",
+            "secondary",
+            "success",
+            "info",
+            "warning",
+            "danger",
+            "light",
+            "dark",
+            "outline-default",
+            "outline-primary",
+            "outline-secondary",
+            "outline-success",
+            "outline-info",
+            "outline-warning",
+            "outline-danger",
+            "outline-light",
+            "outline-dark"
+        ] = "default",
+        command: Callable | None = None,
+        icon: icons.Icon, 
+        anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw",
+        capture_events: bool | None = None,
+        gradient_animation: bool | None = None,
+        auto_update: bool | None = None,
+        style: type[maliang.core.virtual.Style] | None = None
+    ):
+        """
+        :param self: `IconButton`类
+        :param master: 父控件
+        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :param position: 位置
+        :type position: tuple[int, int]
+        :param size: 大小
+        :type size: tuple[int, int] | None
+        :param theme: 主题
+        :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
+        :param command: 绑定命令
+        :type command: Callable | None
+        :param icon: 图标
+        :type icon: icons.Icon
+        :param anchor: 锚点
+        :type anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"]
+        :param capture_events: 监听事件
+        :type capture_events: bool | None
+        :param gradient_animation: 过渡动画
+        :type gradient_animation: bool | None
+        :param auto_update: 自动更新
+        :type auto_update: bool | None
+        :param style: 样式
+        :type style: type[maliang.core.virtual.Style] | None
+        """
+
+        super().__init__(
+            master,
+            position,
+            size,
+            theme = theme,
+            command = command,
+            image = image,
+            anchor = anchor,
+            capture_events = capture_events,
+            gradient_animation = gradient_animation,
+            auto_update = auto_update,
+            style = style
+        )

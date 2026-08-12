@@ -27,14 +27,28 @@ except ImportError:
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 
 class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
+    """
+    图标类，用于渲染不同颜色的图标，支持多种图片格式。
+    """
+
     def prase(self, color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]) -> None:
-        for color_name, color_value in color_dict.items():
-            self[color_name] = self._temp.copy()
-            if color_value is not None:
-                for x in range(self._temp.width()):
-                    for y in range(self._temp.height()):
-                        if not self._temp.transparency_get(x, y):
-                            self[color_name].put(color_value, (x, y))
+        """
+        按颜色字典渲染图标，每种颜色生成一个独立变体存入。
+
+        :param self: `Icon`类
+        :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
+        :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
+        """
+
+        if not color_dict.get(color_name, "None") == self.color_dict.get(color_name, "None"):
+            for color_name, color_value in color_dict.items():
+                self[color_name] = self._temp.copy()
+                if color_value is not None:
+                    for x in range(self._temp.width()):
+                        for y in range(self._temp.height()):
+                            if not self._temp.transparency_get(x, y):
+                                self[color_name].put(color_value, (x, y))
+                                self.color_dict[color_name] = color_value
 
     @override
     def __init__(
@@ -43,9 +57,25 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
         *,
         file: str | pathlib.Path | None = None,
         data: str | bytes | bytearray | memoryview | None = None,
-        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | None = None, 
+        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | None = None,
         size: tuple[int, int] = ss((32, 32))
     ):
+        """
+        从图片源加载并渲染图标。
+
+        :param self: `Icon`类
+        :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
+        :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
+        :param file: 图片文件路径，支持 PNG/GIF/BMP/ICO/SVG
+        :type file: str | pathlib.Path | None
+        :param data: 原始图片数据
+        :type data: str | bytes | bytearray | memoryview | None
+        :param image: 已有图片对象
+        :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | None
+        :param size: 渲染尺寸
+        :type size: tuple[int, int]
+        """
+
         self.color_dict = color_dict
         if file is not None:
             try:
@@ -68,16 +98,34 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
         self.prase(color_dict)
 
 class BootstrapIcon(Icon):
+    """
+    Bootstrap Icons 图标，从本地 SVG 文件渲染。
+    """
+
     @override
     def __init__(
-        self, 
-        bi: str, 
-        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle}, 
-        *, 
+        self,
+        bi_name: str,
+        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle},
+        *,
         size: tuple[int, int] = ss((32, 32))
     ):
-        svg = base_dir / f"assets/icons/bootstrap-icons/{bi}.svg"
+        """
+        加载指定名称的 Bootstrap Icons SVG 并渲染。
+
+        :param self: `BootstrapIcon`类
+        :param bi_name: Bootstrap Icons 名称（不含扩展名）
+        :type bi_name: str
+        :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
+        :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
+        :param size: 渲染尺寸
+        :type size: tuple[int, int]
+        """
+
+        svg = base_dir / f"assets/icons/bootstrap-icons/{bi_name}.svg"
         if svg.is_file():
             super().__init__(color_dict = color_dict, file = svg, size = size)
         else:
-            raise FileNotFoundError(f"Bootstrap Icons '{bi}' 未找到。")
+            raise FileNotFoundError(f"Bootstrap Icons '{bi_name}' 未找到。")
+
+bi = BootstrapIcon

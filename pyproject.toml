@@ -19,6 +19,7 @@ dependencies = [
     "resvg-py",
     "maliang[opt]>=3.1.0",
     "maliang-table",
+    "pillow>=10.0.0",
     "pyyaml",
     "pipdeptree>=2.0.0"
 ]

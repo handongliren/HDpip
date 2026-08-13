@@ -8,7 +8,12 @@ codecov
 pip>=25.2
 typing-extensions
 darkdetect
+resvg-py
 maliang[opt]>=3.1.0
 maliang-table
+pillow>=10.0.0
 pyyaml
 pipdeptree>=2.0.0
+
+# pipgui.py 独立工具
+PyQt6

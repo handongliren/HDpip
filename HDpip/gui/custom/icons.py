@@ -26,6 +26,45 @@ except ImportError:
 
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 
+class Image(maliang.toolbox.enhanced.PhotoImage, PIL.ImageTk.PhotoImage, tkinter.PhotoImage):
+    """
+    图片类，统一支持 file / data / image 三种输入，兼容 Tk、PIL 与 maliang 图片类型。
+    """
+
+    @override
+    def __init__(
+        self, 
+        *, 
+        file: str | pathlib.Path | None = None, 
+        data: str | bytes | bytearray | memoryview | None = None, 
+        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | None = None
+    ):
+        """
+        从图片源加载图片。
+
+        :param self: `Image`类
+        :param file: 图片文件路径，支持 PNG/GIF/BMP/ICO/SVG
+        :type file: str | pathlib.Path | None
+        :param data: 原始图片数据
+        :type data: str | bytes | bytearray | memoryview | None
+        :param image: 已有图片对象
+        :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | None
+        """
+
+        if file is not None:
+            if pathlib.Path(file).suffix.lower() == ".svg":
+                import resvg_py
+                png_bytes = resvg_py.svg_to_bytes(svg_path = str(file))
+                super().__init__(PIL.Image.open(io.BytesIO(png_bytes)))
+            else:
+                super().__init__(file = file)
+        elif data is not None:
+            super().__init__(data = data)
+        elif image is not None:
+            super().__init__(PIL.ImageTk.getimage(image))
+        else:
+            raise ValueError("必须在 file、data 或 image 中至少提供一个参数。")
+
 class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
     """
     图标类，用于渲染不同颜色的图标，支持多种图片格式。

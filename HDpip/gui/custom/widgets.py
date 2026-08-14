@@ -14,11 +14,11 @@ import maliang
 try:
     from . import color
     from . import utility
-    from . import icons
+    from . import media
 except ImportError:
     import color
     import utility
-    import icons
+    import HDpip.gui.custom.media as media
 
 class Button(maliang.Button):
     """
@@ -59,6 +59,10 @@ class Button(maliang.Button):
         :param disabled: 是否为禁用状态
         :type disabled: bool
         """
+
+        # maliang 样式表缺少 StillImage，补充空条目（图片不着色）
+        for theme_dict in (self.style.light, self.style.dark):
+            theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
 
         _ = theme.split("outline-")
         if len(_) == 1:
@@ -305,7 +309,7 @@ class Button(maliang.Button):
 
 class IconButton(Button):
     """
-    继承自`Button`，用于图标按钮。
+    继承自`Button`，用于带图标的按钮，图标支持左右两种放置位置。
     """
 
     @override
@@ -335,13 +339,22 @@ class IconButton(Button):
             "outline-light",
             "outline-dark"
         ] = "default",
+        text: str = "",
+        family: str | None = None,
+        fontsize: int | None = utility.ss(20),
+        weight: Literal['normal', 'bold'] = "normal",
+        slant: Literal['roman', 'italic'] = "roman",
+        underline: bool = False,
+        overstrike: bool = False,
+        justify: Literal["left", "center", "right"] = "left",
         command: Callable | None = None,
-        icon: icons.Icon, 
+        image: media.Image,
+        icon_position: Literal["left", "right"] = "left",
         anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw",
         capture_events: bool | None = None,
         gradient_animation: bool | None = None,
         auto_update: bool | None = None,
-        style: type[maliang.core.virtual.Style] | None = None
+        style: type[maliang.core.virtual.Style] | None = None,
     ):
         """
         :param self: `IconButton`类
@@ -353,10 +366,28 @@ class IconButton(Button):
         :type size: tuple[int, int] | None
         :param theme: 主题
         :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
+        :param text: 文本
+        :type text: str
+        :param family: 字体
+        :type family: str | None
+        :param fontsize: 字号
+        :type fontsize: int | None
+        :param weight: 字重
+        :type weight: Literal['normal', 'bold']
+        :param slant: 字形
+        :type slant: Literal['roman', 'italic']
+        :param underline: 下划线
+        :type underline: bool
+        :param overstrike: 重影
+        :type overstrike: bool
+        :param justify: 适应模式
+        :type justify: Literal["left", "center", "right"]
         :param command: 绑定命令
         :type command: Callable | None
-        :param icon: 图标
-        :type icon: icons.Icon
+        :param image: 图片
+        :type image: media.Image
+        :param icon_position: 图标放置位置
+        :type icon_position: Literal["left", "right"]
         :param anchor: 锚点
         :type anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"]
         :param capture_events: 监听事件
@@ -373,7 +404,14 @@ class IconButton(Button):
             master,
             position,
             size,
-            theme = theme,
+            text = text,
+            family = family,
+            fontsize = fontsize,
+            weight = weight,
+            slant = slant,
+            underline = underline,
+            overstrike = overstrike,
+            justify = justify,
             command = command,
             image = image,
             anchor = anchor,
@@ -382,3 +420,8 @@ class IconButton(Button):
             auto_update = auto_update,
             style = style
         )
+        offset = self.size[0] // 4
+        if icon_position == "left":
+            self.images[0].move(offset, 0)
+        elif icon_position == "right":
+            self.images[0].move(-offset, 0)

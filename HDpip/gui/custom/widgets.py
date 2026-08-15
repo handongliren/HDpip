@@ -10,6 +10,7 @@ from typing import *
 from typing_extensions import override
 
 import maliang
+import maliang.theme
 
 try:
     from . import color
@@ -59,10 +60,6 @@ class Button(maliang.Button):
         :param disabled: 是否为禁用状态
         :type disabled: bool
         """
-
-        # maliang 样式表缺少 StillImage，补充空条目（图片不着色）
-        for theme_dict in (self.style.light, self.style.dark):
-            theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
 
         _ = theme.split("outline-")
         if len(_) == 1:
@@ -289,6 +286,7 @@ class Button(maliang.Button):
             style = style
         )
         self.theme = theme
+        self.disabled = False
         self.switchTheme(theme, False)
         self.update()
 
@@ -400,6 +398,8 @@ class IconButton(Button):
         :type style: type[maliang.core.virtual.Style] | None
         """
 
+        self.disabled = False
+        self.icon = media.Icon({}, image = image)
         super().__init__(
             master,
             position,
@@ -421,7 +421,71 @@ class IconButton(Button):
             style = style
         )
         offset = self.size[0] // 4
-        if icon_position == "left":
-            self.images[0].move(offset, 0)
-        elif icon_position == "right":
-            self.images[0].move(-offset, 0)
+        self.images[0].move(offset if icon_position == "left" else -offset, 0)
+        maliang.theme.register_event(lambda _: self.switchTheme(self.theme, self.disabled))
+
+    @override
+    def update(
+        self,
+        state: str | None = None,
+        *,
+        gradient_animation: bool | None = None,
+        nested: bool = False,
+    ) -> None:
+        """
+        更新控件，并根据状态切换图标颜色。
+
+        :param self: `IconButton`类
+        :param state: 状态
+        :type state: str | None
+        :param gradient_animation: 过渡动画
+        :type gradient_animation: bool | None
+        :param nested: 是否嵌套更新
+        :type nested: bool
+        """
+
+        super().update(state, gradient_animation = gradient_animation, nested = nested)
+        if self.icon:
+            self.images[0].configure({"image": self.icon.get(self.state, self.icon["normal"])})
+
+    @override
+    def switchTheme(
+        self,
+        theme: Literal[
+            "default",
+            "primary",
+            "secondary",
+            "success",
+            "info",
+            "warning",
+            "danger",
+            "light",
+            "dark",
+            "outline-default",
+            "outline-primary",
+            "outline-secondary",
+            "outline-success",
+            "outline-info",
+            "outline-warning",
+            "outline-danger",
+            "outline-light",
+            "outline-dark"
+        ] = "default",
+        disabled: bool = False
+    ) -> None:
+        """
+        切换主题，并同步图标颜色（从样式表读取前景色）。
+
+        :param self: `IconButton`类
+        :param theme: 主题
+        :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
+        :param disabled: 是否为禁用状态
+        :type disabled: bool
+        """
+
+        for theme_dict in (self.style.light, self.style.dark):
+            theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
+        super().switchTheme(theme, disabled)
+        icon_style = self.style.dark["StillImage"] if maliang.theme.get_color_mode() == "dark" else self.style.light["StillImage"]
+        self.icon.prase({state: icon_style[state]["fill"] for state in ("normal", "hover", "active")})
+        self.images[0].configure({"image": self.icon["normal"]})

@@ -636,7 +636,7 @@ class ButtonCanvas(maliang.Canvas):
                 maliang.animation.MoveTkWidget(self.content_canvas, (0, ss(-1000)), 1000, controller = maliang.animation.ease_in, end = _, fps = 60).start()
                 maliang.animation.MoveElement(self.button, (0, ss(200)), 500, controller = maliang.animation.smooth, end = self.button.destroy, fps = 60).start()
 
-            self.button = custom.widgets.Button(self, ss((600, 50)), ss((400, 50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", anchor = "center", command = _)
+            self.button = custom.widgets.Button(self, ss((600, 50)), ss((400, 50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", icon = custom.media.bi("emoji-kiss"), anchor = "center", command = _)
             self.configure(bg = custom.color.primary)
             maliang.theme.register_event(lambda _: self.configure(bg = custom.color.primary))
             self.delete(self.button_bar)

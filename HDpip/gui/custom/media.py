@@ -37,7 +37,8 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         *,
         file: str | pathlib.Path | None = None,
         data: str | bytes | bytearray | memoryview | None = None,
-        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None = None
+        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None = None,
+        size: tuple[int, int] | None = None
     ):
         """
         从图片源加载图片。
@@ -49,6 +50,8 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         :type data: str | bytes | bytearray | memoryview | None
         :param image: 已有图片对象
         :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None
+        :param size: 渲染尺寸（仅 SVG 有效）
+        :type size: tuple[int, int] | None
         """
 
         if file is not None:
@@ -57,7 +60,8 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
             except (tkinter.TclError, PIL.Image.UnidentifiedImageError):
                 if pathlib.Path(file).suffix.lower() == ".svg":
                     import resvg_py
-                    self._fromPil(PIL.Image.open(io.BytesIO(resvg_py.svg_to_bytes(svg_path = str(file)))))
+                    options = {"width": size[0], "height": size[1]} if size else {}
+                    self._fromPil(PIL.Image.open(io.BytesIO(resvg_py.svg_to_bytes(svg_path = str(file), **options))))
                 else:
                     self._fromPil(PIL.Image.open(file))
         elif data is not None:
@@ -174,7 +178,7 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
         self.origin = image.resize(*size)
         self.prase(color_dict)
 
-class BootstrapIcon(Icon):
+class BootstrapIcon(Image):
     """
     Bootstrap Icons 图标，从本地 SVG 文件渲染。
     """
@@ -183,25 +187,22 @@ class BootstrapIcon(Icon):
     def __init__(
         self,
         bi_name: str,
-        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle},
         *,
-        size: tuple[int, int] = ss((32, 32))
+        size: tuple[int, int] | None = None
     ):
         """
-        加载指定名称的 Bootstrap Icons SVG 并渲染。
+        加载指定名称的 Bootstrap Icons SVG。
 
         :param self: `BootstrapIcon`类
         :param bi_name: Bootstrap Icons 名称（不含扩展名）
         :type bi_name: str
-        :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
-        :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
         :param size: 渲染尺寸
         :type size: tuple[int, int]
         """
 
         svg = base_dir / f"assets/icons/bootstrap-icons/{bi_name}.svg"
         if svg.is_file():
-            super().__init__(color_dict = color_dict, image = Image(file = svg), size = size)
+            super().__init__(file = svg, size = size)
         else:
             raise FileNotFoundError(f"Bootstrap Icons '{bi_name}' 未找到。")
 

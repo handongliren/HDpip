@@ -10,8 +10,12 @@ from typing import *
 from typing_extensions import override
 
 import maliang
-import maliang.standard.images
-import maliang.theme
+import maliang.standard.styles
+import maliang.toolbox.utility
+
+# maliang 样式表缺少 StillImage，一次性补充（图标不着色）
+for _theme_dict in (maliang.standard.styles.ButtonStyle.light, maliang.standard.styles.ButtonStyle.dark):
+    _theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
 
 try:
     from . import color
@@ -21,11 +25,6 @@ except ImportError:
     import color
     import utility
     import HDpip.gui.custom.media as media
-
-# maliang 样式表缺少 StillImage，一次性补充（图标不着色）
-import maliang.standard.styles
-for _theme_dict in (maliang.standard.styles.ButtonStyle.light, maliang.standard.styles.ButtonStyle.dark):
-    _theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
 
 class Button(maliang.Button):
     """
@@ -185,6 +184,10 @@ class Button(maliang.Button):
                             bg = "",
                             ol = color.colors[color_][1]
                         )
+        if self.icon and not self.use_original_icon:
+            icon_style = self.style.dark["StillImage"] if maliang.theme.get_color_mode() == "dark" else self.style.light["StillImage"]
+            self.icon.prase({state: icon_style[state]["fill"] for state in ("normal", "hover", "active")})
+            self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = self.icon["normal"])
 
     @override
     def __init__(
@@ -222,6 +225,9 @@ class Button(maliang.Button):
         overstrike: bool = False,
         justify: Literal["left", "center", "right"] = "left",
         command: Callable | None = None,
+        icon: media.Image | None = None,
+        icon_position: Literal["left", "right"] = "left",
+        use_original_icon: bool = False,
         anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw",
         capture_events: bool | None = None,
         gradient_animation: bool | None = None,
@@ -256,6 +262,12 @@ class Button(maliang.Button):
         :type justify: Literal["left", "center", "right"]
         :param command: 绑定命令
         :type command: Callable | None
+        :param icon: 图标图片
+        :type icon: media.Image | None
+        :param icon_position: 图标放置位置（仅当 icon 不为 None）
+        :type icon_position: Literal["left", "right"]
+        :param use_original_icon: 是否使用原图（不随主题染色）
+        :type use_original_icon: bool
         :param anchor: 锚点
         :type anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"]
         :param capture_events: 监听事件
@@ -268,6 +280,12 @@ class Button(maliang.Button):
         :type style: type[maliang.core.virtual.Style] | None
         """
 
+        self.icon = None
+        self.icon_position = icon_position
+        self.use_original_icon = use_original_icon
+        if icon is not None:
+            self.icon = media.Icon({"origin": None}, image = icon, size = (fontsize, fontsize))
+            text = ("　" + text) if icon_position == "left" else (text + "　")
         super().__init__(
             master,
             position,
@@ -281,16 +299,100 @@ class Button(maliang.Button):
             overstrike = overstrike,
             justify = justify,
             command = command,
+            image = self.icon["origin"] if self.icon else None,
             anchor = anchor,
             capture_events = capture_events,
             gradient_animation = gradient_animation,
             auto_update = auto_update,
             style = style
         )
+        if self.icon is not None:
+            self._placeIcon()
         self.theme = theme
         self.disabled = False
         self.switchTheme(theme, False)
         self.update()
+
+    @override
+    def get(self) -> str:
+        """
+        获取文本（不含占位空格）。
+
+        :param self: `Button`类
+        :return: 文本
+        :rtype: str
+        """
+
+        text = self.texts[0].get()
+        if self.icon:
+            text = text.removeprefix("　") if self.icon_position == "left" else text.removesuffix("　")
+        return text
+
+    @override
+    def set(self, text: str) -> None:
+        """
+        设置文本（自动处理占位空格并重新定位图标）。
+
+        :param self: `Button`类
+        :param text: 文本
+        :type text: str
+        """
+
+        if self.icon:
+            text = ("　" + text) if self.icon_position == "left" else (text + "　")
+        super().set(text)
+        if self.icon:
+            self._placeIcon()
+
+    def _placeIcon(self) -> None:
+        """
+        将图标定位到文本占位空格处。
+
+        :param self: `Button`类
+        """
+
+        text_x1, text_y1, text_x2, text_y2 = self.texts[0].region()
+        space_width, _ = maliang.toolbox.utility.get_text_size("　", font = self.texts[0].font, master = self.master)
+        if self.icon_position == "left":
+            target_x = text_x1 + space_width / 2
+        else:
+            target_x = text_x2 - space_width / 2
+        target_y = (text_y1 + text_y2) / 2
+        icon_x1, icon_y1, icon_x2, icon_y2 = self.images[0].region()
+        current_x = (icon_x1 + icon_x2) / 2
+        current_y = (icon_y1 + icon_y2) / 2
+        self.images[0].move(target_x - current_x, target_y - current_y)
+
+    @override
+    def update(
+        self,
+        state: str | None = None,
+        *,
+        gradient_animation: bool | None = None,
+        nested: bool = False,
+    ) -> None:
+        """
+        更新控件，并根据状态切换图标。
+
+        :param self: `Button`类
+        :param state: 状态
+        :type state: str | None
+        :param gradient_animation: 过渡动画
+        :type gradient_animation: bool | None
+        :param nested: 是否嵌套更新
+        :type nested: bool
+        """
+
+        super().update(state, gradient_animation = gradient_animation, nested = nested)
+        if self.icon:
+            if self.use_original_icon:
+                image = self.icon["origin"]
+            elif "normal" in self.icon:
+                image = self.icon.get(self.state, self.icon["normal"])
+            else:
+                image = None
+            if image is not None:
+                self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = image)
 
     @override
     def disable(self, value: bool = True) -> None:
@@ -306,162 +408,3 @@ class Button(maliang.Button):
         self.update("normal")
         super().disable(value)
         self.disabled = value
-
-class IconButton(Button):
-    """
-    继承自`Button`，用于带图标的按钮，图标支持左右两种放置位置。
-    """
-
-    @override
-    def __init__(
-        self,
-        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        position: tuple[int, int],
-        size: tuple[int, int] | None = None,
-        *,
-        theme: Literal[
-            "default",
-            "primary",
-            "secondary",
-            "success",
-            "info",
-            "warning",
-            "danger",
-            "light",
-            "dark",
-            "outline-default",
-            "outline-primary",
-            "outline-secondary",
-            "outline-success",
-            "outline-info",
-            "outline-warning",
-            "outline-danger",
-            "outline-light",
-            "outline-dark"
-        ] = "default",
-        text: str = "",
-        family: str | None = None,
-        fontsize: int | None = utility.ss(20),
-        weight: Literal['normal', 'bold'] = "normal",
-        slant: Literal['roman', 'italic'] = "roman",
-        underline: bool = False,
-        overstrike: bool = False,
-        justify: Literal["left", "center", "right"] = "left",
-        command: Callable | None = None,
-        image: media.Image,
-        icon_position: Literal["left", "right"] = "left",
-        anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw",
-        capture_events: bool | None = None,
-        gradient_animation: bool | None = None,
-        auto_update: bool | None = None,
-        style: type[maliang.core.virtual.Style] | None = None,
-    ):
-        """
-        :param self: `IconButton`类
-        :param master: 父控件
-        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
-        :param position: 位置
-        :type position: tuple[int, int]
-        :param size: 大小
-        :type size: tuple[int, int] | None
-        :param theme: 主题
-        :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
-        :param text: 文本
-        :type text: str
-        :param family: 字体
-        :type family: str | None
-        :param fontsize: 字号
-        :type fontsize: int | None
-        :param weight: 字重
-        :type weight: Literal['normal', 'bold']
-        :param slant: 字形
-        :type slant: Literal['roman', 'italic']
-        :param underline: 下划线
-        :type underline: bool
-        :param overstrike: 重影
-        :type overstrike: bool
-        :param justify: 适应模式
-        :type justify: Literal["left", "center", "right"]
-        :param command: 绑定命令
-        :type command: Callable | None
-        :param image: 图片
-        :type image: media.Image
-        :param icon_position: 图标放置位置
-        :type icon_position: Literal["left", "right"]
-        :param anchor: 锚点
-        :type anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"]
-        :param capture_events: 监听事件
-        :type capture_events: bool | None
-        :param gradient_animation: 过渡动画
-        :type gradient_animation: bool | None
-        :param auto_update: 自动更新
-        :type auto_update: bool | None
-        :param style: 样式
-        :type style: type[maliang.core.virtual.Style] | None
-        """
-
-        self.icon = media.Icon({"origin": None}, image = image)
-        super().__init__(
-            master,
-            position,
-            size,
-            text = text,
-            family = family,
-            fontsize = fontsize,
-            weight = weight,
-            slant = slant,
-            underline = underline,
-            overstrike = overstrike,
-            justify = justify,
-            command = command,
-            anchor = anchor,
-            capture_events = capture_events,
-            gradient_animation = gradient_animation,
-            auto_update = auto_update,
-            style = style
-        )
-        maliang.standard.images.StillImage(self, image = self.icon["origin"])
-        self.switchTheme(self.theme, self.disabled)
-        offset = self.size[0] // 4
-        self.images[0].move(offset if icon_position == "left" else -offset, 0)
-
-    @override
-    def switchTheme(
-        self,
-        theme: Literal[
-            "default",
-            "primary",
-            "secondary",
-            "success",
-            "info",
-            "warning",
-            "danger",
-            "light",
-            "dark",
-            "outline-default",
-            "outline-primary",
-            "outline-secondary",
-            "outline-success",
-            "outline-info",
-            "outline-warning",
-            "outline-danger",
-            "outline-light",
-            "outline-dark"
-        ] = "default",
-        disabled: bool = False
-    ) -> None:
-        """
-        切换主题，并同步图标颜色（取主题主色）。
-
-        :param self: `IconButton`类
-        :param theme: 主题
-        :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
-        :param disabled: 是否为禁用状态
-        :type disabled: bool
-        """
-
-        super().switchTheme(theme, disabled)
-        if self.images:
-            info_style = self.style.dark["Information"] if maliang.theme.get_color_mode() == "dark" else self.style.light["Information"]
-            self.icon.prase({"current": info_style["normal"]["fill"]})
-            self.images[0].configure({"image": self.icon["current"]})

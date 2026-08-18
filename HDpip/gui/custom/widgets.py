@@ -185,9 +185,11 @@ class Button(maliang.Button):
                             ol = color.colors[color_][1]
                         )
         if self.icon and not self.use_original_icon:
-            icon_style = self.style.dark["StillImage"] if maliang.theme.get_color_mode() == "dark" else self.style.light["StillImage"]
-            self.icon.prase({state: icon_style[state]["fill"] for state in ("normal", "hover", "active")})
+            style = self.style.get()
+            self.icon.prase({state: style["StillImage"][state]["fill"] for state in ("normal", "hover", "active")})
             self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = self.icon["normal"])
+            for state in ("normal", "hover", "active"):
+                style["Information"][state]["fill"] = style["StillImage"][state]["fill"]
 
     @override
     def __init__(
@@ -218,7 +220,7 @@ class Button(maliang.Button):
         ] = "default",
         text: str = "",
         family: str | None = None,
-        fontsize: int | None = utility.ss(20),
+        fontsize: int | None = utility.ss(25),
         weight: Literal['normal', 'bold'] = "normal",
         slant: Literal['roman', 'italic'] = "roman",
         underline: bool = False,
@@ -383,7 +385,7 @@ class Button(maliang.Button):
         :type nested: bool
         """
 
-        super().update(state, gradient_animation = gradient_animation, nested = nested)
+        super().update(state, gradient_animation = False, nested = nested)
         if self.icon:
             if self.use_original_icon:
                 image = self.icon["origin"]

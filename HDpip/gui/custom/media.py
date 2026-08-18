@@ -50,43 +50,48 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         :type data: str | bytes | bytearray | memoryview | None
         :param image: 已有图片对象
         :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None
-        :param size: 渲染尺寸（仅 SVG 有效）
+        :param size: 渲染尺寸（所有类型生效）
         :type size: tuple[int, int] | None
         """
 
         if file is not None:
-            try:
-                super().__init__(file = file)
-            except (tkinter.TclError, PIL.Image.UnidentifiedImageError):
-                if pathlib.Path(file).suffix.lower() == ".svg":
-                    import resvg_py
-                    options = {"width": size[0], "height": size[1]} if size else {}
-                    self._fromPil(PIL.Image.open(io.BytesIO(resvg_py.svg_to_bytes(svg_path = str(file), **options))))
-                else:
-                    self._fromPil(PIL.Image.open(file))
-        elif data is not None:
-            super().__init__(data = data)
-        elif image is not None:
-            if isinstance(image, PIL.Image.Image):
-                self._fromPil(image)
+            if pathlib.Path(file).suffix.lower() == ".svg":
+                import resvg_py
+                options = {"width": size[0], "height": size[1], "shape_rendering": "crisp_edges"} if size else {"shape_rendering": "crisp_edges"}
+                pil = PIL.Image.open(io.BytesIO(resvg_py.svg_to_bytes(svg_path = str(file), **options)))
             else:
-                self._fromPil(PIL.ImageTk.getimage(image))
+                pil = PIL.Image.open(file)
+        elif data is not None:
+            if isinstance(data, str):
+                super().__init__(data = data)
+                self.name = str(self)
+                return
+            pil = PIL.Image.open(io.BytesIO(bytes(data)))
+        elif image is not None:
+            pil = image if isinstance(image, PIL.Image.Image) else PIL.ImageTk.getimage(image)
         else:
             raise ValueError("必须在 file、data 或 image 中至少提供一个参数。")
+        self._fromPil(pil, size)
         self.name = str(self)
 
-    def _fromPil(self, image: PIL.Image.Image) -> None:
+    def _fromPil(self, image: PIL.Image.Image, size: tuple[int, int] | None = None) -> None:
         """
         通过 PIL Image 中转加载。
 
         :param self: `Image`类
         :param image: PIL 图片
         :type image: PIL.Image.Image
+        :param size: 渲染尺寸
+        :type size: tuple[int, int] | None
         """
 
-        buffer = io.BytesIO()
-        image.save(buffer, "PNG")
-        super().__init__(data = buffer.getvalue())
+        if image.mode == "RGBA":
+            r, g, b, a = image.split()
+            a = a.point(lambda value: 255 if value > 0 else 0)
+            image = PIL.Image.merge("RGBA", (r, g, b, a))
+        if size is not None:
+            image = image.resize(size, PIL.Image.LANCZOS)
+        super().__init__(image)
 
     @override
     def copy(self) -> Self:
@@ -103,7 +108,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
     @override
     def resize(self, width: int, height: int) -> Self:
         """
-        缩放图片，返回新的 `Image` 实例。
+        缩放图片，返回新的 `Image` 实例（LANCZOS 高质量插值）。
 
         :param self: `Image`类
         :param width: 新宽度
@@ -114,7 +119,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         :rtype: Self
         """
 
-        return Image(image = super().resize(width, height))
+        return Image(image = PIL.ImageTk.getimage(self).resize((width, height), PIL.Image.LANCZOS))
 
     def prase(
         self,
@@ -180,7 +185,7 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
 
 class BootstrapIcon(Image):
     """
-    Bootstrap Icons 图标，从本地 SVG 文件渲染。
+    Bootstrap Icons 图标，从本地 SVG 文件渲染，缩放时按目标尺寸重新矢量渲染。
     """
 
     @override
@@ -200,10 +205,27 @@ class BootstrapIcon(Image):
         :type size: tuple[int, int]
         """
 
+        self.bi_name = bi_name
         svg = base_dir / f"assets/icons/bootstrap-icons/{bi_name}.svg"
         if svg.is_file():
             super().__init__(file = svg, size = size)
         else:
             raise FileNotFoundError(f"Bootstrap Icons '{bi_name}' 未找到。")
+
+    @override
+    def resize(self, width: int, height: int) -> Self:
+        """
+        重新按目标尺寸矢量渲染，保证任意尺寸清晰。
+
+        :param self: `BootstrapIcon`类
+        :param width: 新宽度
+        :type width: int
+        :param height: 新高度
+        :type height: int
+        :return: 重新渲染的图标
+        :rtype: Self
+        """
+
+        return BootstrapIcon(self.bi_name, size = (width, height))
 
 bi = BootstrapIcon

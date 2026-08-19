@@ -186,10 +186,11 @@ class Button(maliang.Button):
                         )
         if self.icon and not self.use_original_icon:
             style = self.style.get()
-            self.icon.prase({state: style["StillImage"][state]["fill"] for state in ("normal", "hover", "active")})
+            fills = [style["StillImage"]["normal"]["fill"]] * 3 if disabled else [style["StillImage"][state]["fill"] for state in ("normal", "hover", "active")]
+            self.icon.prase({state: fill for state, fill in zip(("normal", "hover", "active"), fills)})
             self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = self.icon["normal"])
-            for state in ("normal", "hover", "active"):
-                style["Information"][state]["fill"] = style["StillImage"][state]["fill"]
+            for state, fill in zip(("normal", "hover", "active"), fills):
+                style["Information"][state]["fill"] = fill
 
     @override
     def __init__(
@@ -388,9 +389,16 @@ class Button(maliang.Button):
         super().update(state, gradient_animation = False, nested = nested)
         if self.icon:
             if self.use_original_icon:
-                image = self.icon["origin"]
+                if self.disabled:
+                    self.icon.setdefault("disabled", self.icon["origin"].prase(color.gray_500))
+                    image = self.icon["disabled"]
+                else:
+                    image = self.icon["origin"]
             elif "normal" in self.icon:
-                image = self.icon.get(self.state, self.icon["normal"])
+                if self.disabled:
+                    image = self.icon.get("disabled", self.icon["normal"])
+                else:
+                    image = self.icon.get(self.state, self.icon["normal"])
             else:
                 image = None
             if image is not None:

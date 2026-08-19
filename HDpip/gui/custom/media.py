@@ -206,7 +206,7 @@ class BootstrapIcon(Image):
         """
 
         self.bi_name = bi_name
-        svg = base_dir / f"assets/icons/bootstrap-icons/{bi_name}.svg"
+        svg = base_dir / f"assets/icon/bootstrap-icons/{bi_name}.svg"
         if svg.is_file():
             super().__init__(file = svg, size = size)
         else:

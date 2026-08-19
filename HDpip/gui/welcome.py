@@ -34,9 +34,11 @@ except ImportError:
 try:
     from . import custom
     from .custom.utility import ss
+    from .custom.media import bi
 except ImportError:
     import custom
     from custom.utility import ss
+    from custom.media import bi
 
 class LanguageCanvas(maliang.Canvas):
     """
@@ -113,7 +115,7 @@ class LanguageCanvas(maliang.Canvas):
         self.import_tip = maliang.Text(self, ss((-400, 450)), ss((600, 100)), text = "没有您的语言？\nHaven't found your language?", fontsize = ss(30), anchor = "center", auto_update = True)
         self.import_tip.style.set(fg = custom.color.primary)
         maliang.animation.MoveWidget(self.import_tip, (ss(840), 0), 1000, controller = maliang.animation.ease_out, fps = 60).start(delay = 1000)
-        self.import_button = custom.widgets.Button(self, ss((1600, 450)), ss((300, 50)), text = "导入语言 Import language", theme = "outline-primary", anchor = "center", command = self.import_, auto_update = True)
+        self.import_button = custom.widgets.Button(self, ss((1600, 450)), ss((300, 50)), text = "导入语言 Import language", icon = bi("box-arrow-in-right"), fontsize = ss(22), theme = "outline-primary", anchor = "center", command = self.import_, auto_update = True)
         maliang.animation.MoveWidget(self.import_button, (ss(-780), 0), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 1000)
 
 class LicenseCanvas(maliang.Canvas):
@@ -625,8 +627,8 @@ class ButtonCanvas(maliang.Canvas):
                         content_canvas.walkCanvas(-1)
                     def next() -> None:
                         content_canvas.walkCanvas(1)
-                    back_button = self.back_button = custom.widgets.Button(self, ss((100, 150)), ss((100, 50)), theme = "outline-light", text = "上一步", anchor = "center", command = back)
-                    next_button = self.next_button = custom.widgets.Button(self, ss((1100, 150)), ss((100, 50)), theme = "outline-light", text = "下一步", anchor = "center", command = next)
+                    back_button = self.back_button = custom.widgets.Button(self, ss((100, 150)), ss((100, 50)), theme = "outline-light", text = "上一步", icon = bi("chevron-left"), anchor = "center", command = back)
+                    next_button = self.next_button = custom.widgets.Button(self, ss((1100, 150)), ss((100, 50)), theme = "outline-light", text = "下一步", icon = bi("chevron-right"), icon_position = "right", anchor = "center", command = next)
                     self.content_canvas.destroy()
                     content_canvas = self.content_canvas = PageCanvas(self.master, self.data_manager)
                     content_canvas.button_canvas = self
@@ -636,7 +638,7 @@ class ButtonCanvas(maliang.Canvas):
                 maliang.animation.MoveTkWidget(self.content_canvas, (0, ss(-1000)), 1000, controller = maliang.animation.ease_in, end = _, fps = 60).start()
                 maliang.animation.MoveElement(self.button, (0, ss(200)), 500, controller = maliang.animation.smooth, end = self.button.destroy, fps = 60).start()
 
-            self.button = custom.widgets.Button(self, ss((600, 50)), ss((400, 50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", icon = custom.media.bi("emoji-kiss"), anchor = "center", command = _)
+            self.button = custom.widgets.Button(self, ss((600, 50)), ss((400, 50)), theme = "outline-light", text = "让我们开始吧！ Let's begin!", icon = bi("clipboard-data"), anchor = "center", command = _)
             self.configure(bg = custom.color.primary)
             maliang.theme.register_event(lambda _: self.configure(bg = custom.color.primary))
             self.delete(self.button_bar)

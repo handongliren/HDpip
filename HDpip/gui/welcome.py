@@ -480,7 +480,7 @@ class EndCanvas(maliang.Canvas):
         self.tip = maliang.Text(self, ss((600, -200)), ss((600, 40)), fontsize = ss(40), anchor = "center", auto_update = True)
         self.scrolled_text = custom.texts.ScrolledText(self, state = tkinter.DISABLED)
         self.scrolled_text.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
-        self.button = custom.widgets.Button(self, ss((600, 800)), ss((250, 50)), theme = "outline-primary", anchor = "center")
+        self.button = custom.widgets.Button(self, ss((600, 800)), ss((250, 50)), icon = bi("clipboard-check"), theme = "outline-primary", anchor = "center")
         self.button.bind("<Button-1>", self.command)
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.ease_out, fps = 60).start()
         maliang.animation.MoveTkWidget(self.scrolled_text, (0, ss(750)), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 500)

@@ -189,8 +189,10 @@ class Button(maliang.Button):
             fills = [style["StillImage"]["normal"]["fill"]] * 3 if disabled else [style["StillImage"][state]["fill"] for state in ("normal", "hover", "active")]
             self.icon.prase({state: fill for state, fill in zip(("normal", "hover", "active"), fills)})
             self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = self.icon["normal"])
-            for state, fill in zip(("normal", "hover", "active"), fills):
-                style["Information"][state]["fill"] = fill
+            for theme_name in ("light", "dark"):
+                for state, fill in zip(("normal", "hover", "active"), fills):
+                    self.style.get(theme = theme_name)["Information"][state]["fill"] = fill
+                    self.style.get(theme = theme_name)["StillImage"][state]["fill"] = fill
 
     @override
     def __init__(
@@ -414,7 +416,14 @@ class Button(maliang.Button):
         :type value: bool
         """
 
+        self.disabled = value
         self.switchTheme(self.theme, value)
         self.update("normal")
-        super().disable(value)
-        self.disabled = value
+        if value or self.state_before_disabled:
+            super().disable(value)
+        if value and self.icon and not self.use_original_icon:
+            style = self.style.get()
+            fill = style["Information"].get("disabled", {}).get("fill")
+            if fill is not None:
+                self.icon.prase({state: fill for state in ("normal", "hover", "active")})
+                self.images[0].widget.master.itemconfigure(self.images[0].items[0], image = self.icon["normal"])

@@ -38,7 +38,7 @@ class DialogCanvas(maliang.Canvas):
     @override
     def __init__(
         self,
-        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         position: tuple[int, int],
         size: tuple[int, int],
         *,
@@ -53,7 +53,7 @@ class DialogCanvas(maliang.Canvas):
         """
         :param self: `DialogCanvas`类
         :param master: 父控件
-        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
         :type position: tuple[int, int]
         :param size: 大小

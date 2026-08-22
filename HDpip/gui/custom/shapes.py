@@ -52,7 +52,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
     @override
     def __init__(
         self,
-        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         position: tuple[int, int],
         size: tuple[int, int],
         *,
@@ -68,7 +68,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         """
         :param self: `RoundedRectangle`类
         :param master: 父控件
-        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
         :type position: tuple[int, int]
         :param size: 大小
@@ -118,7 +118,7 @@ class Line(maliang.core.virtual.Widget):
 
     def __init__(
         self,
-        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         position: tuple[int, int],
         size: tuple[int, int],
         *,
@@ -132,7 +132,7 @@ class Line(maliang.core.virtual.Widget):
         """
         :param self: `Line`类
         :param master: 父控件
-        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
         :type position: tuple[int, int]
         :param size: 大小

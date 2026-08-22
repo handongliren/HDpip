@@ -26,7 +26,7 @@ except ImportError:
 
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 
-class Image(maliang.toolbox.enhanced.PhotoImage):
+class Image(maliang.PhotoImage):
     """
     图片类，统一支持 file / data / image 三种输入，兼容 Tk、PIL 与 maliang 图片类型。
     """
@@ -37,7 +37,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         *,
         file: str | pathlib.Path | None = None,
         data: str | bytes | bytearray | memoryview | None = None,
-        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None = None,
+        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.PhotoImage | PIL.Image.Image | None = None,
         size: tuple[int, int] | None = None
     ):
         """
@@ -49,7 +49,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         :param data: 原始图片数据
         :type data: str | bytes | bytearray | memoryview | None
         :param image: 已有图片对象
-        :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None
+        :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.PhotoImage | PIL.Image.Image | None
         :param size: 渲染尺寸（所有类型生效）
         :type size: tuple[int, int] | None
         """
@@ -142,7 +142,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
                     result.put(color_value, (x, y))
         return result
 
-class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
+class Icon(dict[str, maliang.PhotoImage]):
     """
     图标类，用于渲染不同颜色的图标，支持多种图片格式。
     """

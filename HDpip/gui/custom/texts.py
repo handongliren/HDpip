@@ -53,7 +53,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
     @override
     def __init__(
         self,
-        master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
         font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", utility.pxToPt(utility.ss(20))),
@@ -65,7 +65,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         """
         :param self: `ScrolledText`类
         :param master: 父控件
-        :type master: maliang.containers.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param kwargs: 其余参数
         :type kwargs: Any
 

@@ -43,7 +43,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.DataManager(), 
         title: str | None = None, 
-        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = maliang.toolbox.enhanced.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png")), 
+        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = None,
         **kwargs: Any
     ):
         """
@@ -54,6 +54,8 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         self.data_manager = data_manager
         self.data_manager.init()
 
+        if icon is None:
+            icon = str(base_dir / "assets" / "image" / "icon.png")
         super().__init__(size, position, title = title, icon = icon, **kwargs)
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:
@@ -109,7 +111,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.DataManager(), 
         title: str | None = None, 
-        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = maliang.toolbox.enhanced.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png")), 
+        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = None,
         **kwargs: Any
     ):
         """
@@ -120,6 +122,8 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         self.data_manager = data_manager
         self.data_manager.init()
 
+        if icon is None:
+            icon = maliang.toolbox.enhanced.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
         super().__init__(master, size, position, title = title, icon = icon, **kwargs)
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:

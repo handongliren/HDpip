@@ -114,39 +114,18 @@ class LanguageCanvas(maliang.Canvas):
         self.import_button = custom.widgets.Button(self, ss((1600, 450)), ss((300, 50)), text = "导入语言 Import language", icon = bi("box-arrow-in-right"), fontsize = ss(22), theme = "outline-primary", anchor = "center", command = self.import_, auto_update = True)
         maliang.animation.MoveWidget(self.import_button, (ss(-780), 0), 1000, controller = maliang.animation.rebound, fps = 60).start(delay = 1000)
 
-class LicenseCanvas(maliang.Canvas):
+class LicenseCanvas(custom.containers.Canvas):
     """
     许可画布。
     """
 
+    @override
     def renderLanguage(self) -> None:
         """
         渲染语言。
         """
 
         self.tip.set(self.data_manager.language["welcome", "license_tip"])
-
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        super().destroy()
 
     def command(self, agree: bool) -> None:
         self.data_manager.setting["license"] = True
@@ -161,9 +140,7 @@ class LicenseCanvas(maliang.Canvas):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        self.data_manager.language.registerEvent(self.onLanguageChange)
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.license = custom.texts.ScrolledText(self)
         text = (core.system.getBaseDir() / "LICENSE").read_text(encoding = "utf-8")
@@ -181,11 +158,12 @@ class LicenseCanvas(maliang.Canvas):
 
         self.renderLanguage()
 
-class ThemeCanvas(maliang.Canvas):
+class ThemeCanvas(custom.containers.Canvas):
     """
     主题画布。
     """
 
+    @override
     def renderLanguage(self, option_position: tuple[int, int] = ss((800, 350))) -> None:
         """
         渲染语言。
@@ -203,28 +181,6 @@ class ThemeCanvas(maliang.Canvas):
         if isinstance(self.value, int):
             self.option.set(self.value)
 
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        super().destroy()
-
     def command(self, index: int):
         theme_list = ["system", "light", "dark"]
         self.data_manager.setting["theme"] = theme_list[index]
@@ -240,9 +196,7 @@ class ThemeCanvas(maliang.Canvas):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        self.data_manager.language.registerEvent(self.onLanguageChange)
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
         self.value = 0
 
         self.tip = maliang.Text(self, ss((400, -400)), ss((600, 200)), fontsize = ss(40), anchor = "center", auto_update = True)
@@ -250,11 +204,12 @@ class ThemeCanvas(maliang.Canvas):
         maliang.animation.MoveWidget(self.tip, (0, ss(750)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveWidget(self.option, (0, ss(750)), 1000, controller = maliang.animation.ease_out, fps = 60).start()
 
-class InfoCanvas(maliang.Canvas):
+class InfoCanvas(custom.containers.Canvas):
     """
     信息画布。
     """
 
+    @override
     def renderLanguage(self, option_position: tuple[int, int] = ss((800, 350))) -> None:
         """
         渲染语言。
@@ -283,28 +238,6 @@ class InfoCanvas(maliang.Canvas):
                 self.data_manager.language["welcome"]["info_treeview"][i],
                 info_data[i],
             ])
-
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        super().destroy()
 
     def _onColumnResize(self, event) -> None:
         """列宽拖拽后自动填满剩余空间。"""
@@ -343,9 +276,7 @@ class InfoCanvas(maliang.Canvas):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        self.data_manager.language.registerEvent(self.onLanguageChange)
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.tip = maliang.Text(self, ss((600, -200)), ss((300, 50)), fontsize = ss(40), anchor = "center")
         table_width = ss(1000)
@@ -370,11 +301,12 @@ class InfoCanvas(maliang.Canvas):
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveTkWidget(self.table, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)
 
-class EndCanvas(maliang.Canvas):
+class EndCanvas(custom.containers.Canvas):
     """
     结束画布。
     """
 
+    @override
     def renderLanguage(self) -> None:
         """
         渲染语言。
@@ -382,28 +314,6 @@ class EndCanvas(maliang.Canvas):
 
         self.tip.set(self.data_manager.language["welcome", "end_tip"])
         self.button.set(self.data_manager.language["welcome", "end_button"])
-
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        super().destroy()
 
     def command(self, *argvs, **kargvs):
         self.button.disable(True)
@@ -451,9 +361,7 @@ class EndCanvas(maliang.Canvas):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        self.data_manager.language.registerEvent(self.onLanguageChange)
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.tip = maliang.Text(self, ss((600, -200)), ss((600, 40)), fontsize = ss(40), anchor = "center", auto_update = True)
         self.scrolled_text = custom.texts.ScrolledText(self, state = tkinter.DISABLED)
@@ -531,11 +439,12 @@ class PageCanvas(maliang.Canvas):
 
         self.switchCanvas(self.canvas_index + index)
 
-class ButtonCanvas(maliang.Canvas):
+class ButtonCanvas(custom.containers.Canvas):
     """
     按钮画布，包含欢迎页面的底部按钮区域。
     """
 
+    @override
     def renderLanguage(self) -> None:
         """
         渲染语言。
@@ -543,28 +452,6 @@ class ButtonCanvas(maliang.Canvas):
 
         self.back_button.set(self.data_manager.language["welcome", "back_button"])
         self.next_button.set(self.data_manager.language["welcome", "next_button"])
-
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        super().destroy()
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
@@ -575,9 +462,7 @@ class ButtonCanvas(maliang.Canvas):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        data_manager.language.registerEvent(self.onLanguageChange)
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
         self.content_canvas: PageCanvas = None
         self.button: custom.widgets.Button = None
         self.back_button: custom.widgets.Button = None
@@ -613,39 +498,18 @@ class ButtonCanvas(maliang.Canvas):
             self.delete(self.button_bar)
         maliang.animation.GradientItem(self, self.button_bar, "fill", (custom.color.light, custom.color.primary), 500, controller = maliang.animation.smooth, fps = 60, end = _).start(delay = 2500)
 
-class Welcome(maliang.Tk):
+class Welcome(custom.containers.Tk):
     """
     欢迎窗口，HDpip的主欢迎界面。
     """
 
+    @override
     def renderLanguage(self) -> None:
         """
         渲染语言。
         """
 
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
-
-    def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
-        """
-        语言更改的回调函数。
-
-        :param event_type: 事件类型
-        :type event_type: str
-        :param event_data: 事件数据
-        :type event_data: dict[str, Any]
-        """
-
-        if event_type == "load":
-            self.renderLanguage()
-
-    @override
-    def destroy(self) -> None:
-        """
-        销毁控件。
-        """
-
-        self.data_manager.language.unregisterEvent(self.onLanguageChange)
-        custom.animations.WindowFadeOut(self, 500, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
     @override
     def __init__(self, data_manager: core.data.DataManager = core.data.DataManager()):
@@ -654,19 +518,10 @@ class Welcome(maliang.Tk):
         :type data_manager: core.data.DataManager
         """
 
-        self.data_manager = data_manager
-        self.data_manager.init()
-
-        super().__init__(ss((1200, 800)), title = data_manager.language["program_name"] + "(" + data_manager.language["program_subname"] + ")")
-        custom.animations.WindowFadeIn(self, 500, controller = maliang.animation.smooth, fps = 60).start()
+        super().__init__(ss((1200, 800)), data_manager = data_manager, icon = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
         self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
-        self.iconphoto(True, self.icon_)
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
-        self.center()
-        maliang.theme.customize_window(self, disable_maximize_button = True)
-        self.resizable(False, False)
-        self.data_manager.language.registerEvent(self.onLanguageChange)
 
         self.root_canvas = maliang.Canvas(self, expand = "xy", auto_zoom = True, auto_update = True)
         self.root_canvas.place(width = ss(1200), height = ss(800), x = 0, y = 0)
@@ -684,6 +539,7 @@ class Welcome(maliang.Tk):
         self.subtitle_ = maliang.Text(self.content_canvas, ss((600, 1000)), ss((1200, 50)), text = "一个基于maliang的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
         maliang.animation.MoveWidget(self.subtitle_, (0, ss(500) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1500)
         self.button_canvas.start()
+        self.renderLanguage()
 
 if __name__ == "__main__":
     Welcome().mainloop()

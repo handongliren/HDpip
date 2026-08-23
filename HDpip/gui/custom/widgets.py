@@ -59,7 +59,6 @@ class Button(maliang.Button):
         """
         切换主题。
 
-        :param self: `Button`类
         :param theme: 主题
         :type theme: Literal["default", "primary", "secondary", "success", "info", "warning", "danger", "light", "dark", "outline-default", "outline-primary", "outline-secondary", "outline-success", "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark"]
         :param disabled: 是否为禁用状态
@@ -240,7 +239,6 @@ class Button(maliang.Button):
         style: type[maliang.core.virtual.Style] | None = None,
     ):
         """
-        :param self: `Button`类
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
@@ -323,7 +321,6 @@ class Button(maliang.Button):
         """
         获取文本（不含占位空格）。
 
-        :param self: `Button`类
         :return: 文本
         :rtype: str
         """
@@ -338,7 +335,6 @@ class Button(maliang.Button):
         """
         设置文本（自动处理占位空格并重新定位图标）。
 
-        :param self: `Button`类
         :param text: 文本
         :type text: str
         """
@@ -352,8 +348,6 @@ class Button(maliang.Button):
     def _placeIcon(self) -> None:
         """
         将图标定位到文本占位空格处。
-
-        :param self: `Button`类
         """
 
         text_x1, text_y1, text_x2, text_y2 = self.texts[0].region()
@@ -379,7 +373,6 @@ class Button(maliang.Button):
         """
         更新控件，并根据状态切换图标。
 
-        :param self: `Button`类
         :param state: 状态
         :type state: str | None
         :param gradient_animation: 过渡动画
@@ -411,7 +404,6 @@ class Button(maliang.Button):
         """
         修改`Button`类的禁用状态。
 
-        :param self: `Button`类
         :param value: 是否禁用
         :type value: bool
         """

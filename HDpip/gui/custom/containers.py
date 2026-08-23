@@ -5,6 +5,7 @@
 
 本文件用于定制容器。
 """
+
 from typing import *
 from typing_extensions import Self, override
 
@@ -33,6 +34,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
     """
     自定义`Tk`容器。
     """
+
     @override
     def __init__(
         self, 
@@ -48,6 +50,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager
         """
+
         self.data_manager = data_manager
         self.data_manager.init()
 
@@ -64,6 +67,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         """
         渲染语言。
         """
+
         ...
 
     def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
@@ -75,6 +79,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         :param event_data: 事件数据
         :type event_data: dict[str, Any]
         """
+
         if event_type == "load":
             self.renderLanguage()
 
@@ -83,6 +88,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         """
         销毁控件。
         """
+
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         animations.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
@@ -93,6 +99,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
     """
     自定义`Toplevel`容器。
     """
+
     @override
     def __init__(
         self, 
@@ -109,6 +116,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager
         """
+
         self.data_manager = data_manager
         self.data_manager.init()
 
@@ -125,6 +133,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         """
         渲染语言。
         """
+
         ...
 
     def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
@@ -136,6 +145,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         :param event_data: 事件数据
         :type event_data: dict[str, Any]
         """
+
         if event_type == "load":
             self.renderLanguage()
 
@@ -144,6 +154,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         """
         销毁控件。
         """
+
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         animations.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
@@ -154,6 +165,7 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
     """
     自定义`Canvas`容器。
     """
+
     @override
     def __init__(
         self, 
@@ -179,6 +191,7 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         """
         渲染语言。
         """
+
         ...
 
     def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
@@ -190,6 +203,7 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         :param event_data: 事件数据
         :type event_data: dict[str, Any]
         """
+
         if event_type == "load":
             self.renderLanguage()
 
@@ -198,5 +212,6 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         """
         销毁控件。
         """
+
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         super().destroy()

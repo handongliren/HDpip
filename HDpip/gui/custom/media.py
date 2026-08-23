@@ -43,7 +43,6 @@ class Image(maliang.PhotoImage):
         """
         从图片源加载图片。
 
-        :param self: `Image`类
         :param file: 图片文件路径，支持 PNG/GIF/BMP/ICO/SVG
         :type file: str | pathlib.Path | None
         :param data: 原始图片数据
@@ -78,7 +77,6 @@ class Image(maliang.PhotoImage):
         """
         通过 PIL Image 中转加载。
 
-        :param self: `Image`类
         :param image: PIL 图片
         :type image: PIL.Image.Image
         :param size: 渲染尺寸
@@ -98,7 +96,6 @@ class Image(maliang.PhotoImage):
         """
         复制图片，返回新的 `Image` 实例。
 
-        :param self: `Image`类
         :return: 复制后的图片
         :rtype: Self
         """
@@ -110,7 +107,6 @@ class Image(maliang.PhotoImage):
         """
         缩放图片，返回新的 `Image` 实例（LANCZOS 高质量插值）。
 
-        :param self: `Image`类
         :param width: 新宽度
         :type width: int
         :param height: 新高度
@@ -128,7 +124,6 @@ class Image(maliang.PhotoImage):
         """
         按指定颜色渲染图片。
 
-        :param self: `Image`类
         :param color_value: 颜色值
         :type color_value: str | tuple[int, int, int] | tuple[int, int, int, int]
         :return: 渲染后的图片对象
@@ -151,7 +146,6 @@ class Icon(dict[str, maliang.PhotoImage]):
         """
         按颜色字典渲染图标，每种颜色生成一个独立变体存入。
 
-        :param self: `Icon`类
         :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
         :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
         """
@@ -170,7 +164,6 @@ class Icon(dict[str, maliang.PhotoImage]):
         """
         从图片源加载并渲染图标。
 
-        :param self: `Icon`类
         :param color_dict: 颜色字典，键为颜色名，值为颜色值或 None（保留原色）
         :type color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]]
         :param image: 图片对象
@@ -198,7 +191,6 @@ class BootstrapIcon(Image):
         """
         加载指定名称的 Bootstrap Icons SVG。
 
-        :param self: `BootstrapIcon`类
         :param bi_name: Bootstrap Icons 名称（不含扩展名）
         :type bi_name: str
         :param size: 渲染尺寸
@@ -217,7 +209,6 @@ class BootstrapIcon(Image):
         """
         重新按目标尺寸矢量渲染，保证任意尺寸清晰。
 
-        :param self: `BootstrapIcon`类
         :param width: 新宽度
         :type width: int
         :param height: 新高度

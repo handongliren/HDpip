@@ -37,7 +37,6 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         """
         切换主题。
 
-        :param self: `Scrolled`类
         :param theme: 主题
         :type theme: Literal["system", "light", "dark"]
         """
@@ -63,7 +62,6 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         **kwargs: Any
     ):
         """
-        :param self: `ScrolledText`类
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param kwargs: 其余参数

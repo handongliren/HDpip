@@ -32,7 +32,6 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         """
         设置圆角矩形的外观。
 
-        :param self: `RoundedRectangle`类
         :param background: 背景色
         :type background: str | tuple[int, int, int]
         :param outline: 边框色
@@ -66,7 +65,6 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         **kwargs: Any
     ):
         """
-        :param self: `RoundedRectangle`类
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
@@ -107,7 +105,6 @@ class Line(maliang.core.virtual.Widget):
         """
         设置直线的外观。
 
-        :param self: `Line`类
         :param color: 颜色
         :type color: str | tuple[int, int, int]
         :param width: 宽度
@@ -130,7 +127,6 @@ class Line(maliang.core.virtual.Widget):
         **kwargs: Any
     ):
         """
-        :param self: `Line`类
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置

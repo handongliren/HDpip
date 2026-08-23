@@ -31,7 +31,6 @@ class WindowFadeIn(maliang.animation.Animation):
     ) -> None:
 
         """
-        :param self: `WindowFadeIn`类
         :param window: 要渐入的窗口
         :type window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel]
         :param duration: 持续时长
@@ -76,7 +75,6 @@ class WindowFadeOut(maliang.animation.Animation):
     ) -> None:
 
         """
-        :param self: `WindowFadeOut`类
         :param window: 要渐出的窗口
         :type window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel]
         :param duration: 持续时长

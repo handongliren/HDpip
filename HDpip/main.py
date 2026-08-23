@@ -49,8 +49,6 @@ class AboutCanvas(maliang.Canvas):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `AboutCanvas`类
         """
 
         self.title.set(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ")")
@@ -60,7 +58,6 @@ class AboutCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `AboutCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -74,8 +71,6 @@ class AboutCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `AboutCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -110,15 +105,12 @@ class ControlCanvas(maliang.Canvas):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `ControlCanvas`类
         """
 
     def onLanguageChange(self, event_type: str, event_data: dict[str, Any]) -> None:
         """
         语言更改的回调函数。
 
-        :param self: `ControlCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -132,8 +124,6 @@ class ControlCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `ControlCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -167,8 +157,6 @@ class Main(maliang.Tk):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `Welcome`类
         """
 
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
@@ -177,7 +165,6 @@ class Main(maliang.Tk):
         """
         语言更改的回调函数。
 
-        :param self: `Welcome`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -191,8 +178,6 @@ class Main(maliang.Tk):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `Welcome`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)

@@ -56,7 +56,6 @@ class Data():
         """
         绑定一个`.json`文件，且返回绑定的文件字典。
 
-        :param self: `Data`类
         :param file: 一个指向`.json`文件的路径，如`data.json`
         :type file: str | pathlib.Path
         :param encoding: 编码字符串，如`utf-8`
@@ -74,7 +73,6 @@ class Data():
         """
         加载`.json`文件的数据至数据类并返回。
 
-        :param self: `Data`类
         :return: 数据
         :rtype: list | dict
         """
@@ -88,7 +86,6 @@ class Data():
         """
         保存`.json`文件的数据至文件并返回。
 
-        :param self: `Data`类
         :return: 数据
         :rtype: list | dict
         """

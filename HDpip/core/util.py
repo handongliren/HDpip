@@ -75,7 +75,6 @@ class Version(pip._vendor.packaging.version.Version):
         >>> Version("0.1.0").isCloseTo("0.1.1")
         True
 
-        :param self: `Version`类
         :param value: 另一个版本
         :type value: Version | str | tuple[int, str] | list[str | int]
         :return: 结果
@@ -101,7 +100,6 @@ class Version(pip._vendor.packaging.version.Version):
         >>> version.multipleCompare([">0.0.0", "<2", "~=0.1.1", "!=0.1.5"])
         True
 
-        :param self: `Version`类
         :param standard: 富比较标准
         :type standard: str | list[str]
         :return: 结果

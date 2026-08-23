@@ -49,7 +49,6 @@ class LanguageCanvas(maliang.Canvas):
         """
         选择语言，`self.option`的回调函数。
 
-        :param self: `LanguageCanvas`类
         :param index: 索引
         :type index: int
         """
@@ -60,7 +59,6 @@ class LanguageCanvas(maliang.Canvas):
         """
         渲染选项按钮。
 
-        :param self: `LanguageCanvas`类
         :param position: 位置
         :type position: tuple[int, int]
         """
@@ -78,8 +76,6 @@ class LanguageCanvas(maliang.Canvas):
     def import_(self):
         """
         导入语言，`self.import_button`的回调函数。
-
-        :param self: `LanguageCanvas`类
         """
 
         file = pathlib.Path(tkinter.filedialog.askopenfilename(filetypes = [("语言文件 Language file", ".json"), ("所有文件 All files", ".*")], title = "选择一个语言文件以导入 Chose a language file to import", initialdir = core.system.getBaseDir())).resolve()
@@ -126,8 +122,6 @@ class LicenseCanvas(maliang.Canvas):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `LicenseCanvas`类
         """
 
         self.tip.set(self.data_manager.language["welcome", "license_tip"])
@@ -136,7 +130,6 @@ class LicenseCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `LicenseCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -150,8 +143,6 @@ class LicenseCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `LicenseCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -199,7 +190,6 @@ class ThemeCanvas(maliang.Canvas):
         """
         渲染语言。
 
-        :param self: `ThemeCanvas`类
         :param option_position: 选项位置
         :type position: tuple[int, int]
         """
@@ -217,7 +207,6 @@ class ThemeCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `LicenseCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -231,8 +220,6 @@ class ThemeCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `LicenseCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -272,7 +259,6 @@ class InfoCanvas(maliang.Canvas):
         """
         渲染语言。
 
-        :param self: `ThemeCanvas`类
         :param option_position: 选项位置
         :type position: tuple[int, int]
         """
@@ -302,7 +288,6 @@ class InfoCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `InfoCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -316,8 +301,6 @@ class InfoCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `InfoCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -395,8 +378,6 @@ class EndCanvas(maliang.Canvas):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `EndCanvas`类
         """
 
         self.tip.set(self.data_manager.language["welcome", "end_tip"])
@@ -406,7 +387,6 @@ class EndCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `EndCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -420,8 +400,6 @@ class EndCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `EndCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -522,7 +500,6 @@ class PageCanvas(maliang.Canvas):
         """
         切换至指定画布。
 
-        :param self: `PageCanvas`类
         :param index: 索引
         :type index: int
         """
@@ -548,7 +525,6 @@ class PageCanvas(maliang.Canvas):
         """
         相对步进画布。
 
-        :param self: `PageCanvas`类
         :param index: 索引
         :type index: int
         """
@@ -563,8 +539,6 @@ class ButtonCanvas(maliang.Canvas):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `ButtonCanvas`类
         """
 
         self.back_button.set(self.data_manager.language["welcome", "back_button"])
@@ -574,7 +548,6 @@ class ButtonCanvas(maliang.Canvas):
         """
         语言更改的回调函数。
 
-        :param self: `ButtonCanvas`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -588,8 +561,6 @@ class ButtonCanvas(maliang.Canvas):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `ButtonCanvas`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
@@ -615,8 +586,6 @@ class ButtonCanvas(maliang.Canvas):
     def start(self) -> None:
         """
         启动按钮画布的动画效果。
-
-        :param self: `ButtonCanvas`类
         """
 
         self.button_bar = self.create_rectangle(0, 0, ss(1200), ss(100), outline = "")
@@ -652,8 +621,6 @@ class Welcome(maliang.Tk):
     def renderLanguage(self) -> None:
         """
         渲染语言。
-
-        :param self: `Welcome`类
         """
 
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
@@ -662,7 +629,6 @@ class Welcome(maliang.Tk):
         """
         语言更改的回调函数。
 
-        :param self: `Welcome`类
         :param event_type: 事件类型
         :type event_type: str
         :param event_data: 事件数据
@@ -676,8 +642,6 @@ class Welcome(maliang.Tk):
     def destroy(self) -> None:
         """
         销毁控件。
-
-        :param self: `Welcome`类
         """
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)

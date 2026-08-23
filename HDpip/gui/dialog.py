@@ -28,8 +28,6 @@ class DialogCanvas(maliang.Canvas):
     def closeCommand(self, *argvs, **kargvs) -> None:
         """
         关闭对话框。
-
-        :param self: `DialogCanvas`类
         """
 
         self.after(1, self.destroy)
@@ -51,7 +49,6 @@ class DialogCanvas(maliang.Canvas):
         closeCommand: Callable[[], None] | None = None,
     ):
         """
-        :param self: `DialogCanvas`类
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
         :param position: 位置
@@ -120,8 +117,6 @@ class DialogToplevel(maliang.Toplevel):
     def closeCommand(self, *argvs, **kargvs) -> None:
         """
         关闭对话框。
-
-        :param self: `DialogToplevel`类
         """
 
         self.after(1, self.destroy)
@@ -140,7 +135,6 @@ class DialogToplevel(maliang.Toplevel):
         theme: Literal["info", "primary", "danger", "warning", "success"] = "primary"
     ):
         """
-        :param self: `DialogToplevel`类
         :param master: 父窗口
         :type master: maliang.Tk | maliang.Toplevel | None
         :param size: 大小
@@ -177,8 +171,6 @@ class DialogTk(maliang.Tk):
     def closeCommand(self, *argvs, **kargvs) -> None:
         """
         关闭对话框。
-
-        :param self: `DialogTk`类
         """
 
         self.after(1, self.destroy)
@@ -196,7 +188,6 @@ class DialogTk(maliang.Tk):
         theme: Literal["info", "primary", "danger", "warning", "success"] = "primary"
     ):
         """
-        :param self: `DialogTk`类
         :param size: 大小
         :type size: tuple[int, int]
         :param title: 标题

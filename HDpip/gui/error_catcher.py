@@ -15,14 +15,14 @@ import sys
 
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 
-def catch(func: Callable[..., Any] | None = None, *, auto_close: int = 0):
+def catch(func: Callable[..., Any] | None = None, *, auto_close: int = 0) -> Callable[..., Any]:
     """
     装饰器，用于捕捉错误并显示对话框。
 
     :param func: 装饰的函数
     :type func: Callable[..., Any]
     :return: 装饰后的函数
-    :rtype: _Wrapped[Callable[..., Any], Any, Callable[..., Any], Any | None]
+    :rtype: Callable[..., Any]
     """
 
     def _decorate(f: Callable[..., Any], *, auto_close: int = 0):

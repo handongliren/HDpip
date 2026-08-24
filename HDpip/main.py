@@ -17,11 +17,11 @@ import maliang.core.virtual
 try:
     from . import core
     from . import gui
-    from .gui.custom.utility import ss
+    from .gui.custom.util import ss
 except ImportError:
     import core
     import gui
-    from gui.custom.utility import ss
+    from HDpip.gui.custom.util import ss
 
 def needWelcome(data_manager: core.data.DataManager = core.data.DataManager()) -> bool:
     """

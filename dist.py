@@ -11,16 +11,31 @@ import shutil
 import subprocess
 import sys
 
+base_dir = pathlib.Path(__file__).parent.resolve()
+
 def clean() -> None:
-    """清理旧的构建产物。"""
+    """
+    清理旧的构建产物。
+    """
 
     for name in ["build", "dist", "hdpip.egg-info"]:
-        shutil.rmtree(name, ignore_errors = True)
+        shutil.rmtree(base_dir / name, ignore_errors = True)
+
+def copy() -> None:
+    for name in ["README.md", "LICENSE.txt"]:
+        if (base_dir / name).is_file():
+            shutil.copy2(base_dir / name, base_dir / "HDpip" / name)
 
 def main() -> int:
-    """清理并构建 sdist 与 wheel。"""
+    """
+    清理并构建 sdist 与 wheel。
+
+    :return: 运行状态
+    :rtype: int
+    """
 
     clean()
+    copy()
     completed = subprocess.run(
         [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"]
     )

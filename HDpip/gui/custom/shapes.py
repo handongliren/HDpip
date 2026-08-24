@@ -14,9 +14,9 @@ import maliang.standard.shapes
 import maliang.core.virtual
 
 try:
-    from . import utility
+    from . import util
 except ImportError:
-    import utility
+    import HDpip.gui.custom.util as util
 
 class RoundedRectangle(maliang.core.virtual.Widget):
     """
@@ -58,7 +58,7 @@ class RoundedRectangle(maliang.core.virtual.Widget):
         width: int = 1,
         background: str | tuple[int, int, int] = "",
         outline: str | tuple[int, int, int] = "",
-        radius: int = utility.ss(10),
+        radius: int = util.ss(10),
         name: str | None = None,
         anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw",
         gradient_animation: bool = True,

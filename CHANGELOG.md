@@ -12,7 +12,61 @@
 > - 🟠 **Deprecated / 弃用**
 > - 🟤 **Refactored / 重构**
 
+## 🔖 `0.0.6`
+
+🕓 *Release Date / 发布日期 : 2026-8-24*
+
+> [!CAUTION]  
+> `HDpip/gui` has been **fully restructured** into the `gui/custom` subpackage, please pay attention to the changes in function calls.  
+> 我们已对 `HDpip/gui` 进行了**全面重构**，拆分为 `gui/custom` 子包，请注意调用变动。  
+> `HDpip/gui/custom/utility` has been **renamed** to `HDpip/gui/custom/util`, the old import is **no longer available**.  
+> `HDpip/gui/custom/utility` 已**重命名**为 `HDpip/gui/custom/util`，旧引用**已不可用**。  
+
 ---
+
+🟢 **Added / 新增**
+
+- Add the abstract container classes `Tk` / `Toplevel` / `Canvas` under `gui/custom/containers`.
+
+- 新增 `gui/custom/containers` 抽象容器类（`Tk` / `Toplevel` / `Canvas`）。
+
+- Add the `enableTempTk` decorator in `core/util.py`.
+
+- 新增 `core/util.py` 中的 `enableTempTk` 装饰器。
+
+🟤 **Refactored / 重构**
+
+- Split `gui/base.py` into the `gui/custom` subpackage with the `color` / `util` / `widgets` / `texts` / `animations` / `shapes` / `media` / `containers` modules.
+
+- 将 `gui/base.py` 拆分为 `gui/custom` 子包，包含 `color`、`util`、`widgets`、`texts`、`animations`、`shapes`、`media`、`containers` 模块。
+
+- All canvases and windows in `welcome.py` / `main.py` now inherit from the `gui/custom/containers` classes, unifying language events and window customization.
+
+- `welcome.py` 与 `main.py` 的所有画布与窗口全面继承 `gui/custom/containers` 容器类，统一语言事件与窗口定制。
+
+- Integrate `Button` and `IconButton` with icon placement, theme coloring and disabled variants.
+
+- 整合 `Button` 与 `IconButton`，支持图标放置、主题着色与禁用变体。
+
+- Remove all `:param self:` annotations from docstrings.
+
+- 清理了所有文档字符串中的 `:param self:` 注释。
+
+🟡 **Changed / 变更**
+
+- Rename `gui/custom/utility.py` to `util.py` and unify all text files to CRLF line endings.
+
+- 将 `gui/custom/utility.py` 重命名为 `util.py`，并统一所有文本文件为 CRLF 行尾。
+
+🟣 **Fixed / 修复**
+
+- Fix the container icon loading timing and the button icon color after disabling.
+
+- 修复容器图标加载时序与按钮禁用后图标颜色。
+
+- Fix the undefined `_Wrapped` type annotation in `gui/error_catcher.py`.
+
+- 修复 `gui/error_catcher.py` 中未定义的 `_Wrapped` 类型注解。
 
 ## 🔖 `0.0.5.post1`
 
@@ -29,8 +83,6 @@
 - Read the package version dynamically from `HDpip.version` in `pyproject.toml`, keeping a single source of truth.
 
 - `pyproject.toml` 中的版本号改为从 `HDpip.version` 动态读取，保持单一版本来源。
-
----
 
 ## 🔖 `0.0.5`
 

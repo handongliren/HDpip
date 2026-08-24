@@ -19,11 +19,11 @@ for _theme_dict in (maliang.standard.styles.ButtonStyle.light, maliang.standard.
 
 try:
     from . import color
-    from . import utility
+    from . import util
     from . import media
 except ImportError:
     import color
-    import utility
+    import HDpip.gui.custom.util as util
     import HDpip.gui.custom.media as media
 
 class Button(maliang.Button):
@@ -222,7 +222,7 @@ class Button(maliang.Button):
         ] = "default",
         text: str = "",
         family: str | None = None,
-        fontsize: int | None = utility.ss(25),
+        fontsize: int | None = util.ss(25),
         weight: Literal['normal', 'bold'] = "normal",
         slant: Literal['roman', 'italic'] = "roman",
         underline: bool = False,

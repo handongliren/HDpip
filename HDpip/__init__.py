@@ -4,7 +4,7 @@
 - License: GPL-3
 """
 
-version = "0.0.5.post1"
+version = "0.0.6"
 author = "寒冬利刃"
 copyright = "Copyright © 2025 寒冬利刃."
 

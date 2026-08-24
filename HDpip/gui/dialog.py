@@ -15,10 +15,10 @@ import maliang
 
 try:
     from . import custom
-    from .custom.utility import ss
+    from .custom.util import ss
 except ImportError:
     import custom
-    from custom.utility import ss
+    from HDpip.gui.custom.util import ss
 
 class DialogCanvas(maliang.Canvas):
     """

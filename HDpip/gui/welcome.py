@@ -6,11 +6,11 @@
 本文件是欢迎页面。
 """
 
-import difflib
 from typing import *
 from typing_extensions import override
 
 import pathlib
+import difflib
 import locale
 import tkinter.filedialog
 import json
@@ -33,11 +33,11 @@ except ImportError:
 
 try:
     from . import custom
-    from .custom.utility import ss
+    from .custom.util import ss
     from .custom.media import bi
 except ImportError:
     import custom
-    from custom.utility import ss
+    from HDpip.gui.custom.util import ss
     from custom.media import bi
 
 class LanguageCanvas(maliang.Canvas):

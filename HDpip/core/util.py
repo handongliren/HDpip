@@ -6,9 +6,12 @@
 纯工具函数，不依赖 HDpip 其他模块。
 """
 
-import pip._vendor.packaging.version
 from typing import *
 from typing_extensions import override, overload
+from functools import *
+
+import pip._vendor.packaging.version
+import tkinter
 
 class HDpipError(Exception):
     """
@@ -156,3 +159,24 @@ def multipleSpilt(string: str, spilt_symbol: str | list[str]) -> list[str]:
         for i in range(1, len(spilt_symbol)):
             string = string.replace(spilt_symbol[i], spilt_symbol[0])
     return string.split(spilt_symbol[0])
+
+def enableTempTk(func: Callable[..., Any]):
+    """
+    临时创建`Tk`，使功能可在无默认`root`时使用。
+
+    :param func: 要装饰的函数
+    :type func: Callable[..., Any]
+    :return: 装饰后的函数
+    :rtype: Callable[..., Any]
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        root = tkinter.Tk()
+        root.withdraw()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            root.destroy()
+
+    return wrapper

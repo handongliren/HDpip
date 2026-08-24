@@ -25,10 +25,10 @@ import core
 
 try:
     from . import animations, media
-    from .utility import ss
+    from .util import ss
 except ImportError:
     import animations, media
-    from utility import ss
+    from HDpip.gui.custom.util import ss
 
 class Tk(maliang.core.containers.Tk, abc.ABC):
     """
@@ -43,20 +43,32 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.DataManager(), 
         title: str | None = None, 
-        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = None,
+        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
         **kwargs: Any
     ):
         """
+        :param size: 窗口大小
+        :type size: tuple[int, int]
+        :param position: 窗口位置
+        :type position: tuple[int, int] | None
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager
+        :param title: 窗口标题
+        :type title: str | None
+        :param icon: 窗口图标
+        :type icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None
+        :param kwargs: 其他参数
+        :type kwargs: Any
         """
 
         self.data_manager = data_manager
         self.data_manager.init()
 
-        if icon is None:
-            icon = str(base_dir / "assets" / "image" / "icon.png")
-        super().__init__(size, position, title = title, icon = icon, **kwargs)
+        super().__init__(size, position, title = title, icon = None, **kwargs)
+        if isinstance(icon, (str, pathlib.Path)):
+            icon = media.Image(file = icon)
+        if icon is not None:
+            self.icon(icon)
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:
             self.center()
@@ -95,6 +107,13 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         animations.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
     def quickTitle(self, window_name: str) -> None:
+        """
+        快速设置标题。
+
+        :param window_name: 窗口名称
+        :type window_name: str
+        """
+
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + window_name)
 
 class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
@@ -111,20 +130,34 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.DataManager(), 
         title: str | None = None, 
-        icon: str | media.Image | maliang.toolbox.enhanced.PhotoImage | None = None,
+        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
         **kwargs: Any
     ):
         """
+        :param master: 父窗口
+        :type master: Tk | Self | maliang.core.containers.Tk | maliang.core.containers.Toplevel
+        :param size: 窗口大小
+        :type size: tuple[int, int]
+        :param position: 窗口位置
+        :type position: tuple[int, int] | None
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager
+        :param title: 窗口标题
+        :type title: str | None
+        :param icon: 窗口图标
+        :type icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None
+        :param kwargs: 其他参数
+        :type kwargs: Any
         """
 
         self.data_manager = data_manager
         self.data_manager.init()
 
-        if icon is None:
-            icon = maliang.toolbox.enhanced.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
-        super().__init__(master, size, position, title = title, icon = icon, **kwargs)
+        super().__init__(master, size, position, title = title, icon = None, **kwargs)
+        if isinstance(icon, (str, pathlib.Path)):
+            icon = media.Image(file = icon)
+        if icon is not None:
+            self.icon(icon)
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:
             self.center()
@@ -163,6 +196,13 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         animations.WindowFadeOut(self, 250, controller = maliang.animation.smooth, fps = 60, end = super().destroy).start()
 
     def quickTitle(self, window_name: str) -> None:
+        """
+        快速设置标题。
+
+        :param window_name: 窗口名称
+        :type window_name: str
+        """
+
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + window_name)
 
 class Canvas(maliang.core.containers.Canvas, abc.ABC):
@@ -181,9 +221,30 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         keep_ratio: Literal['min', 'max'] | None = None, 
         free_anchor: bool = False, 
         auto_update: bool | None = None, 
-        zoom_all_items: bool = False, 
+        zoom_all_items: bool = False,
         **kwargs: Any
     ):
+        """
+        :param master: 父控件
+        :type master: Tk | Toplevel | Self | maliang.core.containers.Tk | maliang.core.containers.Toplevel | maliang.core.containers.Canvas | None
+        :param data_manager: 数据管理器
+        :type data_manager: core.data.DataManager
+        :param expand: 扩展模式
+        :type expand: Literal['', 'x', 'y', 'xy']
+        :param auto_zoom: 是否自动缩放
+        :type auto_zoom: bool
+        :param keep_ratio: 宽高比模式
+        :type keep_ratio: Literal['min', 'max'] | None
+        :param free_anchor: 锚点是否自由浮动
+        :type free_anchor: bool
+        :param auto_update: 是否自动更新
+        :type auto_update: bool | None
+        :param zoom_all_items: 是否缩放所有项
+        :type zoom_all_items: bool
+        :param kwargs: 其他参数
+        :type kwargs: Any
+        """
+
         self.data_manager = data_manager
         self.data_manager.init()
 

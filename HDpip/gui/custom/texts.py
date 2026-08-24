@@ -18,10 +18,10 @@ import maliang.theme
 
 try:
     from . import color
-    from . import utility
+    from . import util
 except ImportError:
     import color
-    import utility
+    import HDpip.gui.custom.util as util
 
 class ScrolledText(tkinter.scrolledtext.ScrolledText):
     """
@@ -55,7 +55,7 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
         master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
         *,
         wrap = tkinter.WORD,
-        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", utility.pxToPt(utility.ss(20))),
+        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", util.pxToPt(util.ss(20))),
         bg = color.light,
         fg = color.dark,
         relief = tkinter.FLAT,

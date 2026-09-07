@@ -40,7 +40,7 @@ class ForkCanvas(maliang.Canvas):
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         super().destroy()
 
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel

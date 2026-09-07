@@ -403,6 +403,8 @@ class DataManager():
         """
         设置基本数据并初始化。
 
+        已初始化后重复调用不会重建内存数据，共用同一数据管理器时已注册事件不会被清除。
+
         :param must: 是否强制初始化（*这将会覆盖用户数据！*）
         :type must: bool
         """
@@ -412,14 +414,17 @@ class DataManager():
             shutil.copy(self.default_setting, self.custom_setting)
             self.custom_language_dir.mkdir(exist_ok = True)
 
-        self.setting = Data()
-        self.setting.open(self.custom_setting)
-        self.setting.load()
+        if must or not hasattr(self, "setting"):
+            self.setting = Data()
+            self.setting.open(self.custom_setting)
+            self.setting.load()
 
-        self.language_dict = self.generateLanguageDict()
-        self.language = Data()
-        self.getLanguage(self.setting["language"])
-        self.setting.registerEvent(self.onLanguageChange)
+            self.language_dict = self.generateLanguageDict()
+            self.language = Data()
+            self.getLanguage(self.setting["language"])
+            self.setting.registerEvent(self.onLanguageChange)
+
+data_manager = DataManager()
 
 def isBelongedToHDpip(path: pathlib.Path) -> bool:
     """

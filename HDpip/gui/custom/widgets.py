@@ -23,8 +23,8 @@ try:
     from . import media
 except ImportError:
     import color
-    import HDpip.gui.custom.util as util
-    import HDpip.gui.custom.media as media
+    import util
+    import media
 
 class Button(maliang.Button):
     """

@@ -17,11 +17,11 @@ import traceback
 import pip
 
 try:
-    from .. import version
+    from ..info import version
 except ImportError:
     base_dir = pathlib.Path(__file__).parents[1].resolve()
-    sys.path.append(str(base_dir))
-    from HDpip import version
+    sys.path.append(str(base_dir / "HDpip"))
+    from info import version
 
 try:
     from . import util

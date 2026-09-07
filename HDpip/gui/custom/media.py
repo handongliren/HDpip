@@ -22,7 +22,7 @@ try:
     from .util import ss
 except ImportError:
     import color
-    from HDpip.gui.custom.util import ss
+    from util import ss
 
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 

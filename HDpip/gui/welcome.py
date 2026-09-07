@@ -37,7 +37,7 @@ try:
     from .custom.media import bi
 except ImportError:
     import custom
-    from HDpip.gui.custom.util import ss
+    from custom.util import ss
     from custom.media import bi
 
 class LanguageCanvas(maliang.Canvas):
@@ -85,7 +85,7 @@ class LanguageCanvas(maliang.Canvas):
             self.renderOption(ss((800, 250)))
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -132,7 +132,7 @@ class LicenseCanvas(custom.containers.Canvas):
         self.master.button_canvas.next_button.disable(not agree)
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -143,7 +143,7 @@ class LicenseCanvas(custom.containers.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.license = custom.texts.ScrolledText(self)
-        text = (core.system.getBaseDir() / "LICENSE").read_text(encoding = "utf-8")
+        text = (core.system.getBaseDir() / "LICENSE.txt").read_text(encoding = "utf-8")
         self.license.delete(1.0, tkinter.END)
         self.license.insert(1.0, text)
         self.license.tag_configure("center", justify = "center")
@@ -188,7 +188,7 @@ class ThemeCanvas(custom.containers.Canvas):
         self.value = index
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -268,7 +268,7 @@ class InfoCanvas(custom.containers.Canvas):
         self.table.set_column_widths(widths)
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -353,7 +353,7 @@ class EndCanvas(custom.containers.Canvas):
         self.after(1000, _)
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -381,7 +381,7 @@ class PageCanvas(maliang.Canvas):
     """
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -454,7 +454,7 @@ class ButtonCanvas(custom.containers.Canvas):
         self.next_button.set(self.data_manager.language["welcome", "next_button"])
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -512,7 +512,7 @@ class Welcome(custom.containers.Tk):
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
 
     @override
-    def __init__(self, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager

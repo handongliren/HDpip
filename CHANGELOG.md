@@ -12,6 +12,40 @@
 > - 🟠 **Deprecated / 弃用**
 > - 🟤 **Refactored / 重构**
 
+## 🔖 `0.0.6.post1`
+
+🕓 *Release Date / 发布日期 : 2026-9-7*
+
+🟣 **Fixed / 修复**
+
+- Make `main.py` runnable as a bare script without relying on the installed `HDpip` distribution (all fallback imports now point to the local modules); this also fixes the EndCanvas relaunch and the error-dialog startup.
+
+- 修复直接以脚本方式运行 `main.py` 依赖已安装 `HDpip` 包的问题（兜底导入现指向本地模块），同步修复欢迎页结束后的进程重启与错误对话框启动。
+
+- Fix the error dialog that referenced the removed `gui/base.py` module.
+
+- 修复错误对话框引用已删除的 `gui/base.py` 模块的问题。
+
+- Fix duplicated top-level `core` and `HDpip.core` module loading inside `gui/custom/containers.py`.
+
+- 修复 `gui/custom/containers.py` 中顶层 `core` 与 `HDpip.core` 两份模块同时加载的问题。
+
+- Restore language-change notifications for canvases created earlier, which were lost whenever a later container rebuilt the `language` data object.
+
+- 修复后创建的容器重建 `language` 数据对象导致先前画布收不到语言变更事件的问题。
+
+🟤 **Refactored / 重构**
+
+- Move package metadata (`version` / `author` / `copyright`) out of `HDpip/__init__.py` into the dedicated `HDpip/info.py` module.
+
+- 将包元数据（`version` / `author` / `copyright`）从 `HDpip/__init__.py` 抽离至独立的 `HDpip/info.py` 模块。
+
+- All canvases and windows now share one `core.data.data_manager` instance by default, and `DataManager.init()` no longer rebuilds in-memory data on re-entry.
+
+- 所有画布与窗口默认共用同一个 `core.data.data_manager` 实例，且 `DataManager.init()` 重复调用不再重建内存数据。
+
+---
+
 ## 🔖 `0.0.6`
 
 🕓 *Release Date / 发布日期 : 2026-8-24*

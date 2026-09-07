@@ -28,7 +28,7 @@ try:
     from .custom.util import ss
 except ImportError:
     import dialog
-    from base import ss
+    from custom.util import ss
 
 language_dict = {
     "zh-CN": {

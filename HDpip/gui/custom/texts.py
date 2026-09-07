@@ -21,7 +21,7 @@ try:
     from . import util
 except ImportError:
     import color
-    import HDpip.gui.custom.util as util
+    import util
 
 class ScrolledText(tkinter.scrolledtext.ScrolledText):
     """

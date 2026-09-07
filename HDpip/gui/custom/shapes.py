@@ -16,7 +16,7 @@ import maliang.core.virtual
 try:
     from . import util
 except ImportError:
-    import HDpip.gui.custom.util as util
+    import util
 
 class RoundedRectangle(maliang.core.virtual.Widget):
     """

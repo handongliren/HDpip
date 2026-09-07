@@ -4,12 +4,15 @@
 - License: GPL-3
 """
 
-version = "0.0.6"
-author = "寒冬利刃"
-copyright = "Copyright © 2025 寒冬利刃."
-
-__version__ = version
-__author__ = author
-__copyright__ = copyright
+try:
+    from .info import (
+        __version__, __author__, __copyright__,
+        version, author, copyright
+    )
+except ImportError:
+    from info import (
+        __version__, __author__, __copyright__,
+        version, author, copyright
+    )
 
 from . import core, gui

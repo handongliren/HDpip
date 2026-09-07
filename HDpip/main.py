@@ -21,9 +21,9 @@ try:
 except ImportError:
     import core
     import gui
-    from HDpip.gui.custom.util import ss
+    from gui.custom.util import ss
 
-def needWelcome(data_manager: core.data.DataManager = core.data.DataManager()) -> bool:
+def needWelcome(data_manager: core.data.DataManager = core.data.data_manager) -> bool:
     """
     返回是否需要进行欢迎引导。
 
@@ -55,7 +55,7 @@ class AboutCanvas(gui.custom.containers.Canvas):
         self.description.set(self.data_manager.language["main"]["description"])
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -85,7 +85,7 @@ class ControlCanvas(gui.custom.containers.Canvas):
         """
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param master: 父控件
         :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
@@ -116,7 +116,7 @@ class Main(gui.custom.containers.Tk):
         self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
 
     @override
-    def __init__(self, data_manager: core.data.DataManager = core.data.DataManager()):
+    def __init__(self, data_manager: core.data.DataManager = core.data.data_manager):
         """
         :param data_manager: 数据管理器
         :type data_manager: core.data.DataManager
@@ -145,7 +145,7 @@ class Main(gui.custom.containers.Tk):
         self.renderLanguage()
 
 @gui.error_catcher.catch
-def main(data_manager: core.data.DataManager = core.data.DataManager()) -> None:
+def main(data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     主函数。
 

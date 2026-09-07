@@ -20,15 +20,18 @@ import maliang.toolbox.enhanced
 
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 
-sys.path.append(str(base_dir))
-import core
+try:
+    from ... import core
+except ImportError:
+    sys.path.append(str(base_dir))
+    import core
 
 try:
     from . import animations, media
     from .util import ss
 except ImportError:
     import animations, media
-    from HDpip.gui.custom.util import ss
+    from util import ss
 
 class Tk(maliang.core.containers.Tk, abc.ABC):
     """
@@ -41,7 +44,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         size: tuple[int, int] = ss((1200, 800)), 
         position: tuple[int, int] | None = None, 
         *, 
-        data_manager: core.data.DataManager = core.data.DataManager(), 
+        data_manager: core.data.DataManager = core.data.data_manager, 
         title: str | None = None, 
         icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
         **kwargs: Any
@@ -128,7 +131,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         size: tuple[int, int] = ss((1200, 800)), 
         position: tuple[int, int] | None = None, 
         *, 
-        data_manager: core.data.DataManager = core.data.DataManager(), 
+        data_manager: core.data.DataManager = core.data.data_manager, 
         title: str | None = None, 
         icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
         **kwargs: Any
@@ -215,7 +218,7 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         self, 
         master: Tk | Toplevel | Self | maliang.core.containers.Tk | maliang.core.containers.Toplevel | maliang.core.containers.Canvas | None = None, 
         *, 
-        data_manager: core.data.DataManager = core.data.DataManager(), 
+        data_manager: core.data.DataManager = core.data.data_manager, 
         expand: Literal['', 'x', 'y', 'xy'] = "xy", 
         auto_zoom: bool = False, 
         keep_ratio: Literal['min', 'max'] | None = None, 

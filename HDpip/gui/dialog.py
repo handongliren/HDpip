@@ -18,7 +18,7 @@ try:
     from .custom.util import ss
 except ImportError:
     import custom
-    from HDpip.gui.custom.util import ss
+    from custom.util import ss
 
 class DialogCanvas(maliang.Canvas):
     """

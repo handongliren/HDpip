@@ -44,8 +44,6 @@
 
 - 所有画布与窗口默认共用同一个 `core.data.data_manager` 实例，且 `DataManager.init()` 重复调用不再重建内存数据。
 
----
-
 ## 🔖 `0.0.6`
 
 🕓 *Release Date / 发布日期 : 2026-8-24*

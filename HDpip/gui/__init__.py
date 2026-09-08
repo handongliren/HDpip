@@ -6,4 +6,4 @@
 本模块是本包界面。
 """
 
-from . import custom, dialog, error_catcher, welcome
+from . import custom, dialog, error_catcher, welcome, main

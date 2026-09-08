@@ -18,10 +18,12 @@ try:
     from . import core
     from . import gui
     from .gui.custom.util import ss
+    from .gui.custom.media import bi
 except ImportError:
     import core
     import gui
     from gui.custom.util import ss
+    from gui.custom.media import bi
 
 def needWelcome(data_manager: core.data.DataManager = core.data.data_manager) -> bool:
     """
@@ -95,10 +97,10 @@ class ControlCanvas(gui.custom.containers.Canvas):
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
-        self.install_button = gui.custom.widgets.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"], fontsize = ss(30))
-        self.uninstall_button = gui.custom.widgets.Button(self, ss((190, 40)), ss((120, 60)), theme = "outline-danger", text = self.data_manager.language["main"]["uninstall_button"], fontsize = ss(30))
-        self.upgrade_button = gui.custom.widgets.Button(self, ss((40, 140)), ss((120, 60)), theme = "outline-primary", text = self.data_manager.language["main"]["upgrade_button"], fontsize = ss(30))
-        self.setting_button = gui.custom.widgets.Button(self, ss((190, 140)), ss((120, 60)), theme = "outline-secondary", text = self.data_manager.language["main"]["setting_button"], fontsize = ss(30))
+        self.install_button = gui.custom.widgets.Button(self, ss((40, 40)), ss((120, 60)), theme = "outline-success", text = self.data_manager.language["main"]["install_button"], icon = bi("box-seam"), fontsize = ss(30))
+        self.uninstall_button = gui.custom.widgets.Button(self, ss((190, 40)), ss((120, 60)), theme = "outline-danger", text = self.data_manager.language["main"]["uninstall_button"], icon = bi("trash"), fontsize = ss(30))
+        self.upgrade_button = gui.custom.widgets.Button(self, ss((40, 140)), ss((120, 60)), theme = "outline-primary", text = self.data_manager.language["main"]["upgrade_button"], icon = bi("arrow-up"), fontsize = ss(30))
+        self.setting_button = gui.custom.widgets.Button(self, ss((190, 140)), ss((120, 60)), theme = "outline-secondary", text = self.data_manager.language["main"]["setting_button"], icon = bi("gear"), fontsize = ss(30))
 
         self.renderLanguage()
 
@@ -113,7 +115,7 @@ class Main(gui.custom.containers.Tk):
         渲染语言。
         """
 
-        self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
+        self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ")")
 
     @override
     def __init__(self, data_manager: core.data.DataManager = core.data.data_manager):

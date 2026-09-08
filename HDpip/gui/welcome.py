@@ -509,7 +509,7 @@ class Welcome(custom.containers.Tk):
         渲染语言。
         """
 
-        self.wm_title(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ") - " + self.data_manager.language["welcome", "title"])
+        self.quickTitle(self.data_manager.language["welcome", "title"])
 
     @override
     def __init__(self, data_manager: core.data.DataManager = core.data.data_manager):

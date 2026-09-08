@@ -46,9 +46,9 @@ jobs:
 
       - name: Build and deploy
         run: |
-          mkdocs build --dirty -f mkdocs.yml
-          mkdocs build --dirty -f docs/en/mkdocs.yml
-          mkdocs gh-deploy --force --dirty
+          python -m mkdocs build --dirty -f mkdocs.yml
+          python -m mkdocs build --dirty -f docs/en/mkdocs.yml
+          python -m mkdocs gh-deploy --force --dirty --no-build
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}

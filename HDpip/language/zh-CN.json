@@ -31,6 +31,8 @@
         "install_button": "安装", 
         "uninstall_button": "卸载", 
         "upgrade_button": "升级", 
-        "setting_button": "设置"
+        "setting_button": "设置", 
+        "mirror": "镜像", 
+        "switch": "切换"
     }
 }

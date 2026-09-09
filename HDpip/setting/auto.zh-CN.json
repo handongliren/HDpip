@@ -1,6 +1,7 @@
 {
     "pip": {
-        "mirror": [
+        "mirror_index": 3, 
+        "mirrors": [
             {
                 "name": "官方",
                 "url": "https://pypi.org/simple/"

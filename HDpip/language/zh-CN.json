@@ -33,6 +33,10 @@
         "upgrade_button": "升级", 
         "setting_button": "设置", 
         "mirror": "镜像", 
-        "switch": "切换"
+        "switch_button": "切换", 
+        "auto_switch_button": "自动切换", 
+        "view_button": "查看", 
+        "copy_button": "复制", 
+        "copy_pip_button": "复制pip参数"
     }
 }

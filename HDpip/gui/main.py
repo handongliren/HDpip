@@ -43,7 +43,7 @@ class AboutCanvas(custom.containers.Canvas):
         """
 
         self.title.set(self.data_manager.language["program_name"] + "(" + self.data_manager.language["program_subname"] + ")")
-        self.description.set(self.data_manager.language["main"]["description"])
+        self.description.set(self.data_manager.language["main", "description"])
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
@@ -75,10 +75,10 @@ class ControlCanvas(custom.containers.Canvas):
         渲染语言。
         """
 
-        self.install_button.set(self.data_manager.language["main"]["install_button"])
-        self.uninstall_button.set(self.data_manager.language["main"]["uninstall_button"])
-        self.upgrade_button.set(self.data_manager.language["main"]["upgrade_button"])
-        self.setting_button.set(self.data_manager.language["main"]["setting_button"])
+        self.install_button.set(self.data_manager.language["main", "install_button"])
+        self.uninstall_button.set(self.data_manager.language["main", "uninstall_button"])
+        self.upgrade_button.set(self.data_manager.language["main", "upgrade_button"])
+        self.setting_button.set(self.data_manager.language["main", "setting_button"])
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
@@ -109,8 +109,12 @@ class MirrorCanvas(custom.containers.Canvas):
         渲染语言。
         """
 
-        self.title.set(self.data_manager.language["main"]["mirror"])
-        self.switch_button.set(self.data_manager.language["main"]["switch"])
+        self.title.set(self.data_manager.language["main", "mirror"])
+        self.switch_button.set(self.data_manager.language["main", "switch_button"])
+        self.auto_switch_button.set(self.data_manager.language["main", "auto_switch_button"])
+        self.view_button.set(self.data_manager.language["main", "view_button"])
+        self.copy_button.set(self.data_manager.language["main", "copy_button"])
+        self.copy_pip_button.set(self.data_manager.language["main", "copy_pip_button"])
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
@@ -126,7 +130,13 @@ class MirrorCanvas(custom.containers.Canvas):
         self.create_rectangle(ss((0, 0, 350, 50)), fill = custom.color.primary, outline = "")
         self.title = maliang.Text(self, ss((10, 0)), None, anchor = "nw", fontsize = ss(30))
         self.title.style.set(fg = custom.color.white)
-        self.switch_button = custom.widgets.Button(self, ss((340, 25)), ss((100, 30)), anchor = "e", theme = "outline-light", icon = bi("toggles"), fontsize = ss(20))
+        self.switch_button = custom.widgets.Button(self, ss((340, 25)), ss((80, 30)), anchor = "e", theme = "outline-light", icon = bi("toggles"), fontsize = ss(20))
+        self.auto_switch_button = custom.widgets.Button(self, ss((250, 25)), ss((120, 30)), anchor = "e", theme = "outline-light", icon = bi("arrow-repeat"), fontsize = ss(20))
+
+        self.text = maliang.Text(self, ss((20, 65)), None, fontsize = ss(20))
+        self.view_button = custom.widgets.Button(self, ss((250, 65)), ss((80, 30)), theme = "outline-default", icon = bi("eye"), fontsize = ss(20))
+        self.copy_button = custom.widgets.Button(self, ss((20, 110)), ss((80, 30)), theme = "outline-primary", icon = bi("clipboard"), fontsize = ss(20))
+        self.copy_pip_button = custom.widgets.Button(self, ss((130, 110)), ss((200, 30)), theme = "primary", icon = bi("clipboard-data"), fontsize = ss(20))
 
         self.renderLanguage()
 

@@ -218,10 +218,10 @@ class InfoCanvas(custom.containers.Canvas):
         :type position: tuple[int, int]
         """
 
-        self.tip.set(self.data_manager.language["welcome"]["info_tip"])
+        self.tip.set(self.data_manager.language["welcome", "info_tip"])
         self.table.headers([
-            self.data_manager.language["welcome"]["item"],
-            self.data_manager.language["welcome"]["value"],
+            self.data_manager.language["welcome", "item"],
+            self.data_manager.language["welcome", "value"],
         ])
 
         info_data = [
@@ -235,7 +235,7 @@ class InfoCanvas(custom.containers.Canvas):
         self.table.set_sheet_data([])
         for i in range(0, len(info_data)):
             self.table.insert_row([
-                self.data_manager.language["welcome"]["info_treeview"][i],
+                self.data_manager.language["welcome", "info_treeview", i],
                 info_data[i],
             ])
 

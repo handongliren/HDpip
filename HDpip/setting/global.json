@@ -1,5 +1,19 @@
 {
     "language": "zh-CN", 
     "license": false, 
-    "theme": "system"
+    "theme": "system", 
+    "pip": {
+        "mirror_index": 0, 
+        "mirrors": [
+            {
+                "name": "官方", 
+                "url": "https://pypi.org/simple/"
+            }, 
+            {
+                "name": "官方测试",
+                "url": "https://test.pypi.org/simple/", 
+                "test": true
+            }
+        ]
+    }
 }

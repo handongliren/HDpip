@@ -26,6 +26,14 @@
         "save_setting": "保存设置……", 
         "done": "完成"
     }, 
+    "upgrade": {
+        "title": "检查更新", 
+        "tip": "发现新版本{latest_version}，当前版本{current_version}，是否升级？", 
+        "note_button": "查看更新日志", 
+        "confirm_button": "立即升级", 
+        "delay_next_button": "下次提醒", 
+        "delay_week_button": "一周后提醒"
+    }, 
     "main": {
         "description": "一个基于maliang的pip GUI", 
         "install_button": "安装", 

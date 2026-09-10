@@ -74,6 +74,23 @@ class ConfirmCanvas(custom.containers.Canvas):
                 "url"
             ])
         ))
-        self.confirm_button.text.set(self.data_manager.language["upgrade", "confirm_button"])
-        self.delay_next_button.text.set(self.data_manager.language["upgrade", "delay_next_button"])
-        self.delay_week_button.text.set(self.data_manager.language["upgrade", "delay_week_button"])
+        self.note_button.set(self.data_manager.language["upgrade", "note_button"])
+        self.confirm_button.set(self.data_manager.language["upgrade", "confirm_button"])
+        self.delay_next_button.set(self.data_manager.language["upgrade", "delay_next_button"])
+        self.delay_week_button.set(self.data_manager.language["upgrade", "delay_week_button"])
+
+    @override
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager) -> None:
+        """
+        初始化确认画布。
+
+        :param data_manager: 数据管理器
+        :type data_manager: core.data.DataManager
+        """
+
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
+
+        self.tip = maliang.Text(self, ss((200, 50)), None, anchor = "center", justify = "center", fontsize = ss(30))
+        self.note_button = maliang.Button(self, ss((200, 150)), ss((200, 50)), anchor = "center")
+
+        self.renderLanguage()

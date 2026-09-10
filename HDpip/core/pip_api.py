@@ -182,6 +182,8 @@ def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[s
 
     results = []
     for mirror in mirrors:
+        if mirror.get("test", False):
+            continue
         url = mirror["url"]
         t0 = time.time()
         try:

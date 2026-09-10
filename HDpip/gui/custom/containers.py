@@ -27,10 +27,10 @@ except ImportError:
     import core
 
 try:
-    from . import animations, media
+    from . import animations, media, widgets
     from .util import ss
 except ImportError:
-    import animations, media
+    import animations, media, widgets
     from util import ss
 
 class Tk(maliang.core.containers.Tk, abc.ABC):
@@ -283,3 +283,129 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
 
         self.data_manager.language.unregisterEvent(self.onLanguageChange)
         super().destroy()
+
+class PageView(maliang.Canvas):
+    """
+    页面视图容器，用于切换多个画布，效果类似于`Wizard`。
+    """
+
+    def bindBackButton(self, button: widgets.Button) -> None:
+        """
+        绑定上一步按钮。
+
+        :param button: 上一步按钮
+        :type button: widgets.Button
+        """
+
+        self.back_button = button
+        self.back_button.bind("<Button-1>", lambda event: self.back() if not button.disabled else None)
+
+    def bindNextButton(self, button: widgets.Button) -> None:
+        """
+        绑定下一步按钮。
+
+        :param button: 下一步按钮
+        :type button: widgets.Button
+        """
+
+        self.next_button = button
+        self.next_button.bind("<Button-1>", lambda event: self.next() if not button.disabled else None)
+
+    @override
+    def __init__(
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        canvas_class: list[type[Canvas]] = [], 
+        content_argvs: list[Any] = [], 
+        content_kwargs: dict[str, Any] = {}, 
+        *, 
+        animation: bool = True, 
+        back_button: widgets.Button | None = None, 
+        next_button: widgets.Button | None = None
+    ):
+        """
+        :param master: 父控件
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :param canvas_class: 画布类列表
+        :type canvas_class: list[type[Canvas]]
+        :param content_argvs: 内容参数列表
+        :type content_argvs: list[Any]
+        :param content_kwargs: 内容关键字参数
+        :type content_kwargs: dict[str, Any]
+        :param animation: 是否启用动画
+        :type animation: bool
+        :param back_button: 返回按钮
+        :type back_button: widgets.Button | None
+        :param next_button: 下一步按钮
+        :type next_button: widgets.Button | None
+        """
+
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
+
+        self.canvas_index = 0
+        self.canvas_list: list[Canvas] = []
+        self.canvas_class = canvas_class
+        self.content_argvs = content_argvs
+        self.content_kwargs = content_kwargs
+        self.animation = animation
+        if back_button is not None:
+            self.bindBackButton(back_button)
+        if next_button is not None:
+            self.bindNextButton(next_button)
+        self.move_lock = False
+
+        for _ in range(0, len(self.canvas_class)):
+            self.canvas_list.append("uninited")
+
+    def switchCanvas(self, index: int) -> None:
+        """
+        切换至指定画布。
+
+        :param index: 索引
+        :type index: int
+        """
+
+        if self.move_lock:
+            return
+        if index == 0:
+            self.back_button.disable()
+            self.next_button.disable(False)
+        elif index == len(self.canvas_class) - 1:
+            self.back_button.disable(False)
+            self.next_button.disable()
+        else:
+            self.back_button.disable(False)
+            self.next_button.disable(False)
+        if self.canvas_list[index] == "uninited":
+            self.canvas_list[index] = self.canvas_class[index](self, *self.content_argvs, **self.content_kwargs)
+            self.canvas_list[index].place(x = index * ss(1200), y = 0, width = ss(1200), height = ss(700))
+        if self.animation:
+            self.move_lock = True
+            maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * ss(1200), 0), 500, controller = maliang.animation.smooth, fps = 60, end = lambda: setattr(self, "move_lock", False)).start()
+        else:
+            self.place(x = -index * ss(1200), y = 0)
+        self.canvas_index = index
+
+    def walkCanvas(self, index: int) -> None:
+        """
+        相对步进画布。
+
+        :param index: 索引
+        :type index: int
+        """
+
+        self.switchCanvas(self.canvas_index + index)
+
+    def back(self) -> None:
+        """
+        上一步。
+        """
+
+        self.walkCanvas(-1)
+
+    def next(self) -> None:
+        """
+        下一步。
+        """
+
+        self.walkCanvas(1)

@@ -129,7 +129,7 @@ class LicenseCanvas(custom.containers.Canvas):
 
     def command(self, agree: bool) -> None:
         self.data_manager.setting["license"] = True
-        self.master.button_canvas.next_button.disable(not agree)
+        self.master.next_button.disable(not agree)
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
@@ -316,8 +316,10 @@ class EndCanvas(custom.containers.Canvas):
         self.button.set(self.data_manager.language["welcome", "end_button"])
 
     def command(self, *argvs, **kargvs):
+        if self.button.disabled:
+            return
         self.button.disable(True)
-        self.master.button_canvas.back_button.disable(True)
+        self.master.back_button.disable(True)
         self.scrolled_text.configure(state = tkinter.NORMAL)
         self.scrolled_text.delete(1.0, tkinter.END)
         self.scrolled_text.insert(tkinter.END, self.data_manager.language["welcome", "auto_setting"])
@@ -334,15 +336,15 @@ class EndCanvas(custom.containers.Canvas):
         self.scrolled_text.configure(state = tkinter.DISABLED)
         maliang.animation.MoveWidget(
             (
-                self.master.button_canvas.back_button,
-                self.master.button_canvas.next_button
+                self.master.back_button,
+                self.master.next_button
             ),
             (0, ss(200)), 1000, controller = maliang.animation.smooth, fps = 60
         ).start()
         def _() -> None:
             import sys
             import subprocess
-            self.master.master.master.destroy()
+            self.winfo_toplevel().destroy()
             subprocess.Popen(
                 [sys.executable, str(base_dir / "main.py")],
                 stdin = subprocess.DEVNULL,
@@ -375,35 +377,12 @@ class EndCanvas(custom.containers.Canvas):
         self.renderLanguage()
         self.after(2000, self.renderLanguage)
 
-class PageCanvas(maliang.Canvas):
+class WelcomePageView(custom.containers.PageView):
     """
-    页面画布，包含欢迎页面的主要内容区域。
+    欢迎页面视图，额外处理进入许可画布时的下一步按钮状态。
     """
 
     @override
-    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
-        """
-        :param master: 父控件
-        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
-        :param data_manager: 数据管理器
-        :type data_manager: core.data.DataManager
-        """
-
-        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True)
-        self.data_manager = data_manager
-        self.button_canvas: ButtonCanvas = None
-        self.canvas_index = 0
-        self.canvas_list = []
-        self.canvas_guide = [
-            LanguageCanvas,
-            LicenseCanvas,
-            ThemeCanvas,
-            InfoCanvas,
-            EndCanvas
-        ]
-        for _ in range(0, len(self.canvas_guide)):
-            self.canvas_list.append("uninited")
-
     def switchCanvas(self, index: int) -> None:
         """
         切换至指定画布。
@@ -412,32 +391,9 @@ class PageCanvas(maliang.Canvas):
         :type index: int
         """
 
-        if index == 0:
-            self.button_canvas.back_button.disable()
-            self.button_canvas.next_button.disable(False)
-        elif index == len(self.canvas_guide) - 1:
-            self.button_canvas.back_button.disable(False)
-            self.button_canvas.next_button.disable()
-        else:
-            self.button_canvas.back_button.disable(False)
-            self.button_canvas.next_button.disable(False)
-        if self.canvas_list[index] == "uninited":
-            self.canvas_list[index] = self.canvas_guide[index](self, self.data_manager)
-            self.canvas_list[index].place(x = index * ss(1200), y = 0, width = ss(1200), height = ss(700))
-        if index == 1:
-            self.button_canvas.next_button.disable(not self.canvas_list[1].checkbox.get())
-        maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * ss(1200), 0), 500, controller = maliang.animation.smooth, fps = 60).start()
-        self.canvas_index = index
-
-    def walkCanvas(self, index: int) -> None:
-        """
-        相对步进画布。
-
-        :param index: 索引
-        :type index: int
-        """
-
-        self.switchCanvas(self.canvas_index + index)
+        super().switchCanvas(index)
+        if index == 1 and self.canvas_index == 1:
+            self.next_button.disable(not self.canvas_list[1].checkbox.get())
 
 class ButtonCanvas(custom.containers.Canvas):
     """
@@ -463,7 +419,7 @@ class ButtonCanvas(custom.containers.Canvas):
         """
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
-        self.content_canvas: PageCanvas = None
+        self.content_canvas: custom.containers.PageView = None
         self.button: custom.widgets.Button = None
         self.back_button: custom.widgets.Button = None
         self.next_button: custom.widgets.Button = None
@@ -477,16 +433,17 @@ class ButtonCanvas(custom.containers.Canvas):
         def _() -> None:
             def _() -> None:
                 def _() -> None:
-                    def back() -> None:
-                        content_canvas.walkCanvas(-1)
-                    def next() -> None:
-                        content_canvas.walkCanvas(1)
-                    back_button = self.back_button = custom.widgets.Button(self, ss((100, 150)), ss((100, 50)), theme = "outline-light", text = "上一步", icon = bi("chevron-left"), anchor = "center", command = back)
-                    next_button = self.next_button = custom.widgets.Button(self, ss((1100, 150)), ss((100, 50)), theme = "outline-light", text = "下一步", icon = bi("chevron-right"), icon_position = "right", anchor = "center", command = next)
+                    back_button = self.back_button = custom.widgets.Button(self, ss((100, 150)), ss((100, 50)), theme = "outline-light", text = "上一步", icon = bi("chevron-left"), anchor = "center")
+                    next_button = self.next_button = custom.widgets.Button(self, ss((1100, 150)), ss((100, 50)), theme = "outline-light", text = "下一步", icon = bi("chevron-right"), icon_position = "right", anchor = "center")
                     self.content_canvas.destroy()
-                    content_canvas = self.content_canvas = PageCanvas(self.master, self.data_manager)
-                    content_canvas.button_canvas = self
-                    content_canvas.place(x = 0, y = 0, width = ss(1200) * len(content_canvas.canvas_list), height = ss(700))
+                    content_canvas = self.content_canvas = WelcomePageView(
+                        self.master, 
+                        canvas_class = [LanguageCanvas, LicenseCanvas, ThemeCanvas, InfoCanvas, EndCanvas], 
+                        content_argvs = [self.data_manager], 
+                        back_button = back_button, 
+                        next_button = next_button
+                    )
+                    content_canvas.place(x = 0, y = 0, width = ss(1200) * len(content_canvas.canvas_class), height = ss(700))
                     content_canvas.switchCanvas(0)
                     maliang.animation.MoveWidget((back_button, next_button), (0, ss(-100)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 250)
                 maliang.animation.MoveTkWidget(self.content_canvas, (0, ss(-1000)), 1000, controller = maliang.animation.ease_in, end = _, fps = 60).start()

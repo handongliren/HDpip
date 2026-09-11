@@ -90,10 +90,51 @@ class ConfirmCanvas(custom.containers.Canvas):
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
-        self.tip = maliang.Text(self, ss((300, 50)), None, anchor = "center", justify = "center", fontsize = ss(30))
-        self.note_button = maliang.Button(self, ss((300, 150)), ss((200, 50)), anchor = "center")
-        self.confirm_button = maliang.Button(self, ss((150, 250)), ss((100, 50)), anchor = "center")
-        self.delay_next_button = maliang.Button(self, ss((450, 250)), ss((100, 50)), anchor = "center")
-        self.delay_week_button = maliang.Button(self, ss((300, 450)), ss((200, 50)), anchor = "center")
+        self.tip = maliang.Text(self, ss((300, 75)), None, anchor = "center", justify = "center", fontsize = ss(30))
+        self.note_button = custom.widgets.Button(self, ss((300, 200)), ss((300, 50)), anchor = "center", theme = "outline-primary")
+        self.confirm_button = custom.widgets.Button(self, ss((150, 275)), ss((200, 50)), anchor = "center", theme = "primary")
+        self.delay_next_button = custom.widgets.Button(self, ss((450, 275)), ss((200, 50)), anchor = "center", theme = "outline-warning")
+        self.delay_week_button = custom.widgets.Button(self, ss((300, 350)), ss((300, 50)), anchor = "center", theme = "outline-danger")
 
         self.renderLanguage()
+
+class Upgrade(custom.containers.Tk):
+    """
+    更新窗口。
+    """
+
+    @override
+    def renderLanguage(self) -> None:
+        """
+        渲染语言。
+        """
+
+        self.quickTitle(self.data_manager.language["upgrade", "title"])
+
+    @override
+    def __init__(self, data_manager: core.data.DataManager = core.data.data_manager) -> None:
+        """
+        :param data_manager: 数据管理器
+        :type data_manager: core.data.DataManager
+        """
+
+        super().__init__(ss((600, 400)), data_manager = data_manager, icon = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
+        self.icon_ = maliang.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
+        maliang.core.configs.Env.system = "Windows11"
+        maliang.core.configs.Env.auto_update = True
+
+        self.pageview = custom.containers.PageView(
+            self, 
+            [
+                ConfirmCanvas
+            ], 
+            [], 
+            {"data_manager": data_manager}
+        )
+        self.pageview.place(width = ss(600), height = ss(400), x = 0, y = 0)
+        self.pageview.switchCanvas(0)
+
+        self.renderLanguage()
+
+if __name__ == "__main__":
+    Upgrade().mainloop()

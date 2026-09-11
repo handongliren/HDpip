@@ -369,14 +369,20 @@ class PageView(maliang.Canvas):
         if self.move_lock:
             return
         if index == 0:
-            self.back_button.disable()
-            self.next_button.disable(False)
+            if hasattr(self, "back_button") and self.back_button is not None:
+                self.back_button.disable()
+            if hasattr(self, "next_button") and self.next_button is not None:
+                self.next_button.disable(False)
         elif index == len(self.canvas_class) - 1:
-            self.back_button.disable(False)
-            self.next_button.disable()
+            if hasattr(self, "back_button") and self.back_button is not None:
+                self.back_button.disable(False)
+            if hasattr(self, "next_button") and self.next_button is not None:
+                self.next_button.disable()
         else:
-            self.back_button.disable(False)
-            self.next_button.disable(False)
+            if hasattr(self, "back_button") and self.back_button is not None:
+                self.back_button.disable(False)
+            if hasattr(self, "next_button") and self.next_button is not None:
+                self.next_button.disable(False)
         if self.canvas_list[index] == "uninited":
             self.canvas_list[index] = self.canvas_class[index](self, *self.content_argvs, **self.content_kwargs)
             self.canvas_list[index].place(x = index * ss(1200), y = 0, width = ss(1200), height = ss(700))

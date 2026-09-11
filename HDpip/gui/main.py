@@ -161,7 +161,7 @@ class Main(custom.containers.Tk):
         """
 
         super().__init__(ss((1200, 800)), title = "寒冬pip(HDpip)", data_manager = data_manager, icon = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
-        self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
+        self.icon_ = maliang.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
 
@@ -189,9 +189,9 @@ class Main(custom.containers.Tk):
 if __name__ == "__main__":
     import subprocess
     subprocess.Popen(
-        [sys.executable, str(base_dir / "main.py")],
-        stdin = subprocess.DEVNULL,
-        stdout = subprocess.DEVNULL,
-        stderr = subprocess.DEVNULL,
+        [sys.executable, str(base_dir / "main.py")], 
+        stdin = subprocess.DEVNULL, 
+        stdout = subprocess.DEVNULL, 
+        stderr = subprocess.DEVNULL, 
         creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     )

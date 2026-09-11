@@ -3,7 +3,6 @@ import pytest
 import HDpip
 from HDpip.gui.custom import util
 
-
 class TestGuiBase:
     """GUI 基础函数测试。"""
 

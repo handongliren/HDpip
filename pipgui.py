@@ -7,9 +7,9 @@ from datetime import datetime
 
 # PyQt6模块导入
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QListWidget, QListWidgetItem, QLabel, QDialog, QFormLayout, QLineEdit,
-    QDialogButtonBox, QMessageBox, QTextEdit, QRadioButton, QButtonGroup,
+    QApplication, QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, 
+    QListWidget, QListWidgetItem, QLabel, QDialog, QFormLayout, QLineEdit, 
+    QDialogButtonBox, QMessageBox, QTextEdit, QRadioButton, QButtonGroup, 
     QStatusBar, QSplitter, QTabWidget
 )
 from PyQt6.QtCore import Qt, QSize
@@ -33,16 +33,16 @@ class PipManager(QMainWindow):
 
         # 初始化镜像源配置
         self.mirrors = {
-            "官方": "https://pypi.org/simple/",
-            "官方测试": "https://test.pypi.org/simple/",
-            "清华大学": "https://pypi.tuna.tsinghua.edu.cn/simple/",
-            "阿里云（推荐）": "https://mirrors.aliyun.com/pypi/simple/",
-            "网易": "https://mirrors.163.com/pypi/simple/",
-            "豆瓣": "https://pypi.douban.com/simple/",
-            "百度云": "https://mirror.baidu.com/pypi/simple/",
-            "中国科技大学（推荐）": "https://pypi.mirrors.ustc.edu.cn/simple/",
-            "华为云": "https://mirrors.huaweicloud.com/repository/pypi/simple/",
-            "腾讯云": "https://mirrors.cloud.tencent.com/pypi/simple/",
+            "官方": "https://pypi.org/simple/", 
+            "官方测试": "https://test.pypi.org/simple/", 
+            "清华大学": "https://pypi.tuna.tsinghua.edu.cn/simple/", 
+            "阿里云（推荐）": "https://mirrors.aliyun.com/pypi/simple/", 
+            "网易": "https://mirrors.163.com/pypi/simple/", 
+            "豆瓣": "https://pypi.douban.com/simple/", 
+            "百度云": "https://mirror.baidu.com/pypi/simple/", 
+            "中国科技大学（推荐）": "https://pypi.mirrors.ustc.edu.cn/simple/", 
+            "华为云": "https://mirrors.huaweicloud.com/repository/pypi/simple/", 
+            "腾讯云": "https://mirrors.cloud.tencent.com/pypi/simple/", 
         }
 
         # 初始化UI
@@ -276,16 +276,16 @@ class PipManager(QMainWindow):
         <p>使用国内镜像源可以大幅提高包的下载速度。本工具内置了以下常用镜像源：</p>
 
         <ul>
-            <li><b>官方</b>: https://pypi.org/simple/（国内访问较慢！）,
-            <li><b>官方测试</b>: https://test.pypi.org/simple/（国内访问较慢，<b>并且这不是一个正式源！</b>）,
-            <li><b>清华大学</b>: https://pypi.tuna.tsinghua.edu.cn/simple/,
-            <li><b>阿里云</b>: https://mirrors.aliyun.com/pypi/simple/（推荐）,
-            <li><b>网易</b>: https://mirrors.163.com/pypi/simple/,
-            <li><b>豆瓣</b>: https://pypi.douban.com/simple/,
-            <li><b>百度云</b>: https://mirror.baidu.com/pypi/simple/,
-            <li><b>中国科技大学</b>: https://pypi.mirrors.ustc.edu.cn/simple/（推荐）,
-            <li><b>华为云</b>: https://mirrors.huaweicloud.com/repository/pypi/simple/,
-            <li><b>腾讯云</b>: https://mirrors.cloud.tencent.com/pypi/simple/,
+            <li><b>官方</b>: https://pypi.org/simple/（国内访问较慢！）, 
+            <li><b>官方测试</b>: https://test.pypi.org/simple/（国内访问较慢，<b>并且这不是一个正式源！</b>）, 
+            <li><b>清华大学</b>: https://pypi.tuna.tsinghua.edu.cn/simple/, 
+            <li><b>阿里云</b>: https://mirrors.aliyun.com/pypi/simple/（推荐）, 
+            <li><b>网易</b>: https://mirrors.163.com/pypi/simple/, 
+            <li><b>豆瓣</b>: https://pypi.douban.com/simple/, 
+            <li><b>百度云</b>: https://mirror.baidu.com/pypi/simple/, 
+            <li><b>中国科技大学</b>: https://pypi.mirrors.ustc.edu.cn/simple/（推荐）, 
+            <li><b>华为云</b>: https://mirrors.huaweicloud.com/repository/pypi/simple/, 
+            <li><b>腾讯云</b>: https://mirrors.cloud.tencent.com/pypi/simple/, 
         </ul>
 
         <h3>如何设置镜像源</h3>
@@ -344,8 +344,8 @@ class PipManager(QMainWindow):
     def show_about(self):
         """显示关于对话框"""
         QMessageBox.about(
-            self,
-            "关于 Python PIP 图形化管理工具",
+            self, 
+            "关于 Python PIP 图形化管理工具", 
             """<h3>Python PIP 图形化管理工具 v1.1.0</h3>
             <p>一个用于管理多个Python版本包的图形界面工具</p>
             <p>主要功能:</p>
@@ -448,7 +448,7 @@ class PipManager(QMainWindow):
 
         # 检查Program Files
         program_files = [
-            os.environ.get('ProgramFiles', 'C:\\Program Files'),
+            os.environ.get('ProgramFiles', 'C:\\Program Files'), 
             os.environ.get('ProgramFiles(x86)', 'C:\\Program Files (x86)')
         ]
 
@@ -484,7 +484,7 @@ class PipManager(QMainWindow):
         # 使用which命令查找Python
         for exe in python_executables:
             try:
-                result = subprocess.run(['which', exe],
+                result = subprocess.run(['which', exe], 
                                       capture_output=True, text=True, check=False)
                 if result.returncode == 0 and result.stdout.strip():
                     self._add_python_installation(result.stdout.strip())
@@ -493,7 +493,7 @@ class PipManager(QMainWindow):
 
         # 检查常见安装位置
         common_paths = [
-            '/usr/bin', '/usr/local/bin', '/opt/local/bin',
+            '/usr/bin', '/usr/local/bin', '/opt/local/bin', 
             '/Library/Frameworks/Python.framework/Versions'
         ]
 
@@ -510,8 +510,8 @@ class PipManager(QMainWindow):
         try:
             # 获取Python版本
             result = subprocess.run(
-                [python_path, '--version'],
-                capture_output=True, text=True, check=False,
+                [python_path, '--version'], 
+                capture_output=True, text=True, check=False, 
                 startupinfo=self._get_startupinfo()
             )
 
@@ -524,7 +524,7 @@ class PipManager(QMainWindow):
                         return
 
                 self.python_installations.append({
-                    'path': python_path,
+                    'path': python_path, 
                     'version': version
                 })
         except Exception:
@@ -555,8 +555,8 @@ class PipManager(QMainWindow):
         try:
             # 执行pip list命令获取已安装包
             result = subprocess.run(
-                [self.current_python['path'], '-m', 'pip', 'list', '--format=json'],
-                capture_output=True, text=True, check=False,
+                [self.current_python['path'], '-m', 'pip', 'list', '--format=json'], 
+                capture_output=True, text=True, check=False, 
                 startupinfo=self._get_startupinfo()
             )
 
@@ -605,8 +605,8 @@ class PipManager(QMainWindow):
         try:
             # 执行pip show命令获取包详情
             result = subprocess.run(
-                [self.current_python['path'], '-m', 'pip', 'show', pkg_name],
-                capture_output=True, text=True, check=False,
+                [self.current_python['path'], '-m', 'pip', 'show', pkg_name], 
+                capture_output=True, text=True, check=False, 
                 startupinfo=self._get_startupinfo()
             )
 
@@ -662,8 +662,8 @@ class PipManager(QMainWindow):
 
             # 确认安装
             confirm = QMessageBox.question(
-                self, '确认安装',
-                f'确定要安装 {pkg_name}{"=="+version if version else ""} 吗?{mirror_info}',
+                self, '确认安装', 
+                f'确定要安装 {pkg_name}{"=="+version if version else ""} 吗?{mirror_info}', 
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             )
 
@@ -685,8 +685,8 @@ class PipManager(QMainWindow):
 
         # 确认卸载
         confirm = QMessageBox.question(
-            self, '确认卸载',
-            f'确定要卸载 {pkg_name} 吗?',
+            self, '确认卸载', 
+            f'确定要卸载 {pkg_name} 吗?', 
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
 
@@ -708,8 +708,8 @@ class PipManager(QMainWindow):
 
         # 确认升级
         confirm = QMessageBox.question(
-            self, '确认升级',
-            f'确定要升级 {pkg_name} 吗?',
+            self, '确认升级', 
+            f'确定要升级 {pkg_name} 吗?', 
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
 
@@ -755,12 +755,12 @@ class PipManager(QMainWindow):
 
             # 执行命令并实时输出
             process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                universal_newlines=True,
+                cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE, 
+                text=True, 
+                bufsize=1, 
+                universal_newlines=True, 
                 startupinfo=startupinfo  # 添加这个参数来隐藏窗口
             )
 
@@ -779,8 +779,8 @@ class PipManager(QMainWindow):
             # 显示结果
             if return_code == 0:
                 operation_name = {
-                    'install': '安装',
-                    'uninstall': '卸载',
+                    'install': '安装', 
+                    'uninstall': '卸载', 
                 }
 
                 op_name = operation_name.get(command, command)
@@ -799,7 +799,7 @@ class PipManager(QMainWindow):
         except Exception as e:
             self.status_bar.showMessage(f"操作失败", 5000)
             QMessageBox.critical(
-                self, '操作失败',
+                self, '操作失败', 
                 f'操作执行失败:\n{str(e)}'
             )
             self.info_text.append(f"\n错误信息:\n{str(e)}")

@@ -33,27 +33,27 @@ class Button(maliang.Button):
 
     @override
     def switchTheme(
-        self,
+        self, 
         theme: Literal[
-            "default",
-            "primary",
-            "secondary",
-            "success",
-            "info",
-            "warning",
-            "danger",
-            "light",
-            "dark",
-            "outline-default",
-            "outline-primary",
-            "outline-secondary",
-            "outline-success",
-            "outline-info",
-            "outline-warning",
-            "outline-danger",
-            "outline-light",
+            "default", 
+            "primary", 
+            "secondary", 
+            "success", 
+            "info", 
+            "warning", 
+            "danger", 
+            "light", 
+            "dark", 
+            "outline-default", 
+            "outline-primary", 
+            "outline-secondary", 
+            "outline-success", 
+            "outline-info", 
+            "outline-warning", 
+            "outline-danger", 
+            "outline-light", 
             "outline-dark"
-        ] = "default",
+        ] = "default", 
         disabled: bool = False
     ) -> None:
         """
@@ -78,54 +78,54 @@ class Button(maliang.Button):
                 match color_:
                     case "default":
                         self.style.set(
-                            "light",
-                            fg = (color.light, color.light, color.light_subtle),
-                            bg = (color.dark, color.dark, color.dark_subtle),
+                            "light", 
+                            fg = (color.light, color.light, color.light_subtle), 
+                            bg = (color.dark, color.dark, color.dark_subtle), 
                             ol = (color.dark, color.dark, color.dark_subtle)
                         )
                         self.style.set(
-                            "dark",
-                            fg = (color.dark, color.dark, color.dark_subtle),
-                            bg = (color.light, color.light, color.light_subtle),
+                            "dark", 
+                            fg = (color.dark, color.dark, color.dark_subtle), 
+                            bg = (color.light, color.light, color.light_subtle), 
                             ol = (color.light, color.light, color.light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (color.dark, color.dark, color.dark_subtle),
-                            bg = (color.light, color.light, color.light_subtle),
+                            fg = (color.dark, color.dark, color.dark_subtle), 
+                            bg = (color.light, color.light, color.light_subtle), 
                             ol = (color.light, color.light, color.light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (color.light, color.light, color.light_subtle),
-                            bg = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1]),
+                            fg = (color.light, color.light, color.light_subtle), 
+                            bg = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1]), 
                             ol = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1])
                         )
             else:
                 match color_:
                     case "default":
                         self.style.set(
-                            "light",
-                            fg = (color.dark, color.light, color.light_subtle),
-                            bg = ("", color.dark, color.dark_subtle),
+                            "light", 
+                            fg = (color.dark, color.light, color.light_subtle), 
+                            bg = ("", color.dark, color.dark_subtle), 
                             ol = (color.dark, color.dark, color.dark_subtle)
                         )
                         self.style.set(
-                            "dark",
-                            fg = (color.light, color.dark, color.dark_subtle),
-                            bg = ("", color.light, color.light_subtle),
+                            "dark", 
+                            fg = (color.light, color.dark, color.dark_subtle), 
+                            bg = ("", color.light, color.light_subtle), 
                             ol = (color.light, color.light, color.light_subtle)
                         )
                     case "light":
                         self.style.set(
-                            fg = (color.light, color.dark, color.dark_subtle),
-                            bg = ("", color.light, color.light_subtle),
+                            fg = (color.light, color.dark, color.dark_subtle), 
+                            bg = ("", color.light, color.light_subtle), 
                             ol = (color.light, color.light, color.light_subtle)
                         )
                     case _:
                         self.style.set(
-                            fg = (color.colors[color_][0], color.light, color.light_subtle),
-                            bg = ("", color.colors[color_][0], color.colors[color_][1]),
+                            fg = (color.colors[color_][0], color.light, color.light_subtle), 
+                            bg = ("", color.colors[color_][0], color.colors[color_][1]), 
                             ol = (color.colors[color_][0], color.colors[color_][0], color.colors[color_][1])
                         )
         else:
@@ -133,54 +133,54 @@ class Button(maliang.Button):
                 match color_:
                     case "default":
                         self.style.set(
-                            "light",
-                            fg = color.light_subtle,
-                            bg = color.dark_subtle,
+                            "light", 
+                            fg = color.light_subtle, 
+                            bg = color.dark_subtle, 
                             ol = color.dark_subtle
                         )
                         self.style.set(
-                            "dark",
-                            fg = color.dark_subtle,
-                            bg = color.light_subtle,
+                            "dark", 
+                            fg = color.dark_subtle, 
+                            bg = color.light_subtle, 
                             ol = color.light_subtle
                         )
                     case "light":
                         self.style.set(
-                            fg = color.dark_subtle,
-                            bg = color.light_subtle,
+                            fg = color.dark_subtle, 
+                            bg = color.light_subtle, 
                             ol = color.light_subtle
                         )
                     case _:
                         self.style.set(
-                            fg = color.light_subtle,
-                            bg = color.colors[color_][1],
+                            fg = color.light_subtle, 
+                            bg = color.colors[color_][1], 
                             ol = color.colors[color_][1]
                         )
             else:
                 match color_:
                     case "default":
                         self.style.set(
-                            "light",
-                            fg = color.dark_subtle,
-                            bg = "",
+                            "light", 
+                            fg = color.dark_subtle, 
+                            bg = "", 
                             ol = color.dark_subtle
                         )
                         self.style.set(
-                            "dark",
-                            fg = color.light_subtle,
-                            bg = "",
+                            "dark", 
+                            fg = color.light_subtle, 
+                            bg = "", 
                             ol = color.light_subtle
                         )
                     case "light":
                         self.style.set(
-                            fg = color.light_subtle,
-                            bg = "",
+                            fg = color.light_subtle, 
+                            bg = "", 
                             ol = color.light_subtle
                         )
                     case _:
                         self.style.set(
-                            fg = color.colors[color_][1],
-                            bg = "",
+                            fg = color.colors[color_][1], 
+                            bg = "", 
                             ol = color.colors[color_][1]
                         )
         if self.icon and not self.use_original_icon:
@@ -195,48 +195,48 @@ class Button(maliang.Button):
 
     @override
     def __init__(
-        self,
-        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        position: tuple[int, int],
-        size: tuple[int, int] | None = None,
-        *,
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        position: tuple[int, int], 
+        size: tuple[int, int] | None = None, 
+        *, 
         theme: Literal[
-            "default",
-            "primary",
-            "secondary",
-            "success",
-            "info",
-            "warning",
-            "danger",
-            "light",
-            "dark",
-            "outline-default",
-            "outline-primary",
-            "outline-secondary",
-            "outline-success",
-            "outline-info",
-            "outline-warning",
-            "outline-danger",
-            "outline-light",
+            "default", 
+            "primary", 
+            "secondary", 
+            "success", 
+            "info", 
+            "warning", 
+            "danger", 
+            "light", 
+            "dark", 
+            "outline-default", 
+            "outline-primary", 
+            "outline-secondary", 
+            "outline-success", 
+            "outline-info", 
+            "outline-warning", 
+            "outline-danger", 
+            "outline-light", 
             "outline-dark"
-        ] = "default",
-        text: str = "",
-        family: str | None = None,
-        fontsize: int | None = util.ss(25),
-        weight: Literal['normal', 'bold'] = "normal",
-        slant: Literal['roman', 'italic'] = "roman",
-        underline: bool = False,
-        overstrike: bool = False,
-        justify: Literal["left", "center", "right"] = "left",
-        command: Callable | None = None,
-        icon: media.Image | None = None,
-        icon_position: Literal["left", "right"] = "left",
-        use_original_icon: bool = False,
-        anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw",
-        capture_events: bool | None = None,
-        gradient_animation: bool | None = None,
-        auto_update: bool | None = None,
-        style: type[maliang.core.virtual.Style] | None = None,
+        ] = "default", 
+        text: str = "", 
+        family: str | None = None, 
+        fontsize: int | None = util.ss(25), 
+        weight: Literal['normal', 'bold'] = "normal", 
+        slant: Literal['roman', 'italic'] = "roman", 
+        underline: bool = False, 
+        overstrike: bool = False, 
+        justify: Literal["left", "center", "right"] = "left", 
+        command: Callable | None = None, 
+        icon: media.Image | None = None, 
+        icon_position: Literal["left", "right"] = "left", 
+        use_original_icon: bool = False, 
+        anchor: Literal["n", "e", "w", "s", "nw", "ne", "sw", "se", "center"] = "nw", 
+        capture_events: bool | None = None, 
+        gradient_animation: bool | None = None, 
+        auto_update: bool | None = None, 
+        style: type[maliang.core.virtual.Style] | None = None, 
     ):
         """
         :param master: 父控件
@@ -290,23 +290,23 @@ class Button(maliang.Button):
             self.icon = media.Icon({"origin": None}, image = icon, size = (fontsize, fontsize))
             text = ("　" + text) if icon_position == "left" else (text + "　")
         super().__init__(
-            master,
-            position,
-            size,
-            text = text,
-            family = family,
-            fontsize = fontsize,
-            weight = weight,
-            slant = slant,
-            underline = underline,
-            overstrike = overstrike,
-            justify = justify,
-            command = command,
-            image = self.icon["origin"] if self.icon else None,
-            anchor = anchor,
-            capture_events = capture_events,
-            gradient_animation = gradient_animation,
-            auto_update = auto_update,
+            master, 
+            position, 
+            size, 
+            text = text, 
+            family = family, 
+            fontsize = fontsize, 
+            weight = weight, 
+            slant = slant, 
+            underline = underline, 
+            overstrike = overstrike, 
+            justify = justify, 
+            command = command, 
+            image = self.icon["origin"] if self.icon else None, 
+            anchor = anchor, 
+            capture_events = capture_events, 
+            gradient_animation = gradient_animation, 
+            auto_update = auto_update, 
             style = style
         )
         if self.icon is not None:
@@ -364,11 +364,11 @@ class Button(maliang.Button):
 
     @override
     def update(
-        self,
-        state: str | None = None,
-        *,
-        gradient_animation: bool | None = None,
-        nested: bool = False,
+        self, 
+        state: str | None = None, 
+        *, 
+        gradient_animation: bool | None = None, 
+        nested: bool = False, 
     ) -> None:
         """
         更新控件，并根据状态切换图标。

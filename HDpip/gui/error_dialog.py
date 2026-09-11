@@ -32,27 +32,27 @@ except ImportError:
 
 language_dict = {
     "zh-CN": {
-        "title": "错误捕捉",
-        "ok": "确认",
-        "copy": "复制",
-        "export": "导出",
-        "placeholder": "没有错误，你好啊！",
-        "export_title": "导出错误为日志文件",
-        "log_file": "日志文件",
-        "all_files": "所有文件",
-        "warning": "警告",
+        "title": "错误捕捉", 
+        "ok": "确认", 
+        "copy": "复制", 
+        "export": "导出", 
+        "placeholder": "没有错误，你好啊！", 
+        "export_title": "导出错误为日志文件", 
+        "log_file": "日志文件", 
+        "all_files": "所有文件", 
+        "warning": "警告", 
         "export_reject": "禁止将任何文件保存在HDpip的目录中！"
-    },
+    }, 
     "en": {
-        "title": "Error Catcher",
-        "ok": "OK",
-        "copy": "Copy",
-        "export": "Export",
-        "placeholder": "There isn't any error. Hi!",
-        "export_title": "Export Error as a Log File",
-        "log_file": "Log file",
-        "all_files": "All files",
-        "warning": "Warning",
+        "title": "Error Catcher", 
+        "ok": "OK", 
+        "copy": "Copy", 
+        "export": "Export", 
+        "placeholder": "There isn't any error. Hi!", 
+        "export_title": "Export Error as a Log File", 
+        "log_file": "Log file", 
+        "all_files": "All files", 
+        "warning": "Warning", 
         "export_reject": "You mustn't save any file in HDpip's directory!"
     }
 }
@@ -81,9 +81,9 @@ def copyCommand(*argvs, **kargvs) -> None:
 
 def exportCommand(*argvs, **kargvs) -> None:
     file = pathlib.Path(tkinter.filedialog.asksaveasfilename(
-        filetypes = [(language["log_file"], ".log"), (language["all_files"], ".*")],
-        title = language["export_title"],
-        initialfile = "error.log",
+        filetypes = [(language["log_file"], ".log"), (language["all_files"], ".*")], 
+        title = language["export_title"], 
+        initialfile = "error.log", 
         initialdir = str(base_dir.parents[0])
     )).resolve()
     if not file.is_dir():
@@ -94,14 +94,14 @@ def exportCommand(*argvs, **kargvs) -> None:
             file.write_text(error, encoding = "utf-8")
 
 dialog_arguments = {
-    "size": ss((800, 600)),
-    "position": None,
-    "title": language["title"],
-    "text": error,
-    "theme": "danger",
+    "size": ss((800, 600)), 
+    "position": None, 
+    "title": language["title"], 
+    "text": error, 
+    "theme": "danger", 
     "button": [
-        {"text": language["copy"], "theme": "outline-danger", "command": copyCommand},
-        {"text": language["export"], "theme": "outline-danger", "command": exportCommand},
+        {"text": language["copy"], "theme": "outline-danger", "command": copyCommand}, 
+        {"text": language["export"], "theme": "outline-danger", "command": exportCommand}, 
         {"text": language["ok"], "theme": "danger"}
     ]
 }

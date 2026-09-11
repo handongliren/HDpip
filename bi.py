@@ -55,9 +55,9 @@ def search(bi_name: str) -> None:
 
 def main() -> None:
     actions = {
-        "copy": copy,
-        "delete": delete,
-        "search": search,
+        "copy": copy, 
+        "delete": delete, 
+        "search": search, 
     }
 
     parser = argparse.ArgumentParser(description = "Bootstrap Icons 文件管理工具")
@@ -65,9 +65,9 @@ def main() -> None:
 
     for name, func in actions.items():
         subparser = subparsers.add_parser(
-            name,
-            description = func.__doc__.strip().splitlines()[0].strip(),
-            help = func.__doc__.strip().splitlines()[0].strip(),
+            name, 
+            description = func.__doc__.strip().splitlines()[0].strip(), 
+            help = func.__doc__.strip().splitlines()[0].strip(), 
         )
         subparser.add_argument("bi_name", help = "Bootstrap Icons 名称（不含扩展名）")
 

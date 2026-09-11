@@ -9,10 +9,10 @@ base_dir = pathlib.Path(__file__).parents[1].resolve()
 sys.path.insert(0, str(base_dir))
 
 BUTTON_TYPES = [
-    "default", "primary", "secondary", "success",
-    "info", "warning", "danger", "light", "dark",
-    "outline-default", "outline-primary", "outline-secondary", "outline-success",
-    "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark",
+    "default", "primary", "secondary", "success", 
+    "info", "warning", "danger", "light", "dark", 
+    "outline-default", "outline-primary", "outline-secondary", "outline-success", 
+    "outline-info", "outline-warning", "outline-danger", "outline-light", "outline-dark", 
 ]
 
 class TestButtonCreation:
@@ -69,9 +69,9 @@ if __name__ == "__main__":
 
             maliang.theme.register_event(self.update_canvas_theme)
 
-            self.title_text = maliang.Text(self.canvas, (700, 50), (1400, 100),
+            self.title_text = maliang.Text(self.canvas, (700, 50), (1400, 100), 
                                            text = "HDpip 按钮类型演示", fontsize = 32, weight = "bold", anchor = "center")
-            self.subtitle_text = maliang.Text(self.canvas, (700, 90), (1400, 50),
+            self.subtitle_text = maliang.Text(self.canvas, (700, 90), (1400, 50), 
                                               text = "左边九个普通按钮，右边九个轮廓按钮", fontsize = 18, anchor = "center")
 
             self.all_disabled = False
@@ -90,18 +90,18 @@ if __name__ == "__main__":
             total_width = 2 * switch_width + switch_spacing
             start_x = (1400 - total_width) // 2
 
-            self.theme_switch = HDpip.gui.custom.widgets.Button(self.canvas, (start_x, control_y),
-                (switch_width, switch_height), theme = "primary",
+            self.theme_switch = HDpip.gui.custom.widgets.Button(self.canvas, (start_x, control_y), 
+                (switch_width, switch_height), theme = "primary", 
                 text = "🌓 明暗主题切换", command = self.toggle_theme)
-            self.disable_switch = HDpip.gui.custom.widgets.Button(self.canvas,
-                (start_x + switch_width + switch_spacing, control_y),
-                (switch_width, switch_height), theme = "warning",
+            self.disable_switch = HDpip.gui.custom.widgets.Button(self.canvas, 
+                (start_x + switch_width + switch_spacing, control_y), 
+                (switch_width, switch_height), theme = "warning", 
                 text = "⏸️ 全体禁用切换", command = self.toggle_all_disabled)
 
             status_width = 500
             status_x = start_x + (total_width - status_width) // 2
-            self.status_text = maliang.Text(self.canvas, (status_x + status_width // 2, control_y + 80),
-                (status_width, 40), text = "状态: 所有按钮已启用 | 主题: 系统默认",
+            self.status_text = maliang.Text(self.canvas, (status_x + status_width // 2, control_y + 80), 
+                (status_width, 40), text = "状态: 所有按钮已启用 | 主题: 系统默认", 
                 fontsize = 14, anchor = "center")
 
         def create_buttons(self, ):
@@ -116,10 +116,10 @@ if __name__ == "__main__":
             outline = BUTTON_TYPES[9:]
 
             columns = [
-                (regular, 0, 5, 0),
-                (regular, 5, 4, 1),
-                (outline, 0, 5, 2),
-                (outline, 5, 4, 3),
+                (regular, 0, 5, 0), 
+                (regular, 5, 4, 1), 
+                (outline, 0, 5, 2), 
+                (outline, 5, 4, 3), 
             ]
             for button_list, start_index, count, col in columns:
                 for row in range(count):
@@ -127,26 +127,26 @@ if __name__ == "__main__":
                     x = start_x + col * (button_width + button_spacing_x)
                     y = start_y + row * button_spacing_y
                     texts = {
-                        "default": "默认", "primary": "主要", "secondary": "次要",
-                        "success": "成功", "info": "信息", "warning": "警告",
-                        "danger": "危险", "light": "浅色", "dark": "深色",
-                        "outline-default": "轮廓-默认", "outline-primary": "轮廓-主要",
-                        "outline-secondary": "轮廓-次要", "outline-success": "轮廓-成功",
-                        "outline-info": "轮廓-信息", "outline-warning": "轮廓-警告",
-                        "outline-danger": "轮廓-危险", "outline-light": "轮廓-浅色", "outline-dark": "轮廓-深色",
+                        "default": "默认", "primary": "主要", "secondary": "次要", 
+                        "success": "成功", "info": "信息", "warning": "警告", 
+                        "danger": "危险", "light": "浅色", "dark": "深色", 
+                        "outline-default": "轮廓-默认", "outline-primary": "轮廓-主要", 
+                        "outline-secondary": "轮廓-次要", "outline-success": "轮廓-成功", 
+                        "outline-info": "轮廓-信息", "outline-warning": "轮廓-警告", 
+                        "outline-danger": "轮廓-危险", "outline-light": "轮廓-浅色", "outline-dark": "轮廓-深色", 
                     }
-                    button = HDpip.gui.custom.widgets.Button(self.canvas, (x, y),
-                        (button_width, button_height), theme = btn_type, text = texts[btn_type],
+                    button = HDpip.gui.custom.widgets.Button(self.canvas, (x, y), 
+                        (button_width, button_height), theme = btn_type, text = texts[btn_type], 
                         anchor = "center", command = lambda bt = btn_type: self.on_button_click(bt))
                     self.all_buttons.append(button)
 
             regular_title_x = start_x + (button_width + button_spacing_x) // 2
-            self.regular_title = maliang.Text(self.canvas, (regular_title_x, start_y - 40),
-                (button_width + button_spacing_x, 30), text = "普通按钮 (9种)",
+            self.regular_title = maliang.Text(self.canvas, (regular_title_x, start_y - 40), 
+                (button_width + button_spacing_x, 30), text = "普通按钮 (9种)", 
                 fontsize = 16, weight = "bold", anchor = "center")
             outline_title_x = start_x + 2 * (button_width + button_spacing_x) + (button_width + button_spacing_x) // 2
-            self.outline_title = maliang.Text(self.canvas, (outline_title_x, start_y - 40),
-                (button_width + button_spacing_x, 30), text = "轮廓按钮 (9种)",
+            self.outline_title = maliang.Text(self.canvas, (outline_title_x, start_y - 40), 
+                (button_width + button_spacing_x, 30), text = "轮廓按钮 (9种)", 
                 fontsize = 16, weight = "bold", anchor = "center")
 
         def on_button_click(self, button_type, ):

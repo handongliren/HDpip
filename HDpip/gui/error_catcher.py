@@ -34,10 +34,10 @@ def catch(func: Callable[..., Any] | None = None, *, auto_close: int = 0) -> Cal
                 auto_close_arg = ["--auto-close", str(auto_close)] if auto_close and auto_close > 0 else []
 
                 subprocess.Popen(
-                    [sys.executable, str(base_dir / "gui/error_dialog.py"), "--text", "".join(traceback.format_exception(error))] + auto_close_arg,
-                    stdin = subprocess.DEVNULL,
-                    stdout = subprocess.DEVNULL,
-                    stderr = subprocess.DEVNULL,
+                    [sys.executable, str(base_dir / "gui/error_dialog.py"), "--text", "".join(traceback.format_exception(error))] + auto_close_arg, 
+                    stdin = subprocess.DEVNULL, 
+                    stdout = subprocess.DEVNULL, 
+                    stderr = subprocess.DEVNULL, 
                     creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
                 )
                 return None

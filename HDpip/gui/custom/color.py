@@ -40,12 +40,12 @@ light_subtle = gray_300
 dark_subtle = gray_700
 
 colors = {
-    "primary": [primary, primary_subtle],
-    "secondary": [secondary, secondary_subtle],
-    "success": [success, success_subtle],
-    "info": [info, info_subtle],
-    "warning": [warning, warning_subtle],
-    "danger": [danger, danger_subtle],
-    "light": [light, light_subtle],
+    "primary": [primary, primary_subtle], 
+    "secondary": [secondary, secondary_subtle], 
+    "success": [success, success_subtle], 
+    "info": [info, info_subtle], 
+    "warning": [warning, warning_subtle], 
+    "danger": [danger, danger_subtle], 
+    "light": [light, light_subtle], 
     "dark": [dark, dark_subtle]
 }

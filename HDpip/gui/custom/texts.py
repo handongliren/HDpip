@@ -51,14 +51,14 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
 
     @override
     def __init__(
-        self,
-        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        *,
-        wrap = tkinter.WORD,
-        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", util.pxToPt(util.ss(20))),
-        bg = color.light,
-        fg = color.dark,
-        relief = tkinter.FLAT,
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        *, 
+        wrap = tkinter.WORD, 
+        font: tuple[str, int] | tkinter.font.Font = ("TkDefaultFont", util.pxToPt(util.ss(20))), 
+        bg = color.light, 
+        fg = color.dark, 
+        relief = tkinter.FLAT, 
         **kwargs: Any
     ):
         """
@@ -69,20 +69,20 @@ class ScrolledText(tkinter.scrolledtext.ScrolledText):
 
         **标准参数**
 
-        background, borderwidth, cursor, exportselection, font, foreground, highlightbackground, highlightcolor, highlightthickness, insertbackground, insertborderwidth, insertofftime, insertontime, insertwidth, padx, pady, relief, selectbackground, selectborderwidth, selectforeground, setgrid, takefocus, xscrollcommand, yscrollcommand,
+        background, borderwidth, cursor, exportselection, font, foreground, highlightbackground, highlightcolor, highlightthickness, insertbackground, insertborderwidth, insertofftime, insertontime, insertwidth, padx, pady, relief, selectbackground, selectborderwidth, selectforeground, setgrid, takefocus, xscrollcommand, yscrollcommand, 
 
         **特有参数**
 
-        autoseparators, height, maxundo, spacing1, spacing2, spacing3, state, tabs, undo, width, wrap,
+        autoseparators, height, maxundo, spacing1, spacing2, spacing3, state, tabs, undo, width, wrap, 
         """
 
         super().__init__(
-            master,
-            wrap = wrap,
-            font = font,
-            bg = bg,
-            fg = fg,
-            relief = relief,
+            master, 
+            wrap = wrap, 
+            font = font, 
+            bg = bg, 
+            fg = fg, 
+            relief = relief, 
             **kwargs
         )
         maliang.theme.register_event(self.switchTheme)

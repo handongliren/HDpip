@@ -24,9 +24,9 @@ class RoundedRectangle(maliang.core.virtual.Widget):
     """
 
     def setAppearance(
-        self,
-        outline: str | tuple[int, int, int],
-        background: str | tuple[int, int, int] = "",
+        self, 
+        outline: str | tuple[int, int, int], 
+        background: str | tuple[int, int, int] = "", 
         width: int = 1
     ) -> None:
         """
@@ -50,18 +50,18 @@ class RoundedRectangle(maliang.core.virtual.Widget):
 
     @override
     def __init__(
-        self,
-        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        position: tuple[int, int],
-        size: tuple[int, int],
-        *,
-        width: int = 1,
-        background: str | tuple[int, int, int] = "",
-        outline: str | tuple[int, int, int] = "",
-        radius: int = util.ss(10),
-        name: str | None = None,
-        anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw",
-        gradient_animation: bool = True,
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        position: tuple[int, int], 
+        size: tuple[int, int], 
+        *, 
+        width: int = 1, 
+        background: str | tuple[int, int, int] = "", 
+        outline: str | tuple[int, int, int] = "", 
+        radius: int = util.ss(10), 
+        name: str | None = None, 
+        anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw", 
+        gradient_animation: bool = True, 
         **kwargs: Any
     ):
         """
@@ -98,8 +98,8 @@ class Line(maliang.core.virtual.Widget):
     """
 
     def setAppearance(
-        self,
-        color: str | tuple[int, int, int],
+        self, 
+        color: str | tuple[int, int, int], 
         width: int = 1
     ) -> None:
         """
@@ -114,16 +114,16 @@ class Line(maliang.core.virtual.Widget):
         self.master.itemconfigure(self._item, fill = color, width = width)
 
     def __init__(
-        self,
-        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        position: tuple[int, int],
-        size: tuple[int, int],
-        *,
-        color: str | tuple[int, int, int] = "",
-        width: int = 1,
-        name: str | None = None,
-        anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw",
-        gradient_animation: bool = True,
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        position: tuple[int, int], 
+        size: tuple[int, int], 
+        *, 
+        color: str | tuple[int, int, int] = "", 
+        width: int = 1, 
+        name: str | None = None, 
+        anchor: Literal['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se', 'center'] = "nw", 
+        gradient_animation: bool = True, 
         **kwargs: Any
     ):
         """

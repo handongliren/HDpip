@@ -10,7 +10,6 @@ import tkinter
 from typing import *
 from typing_extensions import override
 
-
 import maliang
 
 try:
@@ -32,21 +31,20 @@ class DialogCanvas(maliang.Canvas):
 
         self.after(1, self.destroy)
 
-
     @override
     def __init__(
-        self,
-        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel,
-        position: tuple[int, int],
-        size: tuple[int, int],
-        *,
-        outline: bool = True,
-        title: str | None = None,
-        text: str = "",
-        button: list[dict[str, str | Callable[[], Any]]] = [{"text": "确认"}],
-        theme: Literal["info", "primary", "danger", "warning", "success"] = "primary",
-        anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw",
-        closeCommand: Callable[[], None] | None = None,
+        self, 
+        master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, 
+        position: tuple[int, int], 
+        size: tuple[int, int], 
+        *, 
+        outline: bool = True, 
+        title: str | None = None, 
+        text: str = "", 
+        button: list[dict[str, str | Callable[[], Any]]] = [{"text": "确认"}], 
+        theme: Literal["info", "primary", "danger", "warning", "success"] = "primary", 
+        anchor: Literal["n", "s", "w", "e", "nw", "ne", "sw", "se", "center"] = "nw", 
+        closeCommand: Callable[[], None] | None = None, 
     ):
         """
         :param master: 父控件
@@ -121,17 +119,16 @@ class DialogToplevel(maliang.Toplevel):
 
         self.after(1, self.destroy)
 
-
     @override
     def __init__(
-        self,
-        master: maliang.Tk | maliang.Toplevel | None = None,
-        size: tuple[int, int] = ss((800, 600)),
-        position: tuple[int, int] | None = None,
-        *,
-        title: str | None = None,
-        text: str = "",
-        button: list[dict[str, str | Callable[[], Any]]] = ({"text": "确认"},),
+        self, 
+        master: maliang.Tk | maliang.Toplevel | None = None, 
+        size: tuple[int, int] = ss((800, 600)), 
+        position: tuple[int, int] | None = None, 
+        *, 
+        title: str | None = None, 
+        text: str = "", 
+        button: list[dict[str, str | Callable[[], Any]]] = ({"text": "确认"},), 
         theme: Literal["info", "primary", "danger", "warning", "success"] = "primary"
     ):
         """
@@ -175,16 +172,15 @@ class DialogTk(maliang.Tk):
 
         self.after(1, self.destroy)
 
-
     @override
     def __init__(
-        self,
-        size: tuple[int, int] = ss((800, 600)),
-        position: tuple[int, int] | None = None,
-        *,
-        title: str | None = None,
-        text: str = "",
-        button: list[dict[str, str | Callable[[], Any]]] = ({"text": "确认"},),
+        self, 
+        size: tuple[int, int] = ss((800, 600)), 
+        position: tuple[int, int] | None = None, 
+        *, 
+        title: str | None = None, 
+        text: str = "", 
+        button: list[dict[str, str | Callable[[], Any]]] = ({"text": "确认"},), 
         theme: Literal["info", "primary", "danger", "warning", "success"] = "primary"
     ):
         """

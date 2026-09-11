@@ -14,20 +14,19 @@ from markdown.preprocessors import Preprocessor
 
 ALERT_RE = re.compile(r"^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$")
 ALERT_MAP = {
-    "NOTE": "note",
-    "TIP": "tip",
-    "IMPORTANT": "warning",
-    "WARNING": "warning",
-    "CAUTION": "danger",
+    "NOTE": "note", 
+    "TIP": "tip", 
+    "IMPORTANT": "warning", 
+    "WARNING": "warning", 
+    "CAUTION": "danger", 
 }
 ALERT_TITLES = {
-    "NOTE": "Note",
-    "TIP": "Tip",
-    "IMPORTANT": "Important",
-    "WARNING": "Warning",
-    "CAUTION": "Danger",
+    "NOTE": "Note", 
+    "TIP": "Tip", 
+    "IMPORTANT": "Important", 
+    "WARNING": "Warning", 
+    "CAUTION": "Danger", 
 }
-
 
 class GitHubAlertPreprocessor(Preprocessor):
     """把 `> [!XXX]` 引用块转换为 Material admonition 语法。"""
@@ -51,7 +50,6 @@ class GitHubAlertPreprocessor(Preprocessor):
                 out.append(lines[i])
                 i += 1
         return out
-
 
 class GitHubAlertExtension(Extension):
     """注册 alerts 转换 preprocessor。"""

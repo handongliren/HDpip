@@ -115,10 +115,10 @@ def getScreenSize(use_cache: bool = True) -> tuple[int, int]:
 _smart_cache: dict[tuple[tuple[int, int], tuple[int, int], bool], decimal.Decimal] = {}
 
 def getSmartScaleValue(
-        base_size: tuple[int, int] = (1200, 800),
-        screen_size: tuple[int, int] = getScreenSize(),
-        *,
-        strict_mode: bool = True,
+        base_size: tuple[int, int] = (1200, 800), 
+        screen_size: tuple[int, int] = getScreenSize(), 
+        *, 
+        strict_mode: bool = True, 
         use_cache: bool = True
     ) -> decimal.Decimal:
     """
@@ -183,12 +183,12 @@ def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int
 def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["Decimal"]) -> Iterable[decimal.Decimal]: ...
 @overload
 def smartScale(value: Iterable[int | decimal.Decimal], base_size: tuple[int, int] = ..., screen_size: tuple[int, int] = ..., *, strict_mode: bool = ..., use_cache: bool = ..., return_type: Literal["float"]) -> Iterable[float]: ...
-def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
-    base_size: tuple[int, int] = (1200, 800),
-    screen_size: tuple[int, int] = getScreenSize(),
-    *,
-    strict_mode: bool = True,
-    use_cache: bool = True,
+def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal], 
+    base_size: tuple[int, int] = (1200, 800), 
+    screen_size: tuple[int, int] = getScreenSize(), 
+    *, 
+    strict_mode: bool = True, 
+    use_cache: bool = True, 
     return_type: Literal["Decimal", "float", "int"] = "int"
 ) -> decimal.Decimal | Iterable[decimal.Decimal] | float | Iterable[float] | int | Iterable[int]:
     """

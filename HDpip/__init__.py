@@ -6,12 +6,12 @@
 
 try:
     from .info import (
-        __version__, __author__, __copyright__,
+        __version__, __author__, __copyright__, 
         version, author, copyright
     )
 except ImportError:
     from info import (
-        __version__, __author__, __copyright__,
+        __version__, __author__, __copyright__, 
         version, author, copyright
     )
 

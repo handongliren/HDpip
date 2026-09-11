@@ -268,16 +268,16 @@ class Data():
             self.event_list.remove(callback)
 
     def notifyEvent(
-        self,
+        self, 
         event_type: Literal[
-            "open",
-            "load",
-            "save",
-            "__getitem__",
-            "__setitem__",
-            "__delitem__",
+            "open", 
+            "load", 
+            "save", 
+            "__getitem__", 
+            "__setitem__", 
+            "__delitem__", 
             "__add__"
-        ],
+        ], 
         event_data: dict[str, Any]
     ):
         """
@@ -385,15 +385,15 @@ class DataManager():
         self.default_setting = (system.getBaseDir() / "setting" / "global.json").resolve()
         self.custom_setting = (system.getPythonPath().parent / "HDpip" / "setting.json").resolve()
         self.language_code_dict = {
-            "en": "English",
-            "zh-CN": "简体中文",
-            "zh-TW": "繁體中文",
-            "ko": "한국어",
-            "fr": "Français",
-            "de": "Deutsch",
-            "es": "Español",
-            "ru": "Русский",
-            "ar": "العربية",
+            "en": "English", 
+            "zh-CN": "简体中文", 
+            "zh-TW": "繁體中文", 
+            "ko": "한국어", 
+            "fr": "Français", 
+            "de": "Deutsch", 
+            "es": "Español", 
+            "ru": "Русский", 
+            "ar": "العربية", 
             "hi": "हिन्दी"
         }
         self.default_language_dir = (system.getBaseDir() / "language").resolve()

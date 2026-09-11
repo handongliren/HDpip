@@ -3,8 +3,8 @@ import shutil
 
 # 使用 -m pylint 调用，避免路径问题
 cmd = [
-    "pylint",
-    "--output-format=colorized,text:pylint_report.txt",
+    "pylint", 
+    "--output-format=colorized,text:pylint_report.txt", 
     "HDpip/"
 ]
 

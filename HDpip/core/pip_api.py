@@ -42,8 +42,8 @@ def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
     结果应为如下字典：
     ```
     {
-        "pip_version": util.Version("25.3"),
-        "pip_path": pathlib.Path("D:\\Program Files\\Python310\\lib\\site-packages\\pip"),
+        "pip_version": util.Version("25.3"), 
+        "pip_path": pathlib.Path("D:\\Program Files\\Python310\\lib\\site-packages\\pip"), 
         "python_version": util.Version("3.10")
     }
     ```
@@ -61,8 +61,8 @@ def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
         if not i == "":
             string_.append(i)
     result = {
-        "pip_version": util.Version(string_[0]),
-        "pip_path": pathlib.Path(string_[1]),
+        "pip_version": util.Version(string_[0]), 
+        "pip_path": pathlib.Path(string_[1]), 
         "python_version": util.Version(string_[2])
     }
     return result
@@ -74,8 +74,8 @@ def list_(option: str | None = None, pip_head: str = pip_head) -> list:
     结果应为如下列表：
     ```
     [
-        {"name": "pip", "version": "25.3"},
-        {"name": "HDpip", "version": "0.0.0"},
+        {"name": "pip", "version": "25.3"}, 
+        {"name": "HDpip", "version": "0.0.0"}, 
         ...
     ]
     ```
@@ -99,8 +99,8 @@ def show(package: str, pip_head: str = pip_head) -> dict:
     结果应为如下字典：
     ```
     {
-        "Name": "HDpip",
-        "Version": "0.0.0",
+        "Name": "HDpip", 
+        "Version": "0.0.0", 
         ...
 
     }

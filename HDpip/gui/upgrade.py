@@ -90,7 +90,10 @@ class ConfirmCanvas(custom.containers.Canvas):
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
-        self.tip = maliang.Text(self, ss((200, 50)), None, anchor = "center", justify = "center", fontsize = ss(30))
-        self.note_button = maliang.Button(self, ss((200, 150)), ss((200, 50)), anchor = "center")
+        self.tip = maliang.Text(self, ss((300, 50)), None, anchor = "center", justify = "center", fontsize = ss(30))
+        self.note_button = maliang.Button(self, ss((300, 150)), ss((200, 50)), anchor = "center")
+        self.confirm_button = maliang.Button(self, ss((150, 250)), ss((100, 50)), anchor = "center")
+        self.delay_next_button = maliang.Button(self, ss((450, 250)), ss((100, 50)), anchor = "center")
+        self.delay_week_button = maliang.Button(self, ss((300, 450)), ss((200, 50)), anchor = "center")
 
         self.renderLanguage()

@@ -9,6 +9,7 @@
 from typing import *
 from typing_extensions import Self, override
 
+import copy
 import abc
 import pathlib
 import sys
@@ -46,7 +47,7 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.data_manager, 
         title: str | None = None, 
-        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
+        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png", 
         **kwargs: Any
     ):
         """
@@ -133,7 +134,7 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         *, 
         data_manager: core.data.DataManager = core.data.data_manager, 
         title: str | None = None, 
-        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png",
+        icon: str | pathlib.Path | media.Image | maliang.toolbox.enhanced.PhotoImage | None = base_dir / "assets" / "image" / "icon.png", 
         **kwargs: Any
     ):
         """
@@ -224,7 +225,7 @@ class Canvas(maliang.core.containers.Canvas, abc.ABC):
         keep_ratio: Literal['min', 'max'] | None = None, 
         free_anchor: bool = False, 
         auto_update: bool | None = None, 
-        zoom_all_items: bool = False,
+        zoom_all_items: bool = False, 
         **kwargs: Any
     ):
         """

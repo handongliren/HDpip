@@ -33,11 +33,11 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
 
     @override
     def __init__(
-        self,
-        *,
-        file: str | pathlib.Path | None = None,
-        data: str | bytes | bytearray | memoryview | None = None,
-        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None = None,
+        self, 
+        *, 
+        file: str | pathlib.Path | None = None, 
+        data: str | bytes | bytearray | memoryview | None = None, 
+        image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None = None, 
         size: tuple[int, int] | None = None
     ):
         """
@@ -118,7 +118,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         return Image(image = PIL.ImageTk.getimage(self).resize((width, height), PIL.Image.LANCZOS))
 
     def prase(
-        self,
+        self, 
         color_value: str | tuple[int, int, int] | tuple[int, int, int, int]
     ) -> Self:
         """
@@ -155,9 +155,9 @@ class Icon(dict[str, maliang.toolbox.enhanced.PhotoImage]):
 
     @override
     def __init__(
-        self,
-        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle},
-        *,
+        self, 
+        color_dict: dict[str, str | tuple[int, int, int] | tuple[int, int, int, int]] = {"origin": None, "light": color.light, "light_subtle": color.light_subtle, "dark": color.dark, "dark_subtle": color.dark_subtle}, 
+        *, 
         image: Image, 
         size: tuple[int, int] = ss((32, 32))
     ):
@@ -183,9 +183,9 @@ class BootstrapIcon(Image):
 
     @override
     def __init__(
-        self,
-        bi_name: str,
-        *,
+        self, 
+        bi_name: str, 
+        *, 
         size: tuple[int, int] | None = None
     ):
         """

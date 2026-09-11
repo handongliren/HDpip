@@ -171,7 +171,7 @@ def shell(command: str, realtime: bool = True, callback = print) -> str:
     ```
     with open("result.txt", "a", encoding = "utf-8") as file:
         print(HDpip.core.system.shell(
-            "ping 127.0.0.1",
+            "ping 127.0.0.1", 
             lambda line: file.write(f"{line}\n")
         ).returncode)
     ```
@@ -187,20 +187,20 @@ def shell(command: str, realtime: bool = True, callback = print) -> str:
 
     if realtime:
         popen = subprocess.Popen(
-            command,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            universal_newlines = True,
+            command, 
+            stdout = subprocess.PIPE, 
+            stderr = subprocess.STDOUT, 
+            universal_newlines = True, 
             shell = True
         )
         for line in popen.stdout:
             callback(line.strip())
     else:
         popen = subprocess.Popen(
-            command,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            text = True,
+            command, 
+            stdout = subprocess.PIPE, 
+            stderr = subprocess.STDOUT, 
+            text = True, 
             shell = True
         )
     return shellDecode(popen.communicate()[0])

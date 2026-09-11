@@ -19,15 +19,15 @@ class WindowFadeIn(maliang.animation.Animation):
 
     @override
     def __init__(
-        self,
-        window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel],
-        duration: int,
-        *,
-        controller: Callable[[float], float] = maliang.animation.controllers.linear,
-        end: Callable[[], Any] | None = None,
-        fps: int = 30,
-        repeat: int = 0,
-        repeat_delay: int = 0,
+        self, 
+        window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel], 
+        duration: int, 
+        *, 
+        controller: Callable[[float], float] = maliang.animation.controllers.linear, 
+        end: Callable[[], Any] | None = None, 
+        fps: int = 30, 
+        repeat: int = 0, 
+        repeat_delay: int = 0, 
     ) -> None:
 
         """
@@ -63,15 +63,15 @@ class WindowFadeOut(maliang.animation.Animation):
 
     @override
     def __init__(
-        self,
-        window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel],
-        duration: int,
-        *,
-        controller: Callable[[float], float] = maliang.animation.controllers.linear,
-        end: Callable[[], Any] | None = None,
-        fps: int = 30,
-        repeat: int = 0,
-        repeat_delay: int = 0,
+        self, 
+        window: maliang.Tk | maliang.Toplevel | Sequence[maliang.Tk | maliang.Toplevel], 
+        duration: int, 
+        *, 
+        controller: Callable[[float], float] = maliang.animation.controllers.linear, 
+        end: Callable[[], Any] | None = None, 
+        fps: int = 30, 
+        repeat: int = 0, 
+        repeat_delay: int = 0, 
     ) -> None:
 
         """

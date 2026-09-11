@@ -220,23 +220,23 @@ class InfoCanvas(custom.containers.Canvas):
 
         self.tip.set(self.data_manager.language["welcome", "info_tip"])
         self.table.headers([
-            self.data_manager.language["welcome", "item"],
-            self.data_manager.language["welcome", "value"],
+            self.data_manager.language["welcome", "item"], 
+            self.data_manager.language["welcome", "value"], 
         ])
 
         info_data = [
-            core.system.getSystemVersion(),
-            str(core.system.getPythonVersion()),
-            str(core.system.getPythonPath()),
-            str(core.system.getPipVersion()),
-            core.pip_api.pip_head,
+            core.system.getSystemVersion(), 
+            str(core.system.getPythonVersion()), 
+            str(core.system.getPythonPath()), 
+            str(core.system.getPipVersion()), 
+            core.pip_api.pip_head, 
             str(core.system.getVersion())
         ]
         self.table.set_sheet_data([])
         for i in range(0, len(info_data)):
             self.table.insert_row([
-                self.data_manager.language["welcome", "info_treeview", i],
-                info_data[i],
+                self.data_manager.language["welcome", "info_treeview", i], 
+                info_data[i], 
             ])
 
     def _onColumnResize(self, event) -> None:
@@ -282,17 +282,17 @@ class InfoCanvas(custom.containers.Canvas):
         table_width = ss(1000)
         self._index_width = ss(50)
         self.table = maliang.table.TkTable(
-            self,
-            header = ["item", "value"],
-            total_rows = 6,
-            total_columns = 2,
-            show_vertical_grid = True,
-            show_horizontal_grid = True,
+            self, 
+            header = ["item", "value"], 
+            total_rows = 6, 
+            total_columns = 2, 
+            show_vertical_grid = True, 
+            show_horizontal_grid = True, 
         )
         self.table.place(x = ss(600), y = ss(-400), width = table_width, height = ss(500), anchor = "center")
         self.after_idle(lambda: (
-            self.table.set_index_width(self._index_width),
-            self.table.set_column_widths(ss([250, 700])),
+            self.table.set_index_width(self._index_width), 
+            self.table.set_column_widths(ss([250, 700])), 
         ))
         self.table.hide("x_scrollbar")
         self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
@@ -336,9 +336,9 @@ class EndCanvas(custom.containers.Canvas):
         self.scrolled_text.configure(state = tkinter.DISABLED)
         maliang.animation.MoveWidget(
             (
-                self.master.back_button,
+                self.master.back_button, 
                 self.master.next_button
-            ),
+            ), 
             (0, ss(200)), 1000, controller = maliang.animation.smooth, fps = 60
         ).start()
         def _() -> None:
@@ -346,10 +346,10 @@ class EndCanvas(custom.containers.Canvas):
             import subprocess
             self.winfo_toplevel().destroy()
             subprocess.Popen(
-                [sys.executable, str(base_dir / "main.py")],
-                stdin = subprocess.DEVNULL,
-                stdout = subprocess.DEVNULL,
-                stderr = subprocess.DEVNULL,
+                [sys.executable, str(base_dir / "main.py")], 
+                stdin = subprocess.DEVNULL, 
+                stdout = subprocess.DEVNULL, 
+                stderr = subprocess.DEVNULL, 
                 creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
             )
         self.after(1000, _)
@@ -476,7 +476,7 @@ class Welcome(custom.containers.Tk):
         """
 
         super().__init__(ss((1200, 800)), data_manager = data_manager, icon = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
-        self.icon_ = maliang.PhotoImage(file = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
+        self.icon_ = maliang.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
 

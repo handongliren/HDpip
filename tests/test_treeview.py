@@ -13,18 +13,18 @@ import maliang.table
 def _make_table(master, columns, height=8, selectmode="extended", width=780, height_px=300):
     """创建 TkTable 的工厂函数。"""
     t = maliang.table.TkTable(
-        master,
-        header=list(columns),
-        total_rows=0,
-        total_columns=len(columns),
-        show_vertical_grid=True,
-        show_horizontal_grid=True,
+        master, 
+        header=list(columns), 
+        total_rows=0, 
+        total_columns=len(columns), 
+        show_vertical_grid=True, 
+        show_horizontal_grid=True, 
     )
     t.place(x=10, y=10, width=width, height=height_px)
     t.enable_bindings(
-        "single_select" if selectmode == "browse" else "toggle_select",
-        "drag_select", "column_select", "row_select",
-        "column_width_resize", "double_click_column_resize", "copy",
+        "single_select" if selectmode == "browse" else "toggle_select", 
+        "drag_select", "column_select", "row_select", 
+        "column_width_resize", "double_click_column_resize", "copy", 
     )
     return t
 
@@ -32,9 +32,9 @@ class TestTable:
     """Table 控件测试。"""
 
     PACKAGES = [
-        ("pip", "25.3", "已安装"),
-        ("maliang", "3.1.0", "已安装"),
-        ("HDpip", "0.0.4", "当前项目"),
+        ("pip", "25.3", "已安装"), 
+        ("maliang", "3.1.0", "已安装"), 
+        ("HDpip", "0.0.4", "当前项目"), 
     ]
 
     def test_create_table(self, tk_root, ):
@@ -112,47 +112,47 @@ if __name__ == "__main__":
     main = maliang.Canvas(root, expand="xy", auto_zoom=True, auto_update=True)
     main.place(width=1000, height=620)
 
-    maliang.Text(main, (500, 20), (400, 36), text="Table 控件演示 (tksheet)",
+    maliang.Text(main, (500, 20), (400, 36), text="Table 控件演示 (tksheet)", 
                  fontsize=24, weight="bold", anchor="center")
 
     tv = maliang.table.TkTable(
-        main,
-        header=["包名", "版本", "状态"],
-        total_rows=0,
-        total_columns=3,
-        show_vertical_grid=True,
-        show_horizontal_grid=True,
+        main, 
+        header=["包名", "版本", "状态"], 
+        total_rows=0, 
+        total_columns=3, 
+        show_vertical_grid=True, 
+        show_horizontal_grid=True, 
     )
     tv.place(x=12, y=68, width=976, height=460)
     tv.set_column_widths([280, 120, 100])
     tv.enable_bindings(
-        "toggle_select", "drag_select", "column_select", "row_select",
-        "column_width_resize", "double_click_column_resize", "copy",
+        "toggle_select", "drag_select", "column_select", "row_select", 
+        "column_width_resize", "double_click_column_resize", "copy", 
     )
 
     packages = [
-        ("pip", "25.3", "已安装"),
-        ("maliang", "3.1.0", "已安装"),
-        ("HDpip", "0.0.4", "当前项目"),
-        ("setuptools", "80.9.0", "已安装"),
-        ("wheel", "0.45.1", "已安装"),
-        ("darkdetect", "0.8.0", "已安装"),
-        ("pywinstyles", "1.5.0", "已安装"),
-        ("hPyT", "1.3.0", "已安装"),
-        ("pyyaml", "6.0.3", "已安装"),
-        ("pipdeptree", "2.26.2", "已安装"),
-        ("requests", "2.32.4", "已安装"),
-        ("numpy", "2.3.5", "可升级"),
+        ("pip", "25.3", "已安装"), 
+        ("maliang", "3.1.0", "已安装"), 
+        ("HDpip", "0.0.4", "当前项目"), 
+        ("setuptools", "80.9.0", "已安装"), 
+        ("wheel", "0.45.1", "已安装"), 
+        ("darkdetect", "0.8.0", "已安装"), 
+        ("pywinstyles", "1.5.0", "已安装"), 
+        ("hPyT", "1.3.0", "已安装"), 
+        ("pyyaml", "6.0.3", "已安装"), 
+        ("pipdeptree", "2.26.2", "已安装"), 
+        ("requests", "2.32.4", "已安装"), 
+        ("numpy", "2.3.5", "可升级"), 
     ]
     for name, ver, st in packages:
         tv.insert_row([name, ver, st])
 
-    info_bar = maliang.Text(main, (12, 540), (976, 24),
-                            text="提示: 拖拽列分隔线调整列宽 | Ctrl+点击多选 | 滚轮滚动",
+    info_bar = maliang.Text(main, (12, 540), (976, 24), 
+                            text="提示: 拖拽列分隔线调整列宽 | Ctrl+点击多选 | 滚轮滚动", 
                             fontsize=11, anchor="w")
     info_bar.style.set(fg=HDpip.gui.custom.color.gray_800)
 
-    sel_label = maliang.Text(main, (12, 568), (976, 24),
+    sel_label = maliang.Text(main, (12, 568), (976, 24), 
                              text="当前选中: 无", fontsize=11, anchor="w")
     counter = len(packages)
 
@@ -181,7 +181,7 @@ if __name__ == "__main__":
             info = f"共选中 {len(sel)} 项: {', '.join(str(s) for s in sorted(sel))}"
         else:
             info = "无选中项"
-        maliang.standard.dialogs.TkMessage(message=info, title="选中项信息",
+        maliang.standard.dialogs.TkMessage(message=info, title="选中项信息", 
                                            icon="info", option="ok", master=root)
 
     tv.bind("<<SheetSelect>>", lambda e: refresh_selection_info())
@@ -189,13 +189,13 @@ if __name__ == "__main__":
     toolbar = maliang.Canvas(main, expand="", auto_update=True)
     toolbar.place(x=12, y=28, width=976, height=36)
 
-    HDpip.gui.custom.widgets.Button(toolbar, (0, 0), (80, 30), text="添加", theme="primary",
+    HDpip.gui.custom.widgets.Button(toolbar, (0, 0), (80, 30), text="添加", theme="primary", 
                            command=add_package)
-    HDpip.gui.custom.widgets.Button(toolbar, (90, 0), (80, 30), text="删除选中", theme="danger",
+    HDpip.gui.custom.widgets.Button(toolbar, (90, 0), (80, 30), text="删除选中", theme="danger", 
                            command=delete_selected)
-    HDpip.gui.custom.widgets.Button(toolbar, (180, 0), (80, 30), text="滚到底",
+    HDpip.gui.custom.widgets.Button(toolbar, (180, 0), (80, 30), text="滚到底", 
                            theme="outline-warning", command=scroll_bottom)
-    HDpip.gui.custom.widgets.Button(toolbar, (270, 0), (80, 30), text="查看选中",
+    HDpip.gui.custom.widgets.Button(toolbar, (270, 0), (80, 30), text="查看选中", 
                            theme="outline-primary", command=show_selection_info)
 
     refresh_selection_info()

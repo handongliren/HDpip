@@ -13,17 +13,17 @@ def run_coverage():
 
     if has_pytest_cov:
         subprocess.run([
-            sys.executable, "-m", "pytest", "tests/",
-            "--cov", "--cov-report=xml", "--junitxml=junit.xml",
+            sys.executable, "-m", "pytest", "tests/", 
+            "--cov", "--cov-report=xml", "--junitxml=junit.xml", 
         ], check=True)
         return
 
     if has_coverage:
         subprocess.run([
-            sys.executable, "-m", "coverage", "run", "-m", "pytest", "tests/",
+            sys.executable, "-m", "coverage", "run", "-m", "pytest", "tests/", 
         ], check=True)
         subprocess.run([
-            sys.executable, "-m", "coverage", "xml", "-o", "coverage.xml",
+            sys.executable, "-m", "coverage", "xml", "-o", "coverage.xml", 
         ], check=True)
         return
 
@@ -42,7 +42,7 @@ def upload_to_codecov(token: str):
         print("使用已安装的 codecov 包上传 coverage.xml")
         try:
             subprocess.run([
-                sys.executable, "-m", "codecov", "-t", token, "-f", "coverage.xml",
+                sys.executable, "-m", "codecov", "-t", token, "-f", "coverage.xml", 
             ], check=True)
             print("使用 codecov 包上传成功。")
             return
@@ -90,9 +90,9 @@ def upload_to_codecov(token: str):
     # Include token in query string as some Codecov endpoints expect it there.
     url = f"https://codecov.io/upload/v4?token={token}"
     req = urllib.request.Request(
-        url,
-        data=body,
-        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+        url, 
+        data=body, 
+        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"}, 
     )
 
     # Debug: show first part of body to inspect fields if needed
@@ -114,7 +114,7 @@ def upload_to_codecov(token: str):
 def _get_commit_sha() -> str:
     try:
         return subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text = True, stderr = subprocess.DEVNULL,
+            ["git", "rev-parse", "HEAD"], text = True, stderr = subprocess.DEVNULL, 
         ).strip()
     except Exception:
         return ""

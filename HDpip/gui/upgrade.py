@@ -43,14 +43,8 @@ def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) ->
     """
 
     data_manager.init()
-    mirror = data_manager.setting[
-        "pip", 
-        "mirrors", 
-        data_manager.setting["pip", "mirror_index"], 
-        "url"
-    ]
     current_version = core.system.getVersion()
-    latest_version = core.pip_api.getLatestVersion("hdpip", mirror)
+    latest_version = core.pip_api.getLatestVersion("hdpip")
 
     return current_version < latest_version
 
@@ -67,12 +61,7 @@ class ConfirmCanvas(custom.containers.Canvas):
 
         self.tip.set(self.data_manager.language["upgrade", "tip"].format(
             current_version = core.system.getVersion(), 
-            latest_version = core.pip_api.getLatestVersion("hdpip", self.data_manager.setting[
-                "pip", 
-                "mirrors", 
-                self.data_manager.setting["pip", "mirror_index"], 
-                "url"
-            ])
+            latest_version = core.pip_api.getLatestVersion("hdpip")
         ))
         self.note_button.set(self.data_manager.language["upgrade", "note_button"])
         self.confirm_button.set(self.data_manager.language["upgrade", "confirm_button"])
@@ -118,21 +107,13 @@ class Upgrade(custom.containers.Tk):
         :type data_manager: core.data.DataManager
         """
 
-        super().__init__(ss((600, 400)), data_manager = data_manager, icon = str(core.system.getBaseDir() / "assets" / "image" / "icon.png"))
+        super().__init__(ss((600, 400)), data_manager = data_manager, icon = str(base_dir / "assets" / "image" / "icon.png"))
         self.icon_ = maliang.PhotoImage(file = str(base_dir / "assets" / "image" / "icon.png"))
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
 
-        self.pageview = custom.containers.PageView(
-            self, 
-            [
-                ConfirmCanvas
-            ], 
-            [], 
-            {"data_manager": data_manager}
-        )
-        self.pageview.place(width = ss(600), height = ss(400), x = 0, y = 0)
-        self.pageview.switchCanvas(0)
+        self.confirm_canvas = ConfirmCanvas(self, data_manager = data_manager)
+        self.confirm_canvas.place(width = ss(600), height = ss(400), x = 0, y = 0)
 
         self.renderLanguage()
 

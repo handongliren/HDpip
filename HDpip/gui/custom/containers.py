@@ -76,8 +76,11 @@ class Tk(maliang.core.containers.Tk, abc.ABC):
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:
             self.center()
+        maliang.configs.Env.system = "Windows11"
+        maliang.configs.Env.auto_update = True
         maliang.theme.customize_window(self, disable_maximize_button = True)
         self.resizable(False, False)
+        maliang.theme.set_color_mode(data_manager.setting["theme"])
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
     @abc.abstractmethod
@@ -165,8 +168,11 @@ class Toplevel(maliang.core.containers.Toplevel, abc.ABC):
         animations.WindowFadeIn(self, 250, controller = maliang.animation.smooth, fps = 60).start()
         if position is None:
             self.center()
+        maliang.configs.Env.system = "Windows11"
+        maliang.configs.Env.auto_update = True
         maliang.theme.customize_window(self, disable_maximize_button = True)
         self.resizable(False, False)
+        maliang.theme.set_color_mode(data_manager.setting["theme"])
         self.data_manager.language.registerEvent(self.onLanguageChange)
 
     @abc.abstractmethod

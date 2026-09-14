@@ -32,7 +32,10 @@
         "note_button": "查看更新日志", 
         "confirm_button": "立即升级", 
         "delay_next_button": "下次提醒", 
-        "delay_week_button": "一周后提醒"
+        "delay_week_button": "一周后提醒", 
+        "install_tip": "正在升级HDpip至{latest_version}……", 
+        "install_success": "安装成功", 
+        "error": "错误"
     }, 
     "main": {
         "description": "一个基于maliang的pip GUI", 

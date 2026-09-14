@@ -91,7 +91,7 @@ class Data():
         """
 
         with open(**self.file, mode = "w") as f:
-            json.dump(self.data, f)
+            json.dump(self.data, f, ensure_ascii = False, indent = 4, sort_keys = True, separators = (", ", ": "))
         self.notifyEvent("save", {"data": self.data})
         return self.data
 

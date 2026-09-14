@@ -14,9 +14,9 @@ class TestData:
         d = HDpip.core.data.Data()
         d.open(str(data_file))
         d.load()
-        assert isinstance(d["pip"]["mirror"], list)
-        assert len(d["pip"]["mirror"]) > 0
-        assert "name" in d["pip"]["mirror"][0]
+        assert isinstance(d["pip"]["mirrors"], list)
+        assert len(d["pip"]["mirrors"]) > 0
+        assert "name" in d["pip"]["mirrors"][0]
 
     def test_add_merge(self, data_file, ):
         d = HDpip.core.data.Data()
@@ -36,7 +36,7 @@ class TestData:
         d = HDpip.core.data.Data()
         d.open(str(data_file))
         d.load()
-        result = d["pip", "mirror"]
+        result = d["pip", "mirrors"]
         assert isinstance(result, list)
 
     def test_events(self, data_file, ):

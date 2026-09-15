@@ -161,7 +161,7 @@ def shellDecode(raw: str | bytes) -> str:
             continue
     return bytes(raw).decode("latin-1", errors="replace")
 
-def shell(command: str, realtime: bool = True, callback = print) -> str:
+def shell(command: str, realtime: bool = True, callback = print, merge_error: bool = True) -> str:
     """
     使用系统shell运行一条指令，每输出一行，如果启用实时模式，运行以更新行为输入的回调函数，并返回标准输出。
 
@@ -176,20 +176,28 @@ def shell(command: str, realtime: bool = True, callback = print) -> str:
         ).returncode)
     ```
 
-    :param command: 命令
+    :param command: 要执行的命令字符串，支持系统 shell 语法。
     :type command: str
-    :param realtime: 实时模式
+    :param realtime: 是否以实时模式读取输出。为 `True` 时，进程输出每一行都会回调给 `callback`。
     :type realtime: bool
-    :param callback: 回调函数
-    :return: 标准输出
+    :param callback: 实时输出时的回调函数。其参数为单行输出内容（去除末尾换行符），默认使用 `print`。
+    :type callback: Callable[[str], None]
+    :param merge_error: 是否将标准错误合并到标准输出中。若为 `True`，则 `stderr` 会被重定向到 `stdout`。
+    :type merge_error: bool
+    :return: 命令的标准输出内容。若 `merge_error` 为 `True`，则包含标准错误输出；若为 `False`，则返回仅标准输出。
     :rtype: str
     """
+
+    if merge_error:
+        stderr_mode = subprocess.STDOUT
+    else:
+        subprocess.PIPE
 
     if realtime:
         popen = subprocess.Popen(
             command, 
             stdout = subprocess.PIPE, 
-            stderr = subprocess.STDOUT, 
+            stderr = stderr_mode, 
             universal_newlines = True, 
             shell = True
         )
@@ -199,7 +207,7 @@ def shell(command: str, realtime: bool = True, callback = print) -> str:
         popen = subprocess.Popen(
             command, 
             stdout = subprocess.PIPE, 
-            stderr = subprocess.STDOUT, 
+            stderr = stderr_mode, 
             text = True, 
             shell = True
         )

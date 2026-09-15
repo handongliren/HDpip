@@ -10,7 +10,7 @@ from typing import *
 from typing_extensions import override, overload
 from functools import *
 
-import pip._vendor.packaging.version
+import packaging.version
 import tkinter
 
 class HDpipError(Exception):
@@ -36,7 +36,7 @@ def unfinished() -> None:
 
     raise HDpipError("不是，哥们，你写了这个功能吗？！")
 
-class Version(pip._vendor.packaging.version.Version):
+class Version(packaging.version.Version):
     """
     版本类，继承 pip 的 Version，支持 PEP 440。
 

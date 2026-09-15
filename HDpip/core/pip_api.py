@@ -90,7 +90,7 @@ def list_(option: str | None = None, pip_head: str = pip_head) -> list:
         option = f" {option}"
     else:
         option = ""
-    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False))
+    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False, merge_error = False))
 
 def show(package: str, pip_head: str = pip_head) -> dict:
     """
@@ -114,7 +114,7 @@ def show(package: str, pip_head: str = pip_head) -> dict:
     :rtype: dict
     """
 
-    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False))
+    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False, merge_error = False))
 
 def getPackageDir(package: str, pythonPath: pathlib.Path  | str = system.getPythonPath()) -> pathlib.Path:
     """

@@ -318,6 +318,22 @@ class PageView(maliang.Canvas):
         self.next_button = button
         self.next_button.bind("<Button-1>", lambda event: self.next() if not button.disabled else None)
 
+    def getPageSize(self) -> tuple[int, int]:
+        """
+        获取单页尺寸，即页面视图宽度除以画布数量。
+
+        :return: 单页宽高
+        :rtype: tuple[int, int]
+        """
+
+        info = self.place_info()
+        if info["width"] and info["height"]:
+            width, height = int(info["width"]), int(info["height"])
+        else:
+            self.update_idletasks()
+            width, height = self.winfo_width(), self.winfo_height()
+        return width // len(self.canvas_class), height
+
     @override
     def __init__(
         self, 
@@ -389,14 +405,15 @@ class PageView(maliang.Canvas):
                 self.back_button.disable(False)
             if hasattr(self, "next_button") and self.next_button is not None:
                 self.next_button.disable(False)
+        width, height = self.getPageSize()
         if self.canvas_list[index] == "uninited":
             self.canvas_list[index] = self.canvas_class[index](self, *self.content_argvs, **self.content_kwargs)
-            self.canvas_list[index].place(x = index * ss(1200), y = 0, width = ss(1200), height = ss(700))
+            self.canvas_list[index].place(x = index * width, y = 0, width = width, height = height)
         if self.animation:
             self.move_lock = True
-            maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * ss(1200), 0), 500, controller = maliang.animation.smooth, fps = 60, end = lambda: setattr(self, "move_lock", False)).start()
+            maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * width, 0), 500, controller = maliang.animation.smooth, fps = 60, end = lambda: setattr(self, "move_lock", False)).start()
         else:
-            self.place(x = -index * ss(1200), y = 0)
+            self.place(x = -index * width, y = 0)
         self.canvas_index = index
 
     def walkCanvas(self, index: int) -> None:

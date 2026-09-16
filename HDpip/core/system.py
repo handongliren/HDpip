@@ -191,7 +191,7 @@ def shell(command: str, realtime: bool = True, callback = print, merge_error: bo
     if merge_error:
         stderr_mode = subprocess.STDOUT
     else:
-        subprocess.PIPE
+        stderr_mode = subprocess.PIPE
 
     if realtime:
         popen = subprocess.Popen(

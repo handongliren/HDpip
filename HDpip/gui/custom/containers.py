@@ -320,7 +320,7 @@ class PageView(maliang.Canvas):
 
     def getPageSize(self) -> tuple[int, int]:
         """
-        获取单页尺寸，即页面视图宽度除以画布数量。
+        获取单页尺寸，水平模式等分宽度，垂直模式等分高度。
 
         :return: 单页宽高
         :rtype: tuple[int, int]
@@ -332,7 +332,9 @@ class PageView(maliang.Canvas):
         else:
             self.update_idletasks()
             width, height = self.winfo_width(), self.winfo_height()
-        return width // len(self.canvas_class), height
+        if self.mode == "horizontal":
+            return width // len(self.canvas_class), height
+        return width, height // len(self.canvas_class)
 
     @override
     def __init__(
@@ -343,6 +345,7 @@ class PageView(maliang.Canvas):
         content_kwargs: dict[str, Any] = {}, 
         *, 
         animation: bool = True, 
+        mode: Literal["horizontal", "vertical"] = "horizontal", 
         back_button: widgets.Button | None = None, 
         next_button: widgets.Button | None = None
     ):
@@ -357,6 +360,8 @@ class PageView(maliang.Canvas):
         :type content_kwargs: dict[str, Any]
         :param animation: 是否启用动画
         :type animation: bool
+        :param mode: 切页方向，`horizontal`为水平，`vertical`为垂直
+        :type mode: Literal["horizontal", "vertical"]
         :param back_button: 返回按钮
         :type back_button: widgets.Button | None
         :param next_button: 下一步按钮
@@ -371,6 +376,7 @@ class PageView(maliang.Canvas):
         self.content_argvs = content_argvs
         self.content_kwargs = content_kwargs
         self.animation = animation
+        self.mode = mode
         if back_button is not None:
             self.bindBackButton(back_button)
         if next_button is not None:
@@ -406,14 +412,18 @@ class PageView(maliang.Canvas):
             if hasattr(self, "next_button") and self.next_button is not None:
                 self.next_button.disable(False)
         width, height = self.getPageSize()
+        if self.mode == "horizontal":
+            step_x, step_y = width, 0
+        else:
+            step_x, step_y = 0, height
         if self.canvas_list[index] == "uninited":
             self.canvas_list[index] = self.canvas_class[index](self, *self.content_argvs, **self.content_kwargs)
-            self.canvas_list[index].place(x = index * width, y = 0, width = width, height = height)
+            self.canvas_list[index].place(x = index * step_x, y = index * step_y, width = width, height = height)
         if self.animation:
             self.move_lock = True
-            maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * width, 0), 500, controller = maliang.animation.smooth, fps = 60, end = lambda: setattr(self, "move_lock", False)).start()
+            maliang.animation.MoveTkWidget(self, ((self.canvas_index - index) * step_x, (self.canvas_index - index) * step_y), 500, controller = maliang.animation.smooth, fps = 60, end = lambda: setattr(self, "move_lock", False)).start()
         else:
-            self.place(x = -index * width, y = 0)
+            self.place(x = -index * step_x, y = -index * step_y)
         self.canvas_index = index
 
     def walkCanvas(self, index: int) -> None:

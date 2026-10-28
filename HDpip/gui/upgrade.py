@@ -113,8 +113,8 @@ class InstallCanvas(custom.containers.Canvas):
 
         try:
             core.pip_api.install(
-                "--upgrade hdpip",
-                callback = lambda line: self.log_queue.put(line),
+                "--upgrade hdpip", 
+                callback = lambda line: self.log_queue.put(line), 
             )
         except Exception as e:
             self.log_queue.put(f"[错误] {e}")

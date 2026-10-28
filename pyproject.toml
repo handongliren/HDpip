@@ -7,8 +7,7 @@ name = "hdpip"
 dynamic = ["version"]
 description = "寒冬pip(HDpip)"
 readme = "HDpip/README.md"
-license = "GPL-3.0-only"
-license-files = ["LICENSE.txt"]
+license = { file = "LICENSE.txt" }
 authors = [
     {name = "寒冬利刃(handongliren(hdlr))", email = "1079489986@qq.com"},
 ]
@@ -18,7 +17,7 @@ dependencies = [
     "typing-extensions",
     "darkdetect",
     "resvg-py",
-    "maliang[opt]>=3.1.0",
+    "maliang[opt]>=3.1.0,<3.2.0",
     "maliang-table",
     "pillow>=10.0.0",
     "pyyaml",

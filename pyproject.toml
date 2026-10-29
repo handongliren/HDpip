@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -21,13 +21,14 @@ dependencies = [
     "maliang-table",
     "pillow>=10.0.0",
     "pyyaml",
-    "pipdeptree>=2.0.0"
+    "pipdeptree>=2.0.0",
 ]
 keywords = ["pip", "gui", "maliang", "hdlr", "寒冬利刃", "handongliren"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -43,6 +44,49 @@ Documentation = "https://handongliren.github.io/HDpip"
 Changelog = "https://handongliren.github.io/HDpip/CHANGELOG/"
 Issue = "https://github.com/handongliren/HDpip/issues"
 
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "codecov"
+]
+
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "markdown",
+    "pymdown-extensions",
+    "pygments",
+    "mkdocs-git-committers-plugin-2",
+    "mkdocs-git-revision-date-localized-plugin",
+    "mkdocs-git-authors-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-redirects",
+    "mkdocs-statistics-plugin",
+    "mkdocs-minify-plugin",
+    "mkdocs-macros-plugin",
+    "mkdocs-rss-plugin",
+    "mkdocs-print-site-plugin",
+    "mkdocs-markmap",
+    "mkdocs_puml",
+    "markdown-exec",
+    "jieba",
+    "mike",
+    "mkdocstrings",
+    "mkdocstrings-python",
+    "mkdocs-autorefs",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "ruff",
+    "griffe-inherited-docstrings",
+    "griffe-pydantic",
+    "griffe-typingdoc",
+    "griffe-warnings-deprecated",
+    "griffe-modernized-annotations",
+]
+
 [project.gui-scripts]
 HDpip = "HDpip.main:main"
 hdpip = "HDpip.main:main"
@@ -57,4 +101,4 @@ include = ["HDpip*"]
 "HDpip" = ["**"]
 
 [tool.setuptools.exclude-package-data]
-"HDpip" = ["__pycache__/*", "**/__pycache__/*"]
+"HDpip" = ["__pycache__/*", "**/__pycache__/*", "**/*.pyc"]

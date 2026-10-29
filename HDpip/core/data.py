@@ -341,6 +341,7 @@ class DataManager():
 
         :param language_code: 语言代码
         :type language_code: str
+        :raises FileNotFoundError: 未找到对应语言代码的语言文件时抛出
         """
 
         try:

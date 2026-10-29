@@ -107,6 +107,7 @@ def openInExplorer(path: str | pathlib.Path) -> None:
 
     :param path: 要打开的文件夹
     :type path: str | pathlib.Path
+    :raises HDpipError: 系统不受支持或打开路径失败时抛出
     """
 
     path = pathlib.Path(path).resolve()

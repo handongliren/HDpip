@@ -51,6 +51,7 @@ class Image(maliang.toolbox.enhanced.PhotoImage):
         :type image: tkinter.PhotoImage | PIL.ImageTk.PhotoImage | maliang.toolbox.enhanced.PhotoImage | PIL.Image.Image | None
         :param size: 渲染尺寸（所有类型生效）
         :type size: tuple[int, int] | None
+        :raises ValueError: 未提供 file、data 或 image 时抛出
         """
 
         if file is not None:
@@ -195,6 +196,7 @@ class BootstrapIcon(Image):
         :type bi_name: str
         :param size: 渲染尺寸
         :type size: tuple[int, int]
+        :raises FileNotFoundError: 未找到对应名称的 SVG 文件时抛出
         """
 
         self.bi_name = bi_name

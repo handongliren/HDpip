@@ -32,6 +32,8 @@ class HDpipError(Exception):
 def unfinished() -> None:
     """
     用于未完成功能的占位，使用`HDpipError`抛出一个错误。
+
+    :raises HDpipError: 未完成功能被调用时抛出
     """
 
     raise HDpipError("不是，哥们，你写了这个功能吗？！")

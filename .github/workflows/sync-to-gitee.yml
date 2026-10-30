@@ -1,0 +1,26 @@
+name: Sync to Gitee
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # 每 6 小时同步一次
+  workflow_dispatch:         # 支持手动触发
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync GitHub -> Gitee
+        uses: NEVSTOP-LAB/GitHub-Gitee-Sync@main
+        with:
+          github-owner: ${{ github.repository_owner }}
+          github-token: ${{ secrets.REPOSITORY_SYNC_GITHUB_TOKEN }}
+          gitee-owner: 'handongliren'          # 替换为你的 Gitee 用户名
+          gitee-token: ${{ secrets.REPOSITORY_SYNC_GITEE_TOKEN }}
+          direction: 'github2gitee'                   # 单向：GitHub -> Gitee
+          sync-extra: 'releases,issues'               # 同步 Releases 和 Issues
+          dry-run: 'false'                            # 首次建议改 'true' 观察计划

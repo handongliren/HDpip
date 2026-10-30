@@ -24,6 +24,12 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - name: Set DNS for Gitee
+        run: |
+          sudo sh -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
+          sudo sh -c 'echo "nameserver 1.1.1.1" >> /etc/resolv.conf'
+          sudo sh -c 'echo "nameserver 114.114.114.114" >> /etc/resolv.conf'
+          nslookup gitee.com || true
       - name: Sync GitHub -> Gitee
         uses: NEVSTOP-LAB/GitHub-Gitee-Sync@main
         with:

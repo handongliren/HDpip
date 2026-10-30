@@ -23,4 +23,5 @@ jobs:
           gitee-token: ${{ secrets.REPOSITORY_SYNC_GITEE_TOKEN }}
           direction: 'github2gitee'                   # 单向：GitHub -> Gitee
           sync-extra: 'releases,issues'               # 同步 Releases 和 Issues
+          white-list: 'HDpip'
           dry-run: 'false'                            # 首次建议改 'true' 观察计划

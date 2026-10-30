@@ -1,0 +1,37 @@
+name: Sync to Gitee
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  pull_request:
+    types: [closed]
+    branches: [main]
+  release:
+    types: [published, prereleased]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-to-gitee
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  sync:
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync GitHub -> Gitee
+        uses: NEVSTOP-LAB/GitHub-Gitee-Sync@main
+        with:
+          github-owner: ${{ github.repository_owner }}
+          github-token: ${{ secrets.REPOSITORY_SYNC_GITHUB_TOKEN }}
+          gitee-owner: 'handongliren'
+          gitee-token: ${{ secrets.REPOSITORY_SYNC_GITEE_TOKEN }}
+          direction: 'github2gitee'
+          sync-extra: 'releases,issues'
+          include-repos: ${{ github.event.repository.name }}
+          dry-run: 'false'

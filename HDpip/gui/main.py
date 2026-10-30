@@ -10,8 +10,10 @@ from typing import *
 from typing_extensions import override
 import pathlib
 
+import tkinter
 import maliang.core.configs
 import maliang.core.virtual
+import maliang.table
 
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 
@@ -137,6 +139,82 @@ class MirrorCanvas(custom.containers.Canvas):
         self.view_button = custom.widgets.Button(self, ss((250, 65)), ss((80, 30)), theme = "outline-default", icon = bi("eye"), fontsize = ss(20))
         self.copy_button = custom.widgets.Button(self, ss((20, 110)), ss((80, 30)), theme = "outline-primary", icon = bi("clipboard"), fontsize = ss(20))
         self.copy_pip_button = custom.widgets.Button(self, ss((130, 110)), ss((200, 30)), theme = "primary", icon = bi("clipboard-data"), fontsize = ss(20))
+
+        self.renderLanguage()
+
+class LinkCanvas(custom.containers.Canvas):
+    """
+    链接画布。
+    """
+
+    @override
+    def renderLanguage(self) -> None:
+        pass
+
+    def _onColumnResize(self, event: tkinter.Event) -> None:
+        """
+        列宽拖拽后自动填满剩余空间。
+
+        :param event: 事件
+        :type event: tkinter.Event
+        """
+
+        self.after_idle(self._doAutofill)
+
+    def _doAutofill(self) -> None:
+        """
+        自动重新分配列宽。
+        """
+
+        widget_w = self.table.winfo_width()
+        if widget_w <= 1:
+            return
+        available = widget_w - self._index_width
+        if available <= self._index_width:
+            return
+        widths = list(self.table.get_column_widths())
+        if len(widths) < 2:
+            return
+        gap = available - sum(widths)
+        if gap == 0:
+            return
+        min_col_w = ss(80)
+        new_last = widths[-1] + gap
+        if new_last < min_col_w:
+            widths[-2] -= min_col_w - new_last
+            new_last = min_col_w
+        if widths[-2] < min_col_w:
+            return
+        widths[-1] = new_last
+        self.table.set_column_widths(widths)
+
+    @override
+    def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager):
+        """
+        :param master: 父控件
+        :type master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel
+        :param data_manager: 数据管理器
+        :type data_manager: core.data.DataManager
+        """
+
+        super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
+
+        self.table = maliang.table.TkTable(
+            self, 
+            header = ["item", "value"], 
+            total_rows = 6, 
+            total_columns = 2, 
+            show_vertical_grid = True, 
+            show_horizontal_grid = True, 
+        )
+        self.table.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
+        self.after_idle(lambda: (
+            self.table.set_index_width(self._index_width), 
+            self.table.set_column_widths(ss([250, 700])), 
+        ))
+        self.table.hide("x_scrollbar")
+        self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
+        self.table.extra_bindings("column_width_resize", self._onColumnResize)
 
         self.renderLanguage()
 

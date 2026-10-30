@@ -239,12 +239,21 @@ class InfoCanvas(custom.containers.Canvas):
                 info_data[i], 
             ])
 
-    def _onColumnResize(self, event) -> None:
-        """列宽拖拽后自动填满剩余空间。"""
+    def _onColumnResize(self, event: tkinter.Event) -> None:
+        """
+        列宽拖拽后自动填满剩余空间。
+
+        :param event: 事件
+        :type event: tkinter.Event
+        """
+
         self.after_idle(self._doAutofill)
 
     def _doAutofill(self) -> None:
-        """将最后一列拉伸/收缩填满容器宽度，保持最小列宽。"""
+        """
+        自动重新分配列宽。
+        """
+
         widget_w = self.table.winfo_width()
         if widget_w <= 1:
             return
@@ -279,7 +288,6 @@ class InfoCanvas(custom.containers.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.tip = maliang.Text(self, ss((600, -200)), ss((300, 50)), fontsize = ss(40), anchor = "center")
-        table_width = ss(1000)
         self._index_width = ss(50)
         self.table = maliang.table.TkTable(
             self, 
@@ -289,7 +297,7 @@ class InfoCanvas(custom.containers.Canvas):
             show_vertical_grid = True, 
             show_horizontal_grid = True, 
         )
-        self.table.place(x = ss(600), y = ss(-400), width = table_width, height = ss(500), anchor = "center")
+        self.table.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
         self.after_idle(lambda: (
             self.table.set_index_width(self._index_width), 
             self.table.set_column_widths(ss([250, 700])), 
@@ -297,6 +305,7 @@ class InfoCanvas(custom.containers.Canvas):
         self.table.hide("x_scrollbar")
         self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
         self.table.extra_bindings("column_width_resize", self._onColumnResize)
+
         self.renderLanguage()
         maliang.animation.MoveWidget(self.tip, (0, ss(250)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         maliang.animation.MoveTkWidget(self.table, (0, ss(750)), 1000, controller = maliang.animation.smooth, fps = 60).start(delay = 500)

@@ -169,9 +169,7 @@ class LinkCanvas(custom.containers.Canvas):
         widget_w = self.table.winfo_width()
         if widget_w <= 1:
             return
-        available = widget_w - self._index_width
-        if available <= self._index_width:
-            return
+        available = widget_w
         widths = list(self.table.get_column_widths())
         if len(widths) < 2:
             return
@@ -201,16 +199,23 @@ class LinkCanvas(custom.containers.Canvas):
 
         self.table = maliang.table.TkTable(
             self, 
+            data = [
+                ["Python", "https://www.python.org/"],
+                ["PyPI", "https://pypi.org/"],
+                ["GitHub", "https://github.com/"],
+                ["VSCode", "https://code.visualstudio.com/"],
+            ],
             header = ["item", "value"], 
-            total_rows = 6, 
+            total_rows = 4,
             total_columns = 2, 
+            show_header = False,
+            show_row_index = False,
             show_vertical_grid = True, 
             show_horizontal_grid = True, 
         )
-        self.table.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
+        self.table.place(x = 0, y = 0, width = ss(350), height = ss(250))
         self.after_idle(lambda: (
-            self.table.set_index_width(self._index_width), 
-            self.table.set_column_widths(ss([250, 700])), 
+            self.table.set_column_widths(ss([100, 250])), 
         ))
         self.table.hide("x_scrollbar")
         self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
@@ -257,6 +262,9 @@ class Main(custom.containers.Tk):
         self.mirror_canvas = MirrorCanvas(self.base_canvas, data_manager)
         self.mirror_canvas.place(x = 0, y = ss(390), width = ss(350), height = ss(160))
         self.mirror_canvas.create_line(ss((0, 159, 350, 159)), width = 2, fill = custom.color.gray_500)
+
+        self.link_canvas = LinkCanvas(self.base_canvas, data_manager)
+        self.link_canvas.place(x = 0, y = ss(550), width = ss(350), height = ss(250))
 
         self.base_canvas.create_line(ss((350, 0, 350, 800)), width = 2, fill = custom.color.gray_500)
         self.base_canvas.create_line(ss((700, 0, 700, 800)), width = 2, fill = custom.color.gray_500)

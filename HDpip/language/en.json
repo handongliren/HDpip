@@ -22,8 +22,34 @@
         ], 
         "end_tip": "Everything is ready, click the button to start", 
         "end_button": "OK, let's go",
-        "auto_setting": "Loading auto settings...",
+        "auto_setting": "Loading automatic settings...",
         "save_setting": "Saving settings...",
         "done": "Done"
+    },
+    "upgrade": {
+        "title": "Check for updates",
+        "tip": "A new version {latest_version} is available.\nCurrent version: {current_version}.\nWould you like to upgrade?",
+        "note_button": "View changelog",
+        "confirm_button": "Upgrade now",
+        "delay_next_button": "Remind me next time",
+        "delay_week_button": "Remind me in a week",
+        "install_tip": "Upgrading HDpip to {latest_version}...",
+        "install_success": "Installation successful",
+        "error": "Error"
+    },
+    "main": {
+        "description": "A pip GUI based on maliang",
+        "install_button": "Install",
+        "uninstall_button": "Uninstall",
+        "upgrade_button": "Upgrade",
+        "setting_button": "Settings",
+        "mirror": "Mirror",
+        "switch_button": "Switch",
+        "auto_switch_button": "Auto switch",
+        "view_button": "View",
+        "copy_button": "Copy",
+        "copy_pip_button": "Copy pip command",
+        "useful_link": "Useful links",
+        "link_tip": "Double-click a link to open it"
     }
 }

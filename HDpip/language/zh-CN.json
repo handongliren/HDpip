@@ -48,6 +48,8 @@
         "auto_switch_button": "自动切换", 
         "view_button": "查看", 
         "copy_button": "复制", 
-        "copy_pip_button": "复制pip参数"
+        "copy_pip_button": "复制pip参数", 
+        "useful_link": "实用链接", 
+        "link_tip": "双击链接即可打开"
     }
 }

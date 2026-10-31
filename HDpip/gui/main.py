@@ -9,6 +9,7 @@
 from typing import *
 from typing_extensions import override
 import pathlib
+import webbrowser
 
 import tkinter
 import maliang.core.configs
@@ -149,7 +150,23 @@ class LinkCanvas(custom.containers.Canvas):
 
     @override
     def renderLanguage(self) -> None:
-        pass
+        self.title.set(self.data_manager.language["main", "useful_link"])
+        self.tip.set(self.data_manager.language["main", "link_tip"])
+
+    def _openLink(self, event: tkinter.Event) -> None:
+        """
+        双击链接时打开链接。
+
+        :param event: 事件
+        :type event: tkinter.Event
+        """
+
+        row = self.table.MT.identify_row(event = event, allow_end = False)
+        if row is None:
+            return
+        url = self.table.get_cell_data(row, 1)
+        if isinstance(url, str) and url.startswith(("http://", "https://")):
+            webbrowser.open_new_tab(url)
 
     def _onColumnResize(self, event: tkinter.Event) -> None:
         """
@@ -197,6 +214,11 @@ class LinkCanvas(custom.containers.Canvas):
 
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
+        self.create_rectangle(ss((0, 0, 350, 50)), fill = custom.color.primary, outline = "")
+        self.title = maliang.Text(self, ss((10, 0)), None, anchor = "nw", fontsize = ss(30))
+        self.title.style.set(fg = custom.color.white)
+        self.tip = maliang.Text(self, ss((340, 25)), None, anchor = "e", fontsize = ss(20), justify = "right")
+        self.tip.style.set(fg = custom.color.white)
         self.table = maliang.table.TkTable(
             self, 
             data = [
@@ -213,12 +235,13 @@ class LinkCanvas(custom.containers.Canvas):
             show_vertical_grid = True, 
             show_horizontal_grid = True, 
         )
-        self.table.place(x = 0, y = 0, width = ss(350), height = ss(250))
+        self.table.place(x = 0, y = ss(50), width = ss(350), height = ss(250))
         self.after_idle(lambda: (
             self.table.set_column_widths(ss([100, 250])), 
         ))
         self.table.hide("x_scrollbar")
         self.table.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
+        self.table.MT.bind("<Double-Button-1>", self._openLink, add = "+")
         self.table.extra_bindings("column_width_resize", self._onColumnResize)
 
         self.renderLanguage()

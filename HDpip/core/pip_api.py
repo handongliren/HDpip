@@ -161,7 +161,7 @@ def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[s
         url = mirror["url"]
         t0 = time.time()
         try:
-            urllib.request.urlopen(url, timeout=timeout)
+            urllib.request.urlopen(url, timeout = timeout)
             elapsed = time.time() - t0
             results.append({"url": url, "time": elapsed})
         except Exception:

@@ -20,7 +20,7 @@ try:
     from ..info import version
 except ImportError:
     base_dir = pathlib.Path(__file__).parents[1].resolve()
-    sys.path.append(str(base_dir / "HDpip"))
+    sys.path.append(str(base_dir))
     from info import version
 
 try:

@@ -255,7 +255,7 @@ class InfoCanvas(custom.containers.Canvas):
             total_columns = 2, 
             show_vertical_grid = True, 
             show_horizontal_grid = True, 
-            index_width = ss(50),
+            index_width = ss(50), 
         )
         self.table.place(x = ss(600), y = ss(-400), width = ss(1000), height = ss(500), anchor = "center")
         self.after_idle(lambda: (

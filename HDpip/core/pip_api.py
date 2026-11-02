@@ -13,7 +13,7 @@ import subprocess
 import urllib.parse
 import time
 import urllib.request
-from pip._vendor.packaging.utils import parse_sdist_filename, parse_wheel_filename
+from packaging.utils import parse_sdist_filename, parse_wheel_filename
 
 try:
     from . import system
@@ -24,7 +24,7 @@ except ImportError:
 
 def getPip(python: str | pathlib.Path = system.getPythonPath()) -> str:
     """
-    获取指定Python对应的pip执行头（例如`"D:\\Program Files\\Python310\\python.exe" -m pip`。），默认为运行HDpip的，您也可以直接使用变量`HDpip.core.pip.pip_head`。
+    获取指定Python对应的pip执行头。
 
     :param python: 指定的Python
     :type python: str | pathlib.Path
@@ -37,21 +37,12 @@ pip_head = getPip()
 
 def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
     """
-    返回运行`pip -V`的结果，参见`HDpip.core.system.shell()`。
-
-    结果应为如下字典：
-    ```
-    {
-        "pip_version": util.Version("25.3"), 
-        "pip_path": pathlib.Path("D:\\Program Files\\Python310\\lib\\site-packages\\pip"), 
-        "python_version": util.Version("3.10")
-    }
-    ```
+    返回运行`pip -V`的结果。
 
     :param pip_head: pip执行头
     :type pip_head: str
     :return: 数据字典
-    :rtype: dict[str: util.Version, str: pathlib.Path]
+    :rtype: dict
     """
 
     string = system.shell(f"{pip_head} -V", False)
@@ -63,23 +54,16 @@ def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
     result = {
         "pip_version": util.Version(string_[0]), 
         "pip_path": pathlib.Path(string_[1]), 
-        "python_version": util.Version(string_[2])
+        "python_version": util.Version(string_[2]), 
     }
     return result
 
 def list_(option: str | None = None, pip_head: str = pip_head) -> list:
     """
-    返回运行`pip list --format=json`的结果，参见`HDpip.core.system.shell()`。
+    返回运行`pip list --format=json`的结果。
 
-    结果应为如下列表：
-    ```
-    [
-        {"name": "pip", "version": "25.3"}, 
-        {"name": "HDpip", "version": "0.0.0"}, 
-        ...
-    ]
-    ```
-
+    :param option: 额外参数
+    :type option: str | None
     :param pip_head: pip执行头
     :type pip_head: str
     :return: 包列表
@@ -90,21 +74,11 @@ def list_(option: str | None = None, pip_head: str = pip_head) -> list:
         option = f" {option}"
     else:
         option = ""
-    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False, merge_error = False))
+    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False, merge_error=False))
 
 def show(package: str, pip_head: str = pip_head) -> dict:
     """
-    返回运行`pip show`的结果，参见`HDpip.core.system.shell()`。
-
-    结果应为如下字典：
-    ```
-    {
-        "Name": "HDpip", 
-        "Version": "0.0.0", 
-        ...
-
-    }
-    ```
+    返回运行`pip show`的结果。
 
     :param package: 要获取信息的包
     :type package: str
@@ -114,9 +88,9 @@ def show(package: str, pip_head: str = pip_head) -> dict:
     :rtype: dict
     """
 
-    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False, merge_error = False))
+    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False, merge_error=False))
 
-def getPackageDir(package: str, pythonPath: pathlib.Path  | str = system.getPythonPath()) -> pathlib.Path:
+def getPackageDir(package: str, pythonPath: pathlib.Path | str = system.getPythonPath()) -> pathlib.Path:
     """
     返回包路径。
 
@@ -131,11 +105,11 @@ def getPackageDir(package: str, pythonPath: pathlib.Path  | str = system.getPyth
     if not system.isDev():
         return (system.getBaseDir().parent / package).resolve()
     else:
-        return (pythonPath.parent / "Lib" / "site-packages"/ package).resolve()
+        return (pythonPath.parent / "Lib" / "site-packages" / package).resolve()
 
-def install(package: str, callback = print, index: str | None = None, pip_head: str = pip_head) -> subprocess.Popen:
+def install(package: str, callback=print, index: str | None = None, pip_head: str = pip_head) -> subprocess.Popen:
     """
-    返回运行`pip install`的结果，参见`HDpip.core.system.shell()`。
+    返回运行`pip install`的结果。
 
     :param package: 包名
     :type package: str
@@ -154,9 +128,9 @@ def install(package: str, callback = print, index: str | None = None, pip_head: 
         option = ""
     return system.shell(f"{pip_head} install {package}{option}", True, callback)
 
-def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subprocess.Popen:
+def uninstall(package: str, callback=print, pip_head: str = pip_head) -> subprocess.Popen:
     """
-    返回运行`pip uninstall`的结果，参见`HDpip.core.system.shell()`。
+    返回运行`pip uninstall`的结果。
 
     :param package: 包名
     :type package: str
@@ -170,14 +144,14 @@ def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subpr
 
 def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[str, str | float]]:
     """
-    测试镜像源的响应速度，返回由快到慢的 (url, time) 列表。
+    测试镜像源的响应速度。
 
     :param mirrors: 镜像列表，每项含 "url" 字段
     :type mirrors: list[dict]
     :param timeout: 超时时间
     :type timeout: float
-    :return: 由快到慢的 (url, time) 列表
-    :rtype: list[tuple[str, float]]
+    :return: 由快到慢的列表
+    :rtype: list[dict]
     """
 
     results = []
@@ -187,21 +161,68 @@ def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[s
         url = mirror["url"]
         t0 = time.time()
         try:
-            urllib.request.urlopen(url, timeout = timeout)
+            urllib.request.urlopen(url, timeout=timeout)
             elapsed = time.time() - t0
             results.append({"url": url, "time": elapsed})
         except Exception:
             results.append({"url": url, "time": timeout})
 
-    return sorted(results, key = lambda x: x["time"])
+    return sorted(results, key=lambda x: x["time"])
+
+def _parseJsonVersions(body: str) -> set[str] | None:
+    """
+    按 PEP 691 JSON 解析版本集合。
+
+    :param body: 响应体
+    :type body: str
+    :return: 版本集合，不是合法结构时返回 None
+    :rtype: set[str] | None
+    """
+
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    versions = data.get("versions")
+    if not isinstance(versions, list):
+        return None
+    return {str(v) for v in versions}
+
+def _parseHtmlVersions(body: str) -> set[str]:
+    """
+    从 HTML 页面解析版本集合。
+
+    :param body: 响应体
+    :type body: str
+    :return: 版本集合
+    :rtype: set[str]
+    """
+
+    versions = set()
+    for line in body.splitlines():
+        for ext, parser in ((".tar.gz", parse_sdist_filename), (".whl", parse_wheel_filename)):
+            if ext not in line:
+                continue
+            start = line.find(">") + 1
+            end = line.find(ext + "<")
+            if start > 0 and end > start:
+                filename = line[start:end + len(ext)]
+                try:
+                    _, ver = parser(filename)
+                    versions.add(str(ver))
+                except Exception:
+                    pass
+    return versions
 
 def getLatestVersion(package: str, mirror: str | None = None) -> util.Version | None:
     """
-    通过 PyPI Simple API 获取指定包的最新版本，使用 pip 原生解析器。
+    通过 Simple API 获取最新版本，优先 JSON，回退 HTML。
 
     :param package: 包名
     :type package: str
-    :param mirror: 镜像地址（如 auto.json 中的 url 字段），默认官方 PyPI
+    :param mirror: 镜像地址，默认官方 PyPI
     :type mirror: str | None
     :return: 最新版本，失败返回 None
     :rtype: util.Version | None
@@ -211,24 +232,31 @@ def getLatestVersion(package: str, mirror: str | None = None) -> util.Version | 
         mirror = "https://pypi.org/simple/"
 
     url = mirror.rstrip("/") + f"/{package}/"
+    req = urllib.request.Request(
+        url, 
+        headers={"Accept": "application/vnd.pypi.simple.v1+json"}, 
+    )
+
     try:
-        html = urllib.request.urlopen(url, timeout = 30).read().decode("utf-8")
-        versions = set()
-        for line in html.splitlines():
-            for ext, parser in ((".tar.gz", parse_sdist_filename), (".whl", parse_wheel_filename)):
-                if ext not in line:
-                    continue
-                start = line.find(">") + 1
-                end = line.find(ext + "<")
-                if start > 0 and end > start:
-                    filename = line[start:end + len(ext)]
-                    try:
-                        _, ver = parser(filename)
-                        versions.add(str(ver))
-                    except Exception:
-                        pass
-        if not versions:
-            return None
-        return util.Version(str(max(util.Version(v) for v in versions)))
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            body = resp.read().decode("utf-8", errors="replace")
     except Exception:
         return None
+
+    versions = _parseJsonVersions(body)
+    if versions is None:
+        versions = _parseHtmlVersions(body)
+
+    if not versions:
+        return None
+
+    valid: list[util.Version] = []
+    for v in versions:
+        try:
+            valid.append(util.Version(v))
+        except Exception:
+            pass
+
+    if not valid:
+        return None
+    return max(valid)

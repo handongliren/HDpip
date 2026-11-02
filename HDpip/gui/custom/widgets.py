@@ -6,11 +6,15 @@
 自定义控件。
 """
 
+from types import MethodType
 from typing import *
 from typing_extensions import override
 
+import tkinter
+
 import maliang
 import maliang.standard.styles
+import maliang.table
 import maliang.toolbox.utility
 
 # maliang 样式表缺少 StillImage，一次性补充（图标不着色）
@@ -25,6 +29,82 @@ except ImportError:
     import color
     import util
     import media
+
+class HorizontallyFixedTable(maliang.table.TkTable):
+    """
+    禁用水平滚动并在拖动列宽后自动填满表格的表格控件。
+
+    :param parent: 父控件
+    :param index_width: 可见行索引宽度
+    """
+
+    def __init__(
+        self,
+        parent: tkinter.Misc,
+        *,
+        data: Sequence[Sequence[Any]] | None = None,
+        header: list[Any] | None = None,
+        total_rows: int | None = None,
+        total_columns: int | None = None,
+        show_header: bool = True,
+        show_row_index: bool = True,
+        show_vertical_grid: bool = True,
+        show_horizontal_grid: bool = True,
+        index_width: int | None = None,
+    ) -> None:
+        super().__init__(
+            parent,
+            data = data,
+            header = header,
+            total_rows = total_rows,
+            total_columns = total_columns,
+            show_header = show_header,
+            show_row_index = show_row_index,
+            show_vertical_grid = show_vertical_grid,
+            show_horizontal_grid = show_horizontal_grid,
+            show_x_scrollbar = False,
+        )
+        if index_width is not None:
+            self.set_index_width(index_width)
+        for widget in (self.MT, self.CH):
+            xview = widget.xview
+
+            def lockedXview(self: Any, *args: Any, _xview: Any = xview) -> Any:
+                if not args:
+                    return _xview()
+
+            def lockedXviewScroll(self: Any, number: int, what: str) -> None:
+                return None
+
+            widget.xview = MethodType(lockedXview, widget)
+            widget.xview_scroll = MethodType(lockedXviewScroll, widget)
+        self.enable_bindings("single_select", "drag_select", "ctrl_select", "copy", "column_width_resize", "rc_menu")
+        self.extra_bindings("column_width_resize", self._onColumnResize)
+
+    def _onColumnResize(self, event: tkinter.Event) -> None:
+        self.after_idle(self._doAutofill)
+
+    def _doAutofill(self) -> None:
+        widget_w = self.winfo_width()
+        if widget_w <= 1:
+            return
+        index_width = self.RI.winfo_width() if self.MT.show_index else 0
+        available = widget_w - index_width
+        widths = list(self.get_column_widths())
+        if len(widths) < 2:
+            return
+        gap = available - sum(widths)
+        if gap == 0:
+            return
+        min_col_w = util.ss(80)
+        new_last = widths[-1] + gap
+        if new_last < min_col_w:
+            widths[-2] -= min_col_w - new_last
+            new_last = min_col_w
+        if widths[-2] < min_col_w:
+            return
+        widths[-1] = new_last
+        self.set_column_widths(widths)
 
 class Button(maliang.Button):
     """

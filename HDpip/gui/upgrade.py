@@ -33,7 +33,7 @@ except ImportError:
     from custom.util import ss
     from custom.media import bi
 
-current_version = core.system.getVersion(), 
+current_version = core.system.getVersion()
 latest_version = core.pip_api.getLatestVersion("hdpip")
 
 def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) -> bool:
@@ -114,7 +114,7 @@ class InstallCanvas(custom.containers.Canvas):
         try:
             core.pip_api.install(
                 "--upgrade hdpip", 
-                callback = lambda line: self.log_queue.put(line), 
+                callback = self.log_queue.put, 
             )
         except Exception as e:
             self.log_queue.put(f"[错误] {e}")

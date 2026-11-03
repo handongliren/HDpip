@@ -82,7 +82,7 @@ class DialogCanvas(maliang.Canvas):
         if outline:
             self.outline = custom.shapes.RoundedRectangle(self, (0, 0), (size[0] - 2, size[1] - 2), outline = self.theme_color)
 
-        if title == None:
+        if title is None:
             title = theme
         self.title = maliang.Text(self, (margin, ss(40)), size = [size[0] - 2 * margin, title_height], text = title, fontsize = ss(50), weight = "bold", anchor = "w", justify = "left", auto_update = True)
 
@@ -146,7 +146,7 @@ class DialogToplevel(maliang.Toplevel):
         :type theme: Literal["info", "primary", "danger", "warning", "success"]
         """
 
-        if title == None:
+        if title is None:
             title = theme
 
         super().__init__(master, size = size, title = title)
@@ -196,7 +196,7 @@ class DialogTk(maliang.Tk):
         :type theme: Literal["info", "primary", "danger", "warning", "success"]
         """
 
-        if title == None:
+        if title is None:
             title = theme
 
         super().__init__(size = size, title = title)

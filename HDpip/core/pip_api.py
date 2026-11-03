@@ -207,7 +207,7 @@ def _parseHtmlVersions(body: str) -> set[str]:
                 continue
             start = line.find(">") + 1
             end = line.find(ext + "<")
-            if start > 0 and end > start:
+            if 0 < start < end:
                 filename = line[start:end + len(ext)]
                 try:
                     _, ver = parser(filename)

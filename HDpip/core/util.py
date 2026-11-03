@@ -125,7 +125,7 @@ class Version(packaging.version.Version):
             else:
                 value = Version(i[2:])
 
-            if mode == "==" and not self == value:
+            if mode == "==" and self != value:
                 return False
             elif mode == "!=" and not self != value:
                 return False
@@ -156,7 +156,7 @@ def multipleSpilt(string: str, spilt_symbol: str | list[str]) -> list[str]:
         spilt_symbol = spilt_symbol.split(",")
 
     if len(spilt_symbol) == 0:
-        ValueError("分隔符列表不能为空！")
+        raise ValueError("分隔符列表不能为空！")
     elif len(spilt_symbol) > 1:
         for i in range(1, len(spilt_symbol)):
             string = string.replace(spilt_symbol[i], spilt_symbol[0])

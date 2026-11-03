@@ -1,7 +1,16 @@
 [MESSAGES CONTROL]
 disable=
-    line-too-long, 
-    invalid-name, 
-    too-many-ancestors, 
-    unspecified-encoding, 
-    trailing-whitespace
+    broad-exception-caught,
+    too-many-arguments,
+    too-many-branches,
+    too-many-locals,
+    too-many-instance-attributes,
+    too-few-public-methods,
+    attribute-defined-outside-init,
+    import-outside-toplevel,
+    consider-using-with,
+    duplicate-code,
+    wildcard-import,
+    unused-wildcard-import,
+    missing-function-docstring,
+    missing-class-docstring

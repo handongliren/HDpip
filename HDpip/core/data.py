@@ -210,7 +210,6 @@ class Data():
             raise TypeError(f"不支持的键类型：{type(key).__name__}")
         self._iterator = None
         self.notifyEvent("__setitem__", {"key": key, "value": value, "old_value": old_value})
-        return None
 
     @overload
     def __delitem__(self, key: str | int): ...

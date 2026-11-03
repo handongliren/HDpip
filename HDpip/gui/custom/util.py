@@ -206,9 +206,9 @@ def smartScale(value: int | decimal.Decimal | Iterable[int | decimal.Decimal],
     :type use_cache: bool
     :param return_type: 返回类型
     :type return_type: Literal["Decimal", "float", "int"]
+    :raises TypeError: value 不是支持的数值或可迭代类型时抛出
     :return: 缩放后的值
     :rtype: decimal.Decimal | Iterable[decimal.Decimal] | float | Iterable[float] | int | Iterable[int]
-    :raises TypeError: value 不是支持的数值或可迭代类型时抛出
     """
 
     scale_value = getSmartScaleValue(base_size, screen_size, strict_mode = strict_mode, use_cache = use_cache)

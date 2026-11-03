@@ -3,13 +3,16 @@
 - Copyright © 2025 寒冬利刃.
 - License: GPL-3
 
-Data 数据系统。
+本文件是数据系统。
 """
 
 import copy
 import json
+import math
 import pathlib
+import re
 import shutil
+import time
 import traceback
 from typing import *
 from typing_extensions import overload, Self
@@ -434,6 +437,364 @@ class Data():
                 observer(event_type, event_data)
             except Exception as error:
                 traceback.print_exception(error)
+
+class Cache(Data):
+    """
+    自动刷新的缓存数据类。
+
+    刷新规则按 key 注册，key 参数统一为 `str | re.Pattern | None`：
+    - `str`：精确匹配单个 key
+    - `re.Pattern`：正则 `fullmatch` 匹配多个 key
+    - `None`：全部 key
+
+    `registerRefresh(None, ...)` 注册兜底规则，精确和正则都不匹配时使用。
+    `unregisterRefresh(None)` 清空所有精确规则、正则规则和兜底规则。
+
+    `isExpired`、`lastRefresh`、`setTTL`、`refresh`、`get` 传 `str` 时返回原类型，
+    传 `re.Pattern` 或 `None` 时批量操作并返回 `dict`。
+    `check()` 只检查已有 key，过期且能刷新的立即刷新。
+    `clear()` 传 `str` 清除单个，`re.Pattern` 清除匹配的，`None` 清除全部。
+
+    `__getitem__` / `__setitem__` / `__delitem__` 沿用 `Data` 的 `str | int | tuple | list` 语义，不参与统一。
+
+    TTL 语义在所有位置统一：
+    - `None`：继承默认 TTL
+    - `math.inf`：永不过期
+    - 其他数字：过期秒数
+
+    内部元数据只保存解析后的 `float`，不会出现 `None`。
+
+    本类会发送 `refresh`、`clear`、`ttl` 事件，这三个值不在 `Data.notifyEvent` 的 `Literal` 中，
+    运行时不受影响，仅静态类型检查会提示。
+    """
+
+    def __init__(self, ttl: float = 6 * 3600):
+        """
+        :param ttl: 默认有效期（秒），`math.inf` 表示默认永不过期
+        :type ttl: float
+        """
+
+        super().__init__()
+        self._default_ttl = ttl
+        self._exact: dict[str, tuple[Callable[[str], Any], float | None]] = {}
+        self._rules: list[tuple[re.Pattern, Callable[[str], Any], float | None]] = []
+        self._fallback: tuple[Callable[[str], Any], float | None] | None = None
+        self._meta: dict[str, dict[str, float]] = {}
+
+    def _match(self, key: str | re.Pattern | None) -> list[str]:
+        """
+        把 key 参数解析为具体的 key 列表。
+
+        `str` 返回 `[key]`，不检查是否存在；`re.Pattern` 返回 `data` 中 `fullmatch` 匹配的 key；
+        `None` 返回 `data` 中所有 key。
+
+        :param key: 匹配条件
+        :type key: str | re.Pattern | None
+        :return: key 列表
+        :rtype: list[str]
+        """
+
+        if key is None:
+            return list(self.data.keys())
+        if isinstance(key, re.Pattern):
+            return [k for k in self.data if key.fullmatch(k)]
+        return [key]
+
+    def registerRefresh(self, key: str | re.Pattern | None, func: Callable[[str], Any], ttl: float | None = None) -> None:
+        """
+        注册刷新规则。
+
+        `key` 为 `str` 时精确匹配，`re.Pattern` 时正则匹配，`None` 时作为兜底规则。
+        精确匹配优先于正则，正则按注册顺序依次尝试，都不匹配时使用兜底规则。
+
+        :param key: 精确 key、正则模式或 `None`（兜底）
+        :type key: str | re.Pattern | None
+        :param func: 刷新函数，接收 key 返回新值
+        :type func: Callable[[str], Any]
+        :param ttl: 该规则的过期秒数；`None` 表示继承默认 TTL，`math.inf` 表示永不过期
+        :type ttl: float | None
+        """
+
+        if key is None:
+            self._fallback = (func, ttl)
+        elif isinstance(key, re.Pattern):
+            self._rules.append((key, func, ttl))
+        else:
+            self._exact[key] = (func, ttl)
+
+    def unregisterRefresh(self, key: str | re.Pattern | None) -> None:
+        """
+        注销刷新规则。
+
+        `str` 删除精确规则，`re.Pattern` 删除 pattern 和 flags 都相同的正则规则，
+        `None` 清空所有精确规则、正则规则和兜底规则。
+
+        :param key: 精确 key、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        """
+
+        if key is None:
+            self._exact.clear()
+            self._rules.clear()
+            self._fallback = None
+        elif isinstance(key, re.Pattern):
+            self._rules = [(p, f, t) for p, f, t in self._rules if p.pattern != key.pattern or p.flags != key.flags]
+        else:
+            self._exact.pop(key, None)
+
+    def _resolve(self, key: str) -> tuple[Callable[[str], Any] | None, float]:
+        """
+        查找 key 匹配的刷新函数和最终 TTL。
+
+        精确规则优先，其次正则，最后兜底。返回的 TTL 一定是解析后的 `float`。
+
+        :param key: 缓存键
+        :type key: str
+        :return: (刷新函数或 None, 最终 TTL)
+        :rtype: tuple[Callable[[str], Any] | None, float]
+        """
+
+        if key in self._exact:
+            func, ttl = self._exact[key]
+            return func, self._default_ttl if ttl is None else ttl
+        for pattern, func, ttl in self._rules:
+            if pattern.fullmatch(key):
+                return func, self._default_ttl if ttl is None else ttl
+        if self._fallback is not None:
+            func, ttl = self._fallback
+            return func, self._default_ttl if ttl is None else ttl
+        return None, self._default_ttl
+
+    def isExpired(self, key: str | re.Pattern | None) -> bool | dict[str, bool]:
+        """
+        判断 key 是否缺失或过期。
+
+        缺失、无元数据、超过 TTL 都视为过期。TTL 为 `math.inf` 时永不过期。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        :return: `str` 返回单个 `bool`，`re.Pattern` / `None` 返回 `dict[str, bool]`
+        """
+
+        if isinstance(key, str):
+            if key not in self.data:
+                return True
+            meta = self._meta.get(key)
+            if meta is None:
+                return True
+            ttl = meta["ttl"]
+            if ttl == math.inf:
+                return False
+            return time.time() - meta["ts"] >= ttl
+        return {k: self.isExpired(k) for k in self._match(key)}
+
+    def lastRefresh(self, key: str | re.Pattern | None) -> float | None | dict[str, float | None]:
+        """
+        返回 key 上次刷新的时间戳。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        :return: `str` 返回单个时间戳或 `None`，`re.Pattern` / `None` 返回 `dict`
+        """
+
+        if isinstance(key, str):
+            meta = self._meta.get(key)
+            return None if meta is None else meta["ts"]
+        return {k: self.lastRefresh(k) for k in self._match(key)}
+
+    def setTTL(self, key: str | re.Pattern | None, ttl: float | None) -> None:
+        """
+        修改 key 的过期时间。
+
+        `str` 时 key 不存在抛 `KeyError`；`re.Pattern` / `None` 批量设置已存在的 key。
+        `ttl` 为 `None` 表示继承默认 TTL，`math.inf` 表示永不过期。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        :param ttl: 新的过期秒数
+        :type ttl: float | None
+        :raises KeyError: `key` 为 `str` 且不在缓存中时
+        """
+
+        resolved = self._default_ttl if ttl is None else ttl
+        if isinstance(key, str):
+            if key not in self.data:
+                raise KeyError(f"缓存中不存在键 {key!r}。")
+            meta = self._meta.setdefault(key, {"ts": time.time(), "ttl": resolved})
+            meta["ttl"] = resolved
+            self.notifyEvent("ttl", {"key": key, "ttl": resolved})  # type: ignore[arg-type]
+            return
+        for k in self._match(key):
+            meta = self._meta.setdefault(k, {"ts": time.time(), "ttl": resolved})
+            meta["ttl"] = resolved
+            self.notifyEvent("ttl", {"key": k, "ttl": resolved})  # type: ignore[arg-type]
+
+    def setDefaultTTL(self, ttl: float) -> None:
+        """
+        修改默认过期时间。
+
+        只影响之后刷新的值，不改变已有值的 TTL。
+
+        :param ttl: 新的默认过期秒数，`math.inf` 表示永不过期
+        :type ttl: float
+        """
+
+        self._default_ttl = ttl
+
+    def refresh(self, key: str | re.Pattern | None) -> Any:
+        """
+        强制刷新 key。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        :raises KeyError: `key` 为 `str` 且未匹配到刷新规则时
+        :return: `str` 返回刷新后的值，`re.Pattern` / `None` 返回 `dict[str, Any]`
+        """
+
+        if isinstance(key, str):
+            func, ttl = self._resolve(key)
+            if func is None:
+                raise KeyError(f"键 {key!r} 未匹配到刷新规则。")
+            value = func(key)
+            self.data[key] = value
+            self._meta[key] = {"ts": time.time(), "ttl": ttl}
+            self._iterator = None
+            self.notifyEvent("refresh", {"key": key, "value": value})  # type: ignore[arg-type]
+            return value
+        result: dict[str, Any] = {}
+        for k in self._match(key):
+            func, _ = self._resolve(k)
+            if func is not None:
+                result[k] = self.refresh(k)
+        return result
+
+    def get(self, key: str | re.Pattern | None) -> Any:
+        """
+        获取缓存值，缺失或过期时自动刷新。
+
+        `str` 时缺失且无规则抛 `KeyError`，过期且无规则返回旧值。
+        `re.Pattern` / `None` 批量获取，只处理 `data` 中存在的 key。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        :raises KeyError: `key` 为 `str` 且缺失、未匹配到刷新规则时
+        :return: `str` 返回缓存值，`re.Pattern` / `None` 返回 `dict[str, Any]`
+        """
+
+        if isinstance(key, str):
+            if not self.isExpired(key):
+                return self.data[key]
+            func, _ = self._resolve(key)
+            if func is None:
+                if key not in self.data:
+                    raise KeyError(f"缓存中不存在键 {key!r}，且未匹配到刷新规则。")
+                return self.data[key]
+            return self.refresh(key)
+        return {k: self.get(k) for k in self._match(key)}
+
+    def check(self, pattern: str | re.Pattern | None = None) -> None:
+        """
+        检查已有 key，过期的立即刷新，未过期的跳过。
+
+        `str` 精确匹配该 key，`re.Pattern` 按正则 `fullmatch` 匹配，`None` 检查全部。
+        没有匹配刷新规则的过期 key 会被跳过。
+        刷新函数自身抛出的异常会直接传播，中断本次检查。
+
+        :param pattern: 可选的匹配条件，`None` 表示全部
+        :type pattern: str | re.Pattern | None
+        :raises Exception: 刷新函数抛出的任何异常
+        """
+
+        if pattern is None:
+            matcher = None
+        elif isinstance(pattern, re.Pattern):
+            matcher = pattern.fullmatch
+        else:
+            matcher = None
+        for key in list(self.data.keys()):
+            if matcher is not None:
+                if not matcher(key):
+                    continue
+            elif pattern is not None and key != pattern:
+                continue
+            if not self.isExpired(key):
+                continue
+            func, _ = self._resolve(key)
+            if func is not None:
+                self.refresh(key)
+
+    def __getitem__(self, key: str | int | tuple | list):
+        """
+        访问数据，单键自动判过期并刷新，嵌套路径走 `Data` 原始逻辑。
+
+        :param key: 键，可以是字符串、整数，或由它们组成的路径
+        :type key: str | int | tuple | list
+        :return: 对应的值
+        """
+
+        if isinstance(key, str | int):
+            value = self.get(key)
+            self.notifyEvent("__getitem__", {"key": key, "value": value})
+            return value
+        return super().__getitem__(key)
+
+    def __setitem__(self, key: str | int | tuple | list, value: Any):
+        """
+        设置数据，并记录刷新时间和 TTL。
+
+        单键更新自身元数据，嵌套路径更新顶层 key 的元数据。
+
+        :param key: 键，可以是字符串、整数，或由它们组成的路径
+        :type key: str | int | tuple | list
+        :param value: 新值
+        :type value: Any
+        """
+
+        super().__setitem__(key, value)
+        top = key if isinstance(key, str | int) else key[0]
+        _, ttl = self._resolve(str(top))
+        self._meta[top] = {"ts": time.time(), "ttl": ttl}
+
+    def clear(self, key: str | re.Pattern | None = None) -> None:
+        """
+        清除缓存。
+
+        `str` 清除单个 key，`re.Pattern` 清除匹配的 key，`None` 清除全部。
+
+        :param key: 缓存键、正则模式或 `None`
+        :type key: str | re.Pattern | None
+        """
+
+        if key is None:
+            self.data.clear()
+            self._meta.clear()
+        elif isinstance(key, re.Pattern):
+            for k in self._match(key):
+                self.data.pop(k, None)
+                self._meta.pop(k, None)
+        else:
+            self.data.pop(key, None)
+            self._meta.pop(key, None)
+        self._iterator = None
+        event_key = key.pattern if isinstance(key, re.Pattern) else key
+        self.notifyEvent("clear", {"key": event_key})  # type: ignore[arg-type]
+
+    def load(self) -> list | dict:
+        """
+        加载数据并清空运行时元数据。
+
+        文件里只存值，不存时间戳和 TTL，加载后所有 key 视为过期，下次访问会刷新。
+
+        :raises FileNotFoundError: 绑定的文件不存在时
+        :raises PermissionError: 没有读取权限时
+        :raises json.JSONDecodeError: 文件内容不是合法 JSON 时
+        :return: 数据
+        :rtype: list | dict
+        """
+
+        super().load()
+        self._meta.clear()
+        return self.data
 
 class DataManager():
     def importSetting(self, path: str | pathlib.Path) -> None:

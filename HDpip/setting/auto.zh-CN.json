@@ -24,10 +24,6 @@
                 "url": "https://mirrors.163.com/pypi/simple/"
             }, 
             {
-                "name": "豆瓣", 
-                "url": "https://pypi.douban.com/simple/"
-            }, 
-            {
                 "name": "百度云", 
                 "url": "https://mirror.baidu.com/pypi/simple/"
             }, 

@@ -4,3 +4,4 @@ disable=
     invalid-name, 
     too-many-ancestors, 
     unspecified-encoding, 
+    trailing-whitespace

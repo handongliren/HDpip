@@ -1,84 +1,28 @@
-import ast
 import io
 import pathlib
 import tokenize
 
-def _argumentEquals(text: str) -> set[int]:
+def _spaceEquals(text: str) -> str:
     lines = text.splitlines(keepends = True)
-    if not lines:
-        return set()
-    tree = ast.parse(text)
     line_offsets = [0]
     for line in lines:
         line_offsets.append(line_offsets[-1] + len(line))
 
-    def offset(line: int, column: int) -> int:
-        byte_column = len(lines[line - 1].encode("utf-8")[:column].decode("utf-8"))
-        return line_offsets[line - 1] + byte_column
-
-    argument_ranges = []
-
-    def addArgumentDefaults(arguments: ast.arguments) -> None:
-        positional = arguments.posonlyargs + arguments.args
-        if arguments.defaults:
-            for argument, default in zip(positional[-len(arguments.defaults):], arguments.defaults):
-                argument_ranges.append((
-                    offset(argument.end_lineno, argument.end_col_offset), 
-                    offset(default.lineno, default.col_offset), 
-                ))
-        for argument, default in zip(arguments.kwonlyargs, arguments.kw_defaults):
-            if default is not None:
-                argument_ranges.append((
-                    offset(argument.end_lineno, argument.end_col_offset), 
-                    offset(default.lineno, default.col_offset), 
-                ))
-
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
-            addArgumentDefaults(node.args)
-        if isinstance(node, (ast.Call, ast.ClassDef)):
-            for keyword in node.keywords:
-                if keyword.arg is not None:
-                    argument_ranges.append((
-                        offset(keyword.lineno, keyword.col_offset), 
-                        offset(keyword.value.lineno, keyword.value.col_offset), 
-                    ))
-        elif isinstance(node, ast.Assign):
-            targets = node.targets
-            for left, right in zip(targets, targets[1:] + [node.value]):
-                argument_ranges.append((
-                    offset(left.end_lineno, left.end_col_offset), 
-                    offset(right.lineno, right.col_offset), 
-                ))
-        elif isinstance(node, ast.AnnAssign) and node.value is not None:
-            left = node.annotation if node.annotation is not None else node.target
-            argument_ranges.append((
-                offset(left.end_lineno, left.end_col_offset), 
-                offset(node.value.lineno, node.value.col_offset), 
-            ))
-
-    equals = set()
+    edits = []
     for token in tokenize.generate_tokens(io.StringIO(text).readline):
         if token.type != tokenize.OP or token.string != "=":
             continue
         token_offset = line_offsets[token.start[0] - 1] + token.start[1]
-        if any(start <= token_offset < end for start, end in argument_ranges):
-            equals.add(token_offset)
-    return equals
-
-def _spaceArgumentEquals(text: str) -> str:
-    edits = []
-    for equals in _argumentEquals(text):
-        left = equals
+        left = token_offset
         while left > 0 and text[left - 1] in " \t":
             left -= 1
-        right = equals + 1
+        right = token_offset + 1
         while right < len(text) and text[right] in " \t":
             right += 1
-        if text[left:equals] != " ":
-            edits.append((left, equals, " "))
-        if text[equals + 1:right] != " ":
-            edits.append((equals + 1, right, " "))
+        if text[left:token_offset] != " ":
+            edits.append((left, token_offset, " "))
+        if text[token_offset + 1:right] != " ":
+            edits.append((token_offset + 1, right, " "))
 
     for start, end, replacement in sorted(edits, reverse = True):
         text = text[:start] + replacement + text[end:]
@@ -113,7 +57,7 @@ def main() -> None:
                 prev_blank = False
             deduped.append(line)
 
-        result = _spaceArgumentEquals(newline.join(deduped) + newline)
+        result = _spaceEquals(newline.join(deduped) + newline)
         if result != text:
             with py.open("w", encoding = "utf-8", newline = "") as f:
                 f.write(result)

@@ -1,5 +1,10 @@
 [MESSAGES CONTROL]
 disable=
+    line-too-long, 
+    invalid-name, 
+    too-many-ancestors, 
+    unspecified-encoding, 
+    trailing-whitespace, 
     broad-exception-caught,
     too-many-arguments,
     too-many-branches,

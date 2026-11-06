@@ -43,14 +43,14 @@ class TestGuiBase:
 
         util._dpi_cache = None
         util._smart_cache.clear()
-        val = util.ss(100, base_size=(1920, 1080), screen_size=(1920, 1080))
+        val = util.ss(100, base_size = (1920, 1080), screen_size = (1920, 1080))
         assert isinstance(val, int)
 
     def test_smart_scale_tuple(self, ):
         import HDpip.gui.custom as gui_custom
 
         util._smart_cache.clear()
-        result = util.ss((100, 200), base_size=(1200, 800), screen_size=(1200, 800))
+        result = util.ss((100, 200), base_size = (1200, 800), screen_size = (1200, 800))
         assert isinstance(result, tuple)
         assert len(result) == 2
         assert all(isinstance(v, int) for v in result)
@@ -61,7 +61,7 @@ class TestGuiBase:
 
         util._smart_cache.clear()
         util._dpi_cache = None
-        val = util.ss(100, base_size=(1200, 800), screen_size=(1280, 720))
+        val = util.ss(100, base_size = (1200, 800), screen_size = (1280, 720))
         assert isinstance(val, int)
 
     def test_smart_scale_zero(self, ):
@@ -75,21 +75,21 @@ class TestGuiBase:
         import HDpip.gui.custom as gui_custom
 
         util._dpi_cache = None
-        pt = util.pxToPt(96, dpi=96)
+        pt = util.pxToPt(96, dpi = 96)
         assert pt == 72
 
     def test_pt_to_px(self, ):
         import HDpip.gui.custom as gui_custom
 
         util._dpi_cache = None
-        px = util.ptToPx(72, dpi=96)
+        px = util.ptToPx(72, dpi = 96)
         assert px == 96
 
     def test_get_smart_scale_value(self, ):
         import HDpip.gui.custom as gui_custom
 
         util._smart_cache.clear()
-        val = util.getSmartScaleValue(base_size=(1200, 800), screen_size=(1200, 800), use_cache=False)
+        val = util.getSmartScaleValue(base_size = (1200, 800), screen_size = (1200, 800), use_cache = False)
         assert isinstance(val, decimal.Decimal)
 
     def test_get_screen_size(self, ):

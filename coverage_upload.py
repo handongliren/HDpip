@@ -15,16 +15,16 @@ def run_coverage():
         subprocess.run([
             sys.executable, "-m", "pytest", "tests/", 
             "--cov", "--cov-report=xml", "--junitxml=junit.xml", 
-        ], check=True)
+        ], check = True)
         return
 
     if has_coverage:
         subprocess.run([
             sys.executable, "-m", "coverage", "run", "-m", "pytest", "tests/", 
-        ], check=True)
+        ], check = True)
         subprocess.run([
             sys.executable, "-m", "coverage", "xml", "-o", "coverage.xml", 
-        ], check=True)
+        ], check = True)
         return
 
     raise SystemExit(
@@ -43,7 +43,7 @@ def upload_to_codecov(token: str):
         try:
             subprocess.run([
                 sys.executable, "-m", "codecov", "-t", token, "-f", "coverage.xml", 
-            ], check=True)
+            ], check = True)
             print("使用 codecov 包上传成功。")
             return
         except subprocess.CalledProcessError as exc:
@@ -91,14 +91,14 @@ def upload_to_codecov(token: str):
     url = f"https://codecov.io/upload/v4?token={token}"
     req = urllib.request.Request(
         url, 
-        data=body, 
-        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"}, 
+        data = body, 
+        headers = {"Content-Type": f"multipart/form-data; boundary={boundary}"}, 
     )
 
     # Debug: show first part of body to inspect fields if needed
     try:
         print("--- debug: multipart body head ---")
-        print(body[:800].decode(errors="replace"))
+        print(body[:800].decode(errors = "replace"))
         print("--- end debug ---")
 
         resp = urllib.request.urlopen(req)
@@ -106,7 +106,7 @@ def upload_to_codecov(token: str):
         print(f"上传结果: {result}")
         print(f"查看报告: https://app.codecov.io/github/handongliren/HDpip")
     except urllib.error.HTTPError as exc:
-        error_body = exc.read().decode(errors="replace")
+        error_body = exc.read().decode(errors = "replace")
         raise RuntimeError(
             f"Codecov upload failed: {exc.code} {exc.reason}\n{error_body}"
         ) from exc

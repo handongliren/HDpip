@@ -159,7 +159,7 @@ class PipManager(QMainWindow):
         splitter.setSizes([300, 300])  # 左右两部分初始宽度比例
 
         # 将分割区域添加到主布局，并设置拉伸因子
-        main_layout.addWidget(splitter, stretch=1)  # stretch=1表示该部分会占用更多可用空间
+        main_layout.addWidget(splitter, stretch = 1)  # stretch=1表示该部分会占用更多可用空间
 
         # 调整整体窗口大小策略
         main_layout.setStretchFactor(python_group, 1)  # Python列表部分
@@ -365,7 +365,7 @@ class PipManager(QMainWindow):
         try:
             # 尝试加载配置文件
             if os.path.exists(config_path):
-                with open(config_path, 'r', encoding='utf-8') as f:
+                with open(config_path, 'r', encoding = 'utf-8') as f:
                     config = json.load(f)
                     self.current_mirror = config.get('current_mirror')
                     if self.current_mirror:
@@ -381,8 +381,8 @@ class PipManager(QMainWindow):
         }
 
         try:
-            with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, ensure_ascii=False, indent=4)
+            with open(config_path, 'w', encoding = 'utf-8') as f:
+                json.dump(config, f, ensure_ascii = False, indent = 4)
         except Exception as e:
             QMessageBox.warning(self, '配置错误', f'保存配置文件失败: {str(e)}')
 
@@ -485,7 +485,7 @@ class PipManager(QMainWindow):
         for exe in python_executables:
             try:
                 result = subprocess.run(['which', exe], 
-                                      capture_output=True, text=True, check=False)
+                                      capture_output = True, text = True, check = False)
                 if result.returncode == 0 and result.stdout.strip():
                     self._add_python_installation(result.stdout.strip())
             except Exception:
@@ -511,8 +511,8 @@ class PipManager(QMainWindow):
             # 获取Python版本
             result = subprocess.run(
                 [python_path, '--version'], 
-                capture_output=True, text=True, check=False, 
-                startupinfo=self._get_startupinfo()
+                capture_output = True, text = True, check = False, 
+                startupinfo = self._get_startupinfo()
             )
 
             if result.returncode == 0:
@@ -556,8 +556,8 @@ class PipManager(QMainWindow):
             # 执行pip list命令获取已安装包
             result = subprocess.run(
                 [self.current_python['path'], '-m', 'pip', 'list', '--format=json'], 
-                capture_output=True, text=True, check=False, 
-                startupinfo=self._get_startupinfo()
+                capture_output = True, text = True, check = False, 
+                startupinfo = self._get_startupinfo()
             )
 
             if result.returncode == 0:
@@ -583,7 +583,7 @@ class PipManager(QMainWindow):
         self.package_list.clear()
 
         # 按名称排序
-        sorted_packages = sorted(self.installed_packages, key=lambda x: x['name'].lower())
+        sorted_packages = sorted(self.installed_packages, key = lambda x: x['name'].lower())
 
         # 添加到列表控件
         for pkg in sorted_packages:
@@ -606,8 +606,8 @@ class PipManager(QMainWindow):
             # 执行pip show命令获取包详情
             result = subprocess.run(
                 [self.current_python['path'], '-m', 'pip', 'show', pkg_name], 
-                capture_output=True, text=True, check=False, 
-                startupinfo=self._get_startupinfo()
+                capture_output = True, text = True, check = False, 
+                startupinfo = self._get_startupinfo()
             )
 
             if result.returncode == 0:
@@ -668,7 +668,7 @@ class PipManager(QMainWindow):
             )
 
             if confirm == QMessageBox.StandardButton.Yes:
-                self.run_pip_command('install', pkg_name, version=version)
+                self.run_pip_command('install', pkg_name, version = version)
 
     def uninstall_package(self):
         """卸载Python包"""
@@ -714,9 +714,9 @@ class PipManager(QMainWindow):
         )
 
         if confirm == QMessageBox.StandardButton.Yes:
-            self.run_pip_command('install', pkg_name, upgrade=True)
+            self.run_pip_command('install', pkg_name, upgrade = True)
 
-    def run_pip_command(self, command, pkg_name, version=None, upgrade=False):
+    def run_pip_command(self, command, pkg_name, version = None, upgrade = False):
         """执行pip命令的通用方法"""
         if not self.current_python:
             QMessageBox.warning(self, '警告', '请先选择一个Python版本')
@@ -756,12 +756,12 @@ class PipManager(QMainWindow):
             # 执行命令并实时输出
             process = subprocess.Popen(
                 cmd, 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE, 
-                text=True, 
-                bufsize=1, 
-                universal_newlines=True, 
-                startupinfo=startupinfo  # 添加这个参数来隐藏窗口
+                stdout = subprocess.PIPE, 
+                stderr = subprocess.PIPE, 
+                text = True, 
+                bufsize = 1, 
+                universal_newlines = True, 
+                startupinfo = startupinfo  # 添加这个参数来隐藏窗口
             )
 
             # 实时读取输出
@@ -848,7 +848,7 @@ class PipManager(QMainWindow):
         for i in range(mirror_group.buttons().__len__()):
             button = mirror_group.button(i)
             if button:
-                button.clicked.connect(lambda checked, btn=button: on_radio_clicked(btn))
+                button.clicked.connect(lambda checked, btn = button: on_radio_clicked(btn))
 
         # 确定和取消按钮
         btn_box = QDialogButtonBox(

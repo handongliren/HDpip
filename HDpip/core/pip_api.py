@@ -74,7 +74,7 @@ def list_(option: str | None = None, pip_head: str = pip_head) -> list:
         option = f" {option}"
     else:
         option = ""
-    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False, merge_error=False))
+    return json.loads(system.shell(f"{pip_head} list --format=json{option}", False, merge_error = False))
 
 def show(package: str, pip_head: str = pip_head) -> dict:
     """
@@ -88,7 +88,7 @@ def show(package: str, pip_head: str = pip_head) -> dict:
     :rtype: dict
     """
 
-    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False, merge_error=False))
+    return yaml.safe_load(system.shell(f"{pip_head} show {package}", False, merge_error = False))
 
 def getPackageDir(package: str, pythonPath: pathlib.Path | str = system.getPythonPath()) -> pathlib.Path:
     """
@@ -107,7 +107,7 @@ def getPackageDir(package: str, pythonPath: pathlib.Path | str = system.getPytho
     else:
         return (pythonPath.parent / "Lib" / "site-packages" / package).resolve()
 
-def install(package: str, callback=print, index: str | None = None, pip_head: str = pip_head) -> subprocess.Popen:
+def install(package: str, callback = print, index: str | None = None, pip_head: str = pip_head) -> subprocess.Popen:
     """
     返回运行`pip install`的结果。
 
@@ -128,7 +128,7 @@ def install(package: str, callback=print, index: str | None = None, pip_head: st
         option = ""
     return system.shell(f"{pip_head} install {package}{option}", True, callback)
 
-def uninstall(package: str, callback=print, pip_head: str = pip_head) -> subprocess.Popen:
+def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subprocess.Popen:
     """
     返回运行`pip uninstall`的结果。
 
@@ -167,7 +167,7 @@ def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[s
         except Exception:
             results.append({"url": url, "time": timeout})
 
-    return sorted(results, key=lambda x: x["time"])
+    return sorted(results, key = lambda x: x["time"])
 
 def _parseJsonVersions(body: str) -> set[str] | None:
     """
@@ -234,12 +234,12 @@ def getLatestVersion(package: str, mirror: str | None = None) -> util.Version | 
     url = mirror.rstrip("/") + f"/{package}/"
     req = urllib.request.Request(
         url, 
-        headers={"Accept": "application/vnd.pypi.simple.v1+json"}, 
+        headers = {"Accept": "application/vnd.pypi.simple.v1+json"}, 
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            body = resp.read().decode("utf-8", errors="replace")
+        with urllib.request.urlopen(req, timeout = 30) as resp:
+            body = resp.read().decode("utf-8", errors = "replace")
     except Exception:
         return None
 

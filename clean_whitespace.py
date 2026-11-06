@@ -17,39 +17,44 @@ def _argumentEquals(text: str) -> set[int]:
         return line_offsets[line - 1] + byte_column
 
     argument_ranges = []
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            positional = node.args.posonlyargs + node.args.args
-            for argument, default in zip(positional[-len(node.args.defaults):], node.args.defaults):
+
+    def addArgumentDefaults(arguments: ast.arguments) -> None:
+        positional = arguments.posonlyargs + arguments.args
+        if arguments.defaults:
+            for argument, default in zip(positional[-len(arguments.defaults):], arguments.defaults):
                 argument_ranges.append((
-                    offset(argument.end_lineno, argument.end_col_offset),
-                    offset(default.lineno, default.col_offset),
+                    offset(argument.end_lineno, argument.end_col_offset), 
+                    offset(default.lineno, default.col_offset), 
                 ))
-            for argument, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
-                if default is not None:
-                    argument_ranges.append((
-                        offset(argument.end_lineno, argument.end_col_offset),
-                        offset(default.lineno, default.col_offset),
-                    ))
-        elif isinstance(node, ast.Call):
+        for argument, default in zip(arguments.kwonlyargs, arguments.kw_defaults):
+            if default is not None:
+                argument_ranges.append((
+                    offset(argument.end_lineno, argument.end_col_offset), 
+                    offset(default.lineno, default.col_offset), 
+                ))
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+            addArgumentDefaults(node.args)
+        if isinstance(node, (ast.Call, ast.ClassDef)):
             for keyword in node.keywords:
                 if keyword.arg is not None:
                     argument_ranges.append((
-                        offset(keyword.lineno, keyword.col_offset),
+                        offset(keyword.lineno, keyword.col_offset), 
                         offset(keyword.value.lineno, keyword.value.col_offset), 
                     ))
         elif isinstance(node, ast.Assign):
             targets = node.targets
             for left, right in zip(targets, targets[1:] + [node.value]):
                 argument_ranges.append((
-                    offset(left.end_lineno, left.end_col_offset),
-                    offset(right.lineno, right.col_offset),
+                    offset(left.end_lineno, left.end_col_offset), 
+                    offset(right.lineno, right.col_offset), 
                 ))
         elif isinstance(node, ast.AnnAssign) and node.value is not None:
             left = node.annotation if node.annotation is not None else node.target
             argument_ranges.append((
-                offset(left.end_lineno, left.end_col_offset),
-                offset(node.value.lineno, node.value.col_offset),
+                offset(left.end_lineno, left.end_col_offset), 
+                offset(node.value.lineno, node.value.col_offset), 
             ))
 
     equals = set()
@@ -75,7 +80,7 @@ def _spaceArgumentEquals(text: str) -> str:
         if text[equals + 1:right] != " ":
             edits.append((equals + 1, right, " "))
 
-    for start, end, replacement in sorted(edits, reverse=True):
+    for start, end, replacement in sorted(edits, reverse = True):
         text = text[:start] + replacement + text[end:]
     return text
 

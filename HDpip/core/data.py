@@ -91,7 +91,7 @@ class Data():
         :rtype: list | dict
         """
 
-        with open(**self.file, mode="r") as f:
+        with open(**self.file, mode = "r") as f:
             self.data = json.load(f)
         self._iterator = None
         self.notifyEvent("load", {"data": self.data})
@@ -111,8 +111,8 @@ class Data():
 
         target = pathlib.Path(self.file["file"])
         temp = target.with_suffix(target.suffix + ".tmp")
-        with open(temp, mode="w", encoding=self.file["encoding"]) as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(", ", ": "))
+        with open(temp, mode = "w", encoding = self.file["encoding"]) as f:
+            json.dump(self.data, f, ensure_ascii = False, indent = 4, sort_keys = True, separators = (", ", ": "))
         temp.replace(target)
         self.notifyEvent("save", {"data": self.data})
         return self.data
@@ -865,7 +865,7 @@ class DataManager():
         """
 
         path = pathlib.Path(path).resolve()
-        self.custom_language_dir.mkdir(parents=True, exist_ok=True)
+        self.custom_language_dir.mkdir(parents = True, exist_ok = True)
         shutil.copy(path, self.custom_language_dir / path.name)
         self.language_dict = self.generateLanguageDict()
 
@@ -907,7 +907,7 @@ class DataManager():
         self.default_language_dir = (system.getBaseDir() / "language").resolve()
         self.custom_language_dir = (system.getPythonPath().parent / "HDpip" / "language").resolve()
 
-    def init(self, must=False):
+    def init(self, must = False):
         """
         设置基本数据并初始化。
 
@@ -920,9 +920,9 @@ class DataManager():
         """
 
         if must or not self.isInited():
-            self.custom_setting.parent.mkdir(parents=True, exist_ok=True)
+            self.custom_setting.parent.mkdir(parents = True, exist_ok = True)
             shutil.copy(self.default_setting, self.custom_setting)
-            self.custom_language_dir.mkdir(parents=True, exist_ok=True)
+            self.custom_language_dir.mkdir(parents = True, exist_ok = True)
 
         if must or not hasattr(self, "setting"):
             self.setting = Data()

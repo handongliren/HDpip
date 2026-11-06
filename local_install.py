@@ -1,8 +1,8 @@
 import os
 import warnings
 
-warnings.filterwarnings("ignore", message="Setuptools is replacing distutils")
-warnings.filterwarnings("ignore", message="No matching packages")
+warnings.filterwarnings("ignore", message = "Setuptools is replacing distutils")
+warnings.filterwarnings("ignore", message = "No matching packages")
 
 from HDpip.core import pip_api
 

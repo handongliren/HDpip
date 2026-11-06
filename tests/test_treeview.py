@@ -10,17 +10,17 @@ sys.path.insert(0, str(base_dir))
 import maliang
 import maliang.table
 
-def _make_table(master, columns, height=8, selectmode="extended", width=780, height_px=300):
+def _make_table(master, columns, height = 8, selectmode = "extended", width = 780, height_px = 300):
     """创建 TkTable 的工厂函数。"""
     t = maliang.table.TkTable(
         master, 
-        header=list(columns), 
-        total_rows=0, 
-        total_columns=len(columns), 
-        show_vertical_grid=True, 
-        show_horizontal_grid=True, 
+        header = list(columns), 
+        total_rows = 0, 
+        total_columns = len(columns), 
+        show_vertical_grid = True, 
+        show_horizontal_grid = True, 
     )
-    t.place(x=10, y=10, width=width, height=height_px)
+    t.place(x = 10, y = 10, width = width, height = height_px)
     t.enable_bindings(
         "single_select" if selectmode == "browse" else "toggle_select", 
         "drag_select", "column_select", "row_select", 
@@ -103,27 +103,27 @@ if __name__ == "__main__":
 
     maliang.core.configs.Env.system = "Windows11"
 
-    root = maliang.Tk((1000, 620), title="Table Demo (tksheet)")
+    root = maliang.Tk((1000, 620), title = "Table Demo (tksheet)")
     root.center()
-    icon = maliang.PhotoImage(file=str(HDpip.core.system.getBaseDir() / "assets" / "image" / "icon.png"))
+    icon = maliang.PhotoImage(file = str(HDpip.core.system.getBaseDir() / "assets" / "image" / "icon.png"))
     root.iconphoto(True, icon)
-    maliang.theme.customize_window(root, disable_maximize_button=True)
+    maliang.theme.customize_window(root, disable_maximize_button = True)
 
-    main = maliang.Canvas(root, expand="xy", auto_zoom=True, auto_update=True)
-    main.place(width=1000, height=620)
+    main = maliang.Canvas(root, expand = "xy", auto_zoom = True, auto_update = True)
+    main.place(width = 1000, height = 620)
 
-    maliang.Text(main, (500, 20), (400, 36), text="Table 控件演示 (tksheet)", 
-                 fontsize=24, weight="bold", anchor="center")
+    maliang.Text(main, (500, 20), (400, 36), text = "Table 控件演示 (tksheet)", 
+                 fontsize = 24, weight = "bold", anchor = "center")
 
     tv = maliang.table.TkTable(
         main, 
-        header=["包名", "版本", "状态"], 
-        total_rows=0, 
-        total_columns=3, 
-        show_vertical_grid=True, 
-        show_horizontal_grid=True, 
+        header = ["包名", "版本", "状态"], 
+        total_rows = 0, 
+        total_columns = 3, 
+        show_vertical_grid = True, 
+        show_horizontal_grid = True, 
     )
-    tv.place(x=12, y=68, width=976, height=460)
+    tv.place(x = 12, y = 68, width = 976, height = 460)
     tv.set_column_widths([280, 120, 100])
     tv.enable_bindings(
         "toggle_select", "drag_select", "column_select", "row_select", 
@@ -148,12 +148,12 @@ if __name__ == "__main__":
         tv.insert_row([name, ver, st])
 
     info_bar = maliang.Text(main, (12, 540), (976, 24), 
-                            text="提示: 拖拽列分隔线调整列宽 | Ctrl+点击多选 | 滚轮滚动", 
-                            fontsize=11, anchor="w")
-    info_bar.style.set(fg=HDpip.gui.custom.color.gray_800)
+                            text = "提示: 拖拽列分隔线调整列宽 | Ctrl+点击多选 | 滚轮滚动", 
+                            fontsize = 11, anchor = "w")
+    info_bar.style.set(fg = HDpip.gui.custom.color.gray_800)
 
     sel_label = maliang.Text(main, (12, 568), (976, 24), 
-                             text="当前选中: 无", fontsize=11, anchor="w")
+                             text = "当前选中: 无", fontsize = 11, anchor = "w")
     counter = len(packages)
 
     def refresh_selection_info():
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         tv.see(tv.get_total_rows() - 1)
 
     def delete_selected():
-        for row in sorted(tv.get_selected_rows(), reverse=True):
+        for row in sorted(tv.get_selected_rows(), reverse = True):
             tv.delete_row(row)
         refresh_selection_info()
 
@@ -181,22 +181,22 @@ if __name__ == "__main__":
             info = f"共选中 {len(sel)} 项: {', '.join(str(s) for s in sorted(sel))}"
         else:
             info = "无选中项"
-        maliang.standard.dialogs.TkMessage(message=info, title="选中项信息", 
-                                           icon="info", option="ok", master=root)
+        maliang.standard.dialogs.TkMessage(message = info, title = "选中项信息", 
+                                           icon = "info", option = "ok", master = root)
 
     tv.bind("<<SheetSelect>>", lambda e: refresh_selection_info())
 
-    toolbar = maliang.Canvas(main, expand="", auto_update=True)
-    toolbar.place(x=12, y=28, width=976, height=36)
+    toolbar = maliang.Canvas(main, expand = "", auto_update = True)
+    toolbar.place(x = 12, y = 28, width = 976, height = 36)
 
-    HDpip.gui.custom.widgets.Button(toolbar, (0, 0), (80, 30), text="添加", theme="primary", 
-                           command=add_package)
-    HDpip.gui.custom.widgets.Button(toolbar, (90, 0), (80, 30), text="删除选中", theme="danger", 
-                           command=delete_selected)
-    HDpip.gui.custom.widgets.Button(toolbar, (180, 0), (80, 30), text="滚到底", 
-                           theme="outline-warning", command=scroll_bottom)
-    HDpip.gui.custom.widgets.Button(toolbar, (270, 0), (80, 30), text="查看选中", 
-                           theme="outline-primary", command=show_selection_info)
+    HDpip.gui.custom.widgets.Button(toolbar, (0, 0), (80, 30), text = "添加", theme = "primary", 
+                           command = add_package)
+    HDpip.gui.custom.widgets.Button(toolbar, (90, 0), (80, 30), text = "删除选中", theme = "danger", 
+                           command = delete_selected)
+    HDpip.gui.custom.widgets.Button(toolbar, (180, 0), (80, 30), text = "滚到底", 
+                           theme = "outline-warning", command = scroll_bottom)
+    HDpip.gui.custom.widgets.Button(toolbar, (270, 0), (80, 30), text = "查看选中", 
+                           theme = "outline-primary", command = show_selection_info)
 
     refresh_selection_info()
     root.mainloop()

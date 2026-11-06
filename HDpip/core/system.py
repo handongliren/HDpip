@@ -160,7 +160,7 @@ def shellDecode(raw: str | bytes) -> str:
             return raw
         except UnicodeDecodeError:
             continue
-    return bytes(raw).decode("latin-1", errors="replace")
+    return bytes(raw).decode("latin-1", errors = "replace")
 
 def shell(command: str, realtime: bool = True, callback = print, merge_error: bool = True) -> str:
     """

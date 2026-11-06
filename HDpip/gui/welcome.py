@@ -456,7 +456,7 @@ class Welcome(custom.containers.Tk):
         maliang.animation.MoveWidget(self.icon_show, (0, ss(350) - ss(1000)), 1000, controller = maliang.animation.rebound, fps = 60).start()
         self.title_ = maliang.Text(self.content_canvas, ss((600, 1000)), ss((1200, 50)), text = "寒冬pip(HDpip)", fontsize = ss(40), weight = "bold", anchor = "center")
         maliang.animation.MoveWidget(self.icon_show, (0, ss(200) - ss(350)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1250)
-        maliang.animation.MoveWidget(self.title_, (0, ss(400) - ss(1000)), 500, controller = maliang.animation.smooth, fps =60).start(delay = 1250)
+        maliang.animation.MoveWidget(self.title_, (0, ss(400) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1250)
         self.subtitle_ = maliang.Text(self.content_canvas, ss((600, 1000)), ss((1200, 50)), text = "一个基于maliang的pip GUI\nA pip GUI based on maliang", fontsize = ss(30), anchor = "center")
         maliang.animation.MoveWidget(self.subtitle_, (0, ss(500) - ss(1000)), 500, controller = maliang.animation.smooth, fps = 60).start(delay = 1500)
         self.button_canvas.start()

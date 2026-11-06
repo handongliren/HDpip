@@ -53,8 +53,8 @@ def requirements() -> None:
     optional = project.get("optional-dependencies", {})
 
     def write(path: pathlib.Path, deps: list[str]) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("\n".join(deps) + "\n", encoding="utf-8")
+        path.parent.mkdir(parents = True, exist_ok = True)
+        path.write_text("\n".join(deps) + "\n", encoding = "utf-8")
         print(f"生成 {path.relative_to(base_dir)}")
 
     write(base_dir / "requirements.txt", project.get("dependencies", []))

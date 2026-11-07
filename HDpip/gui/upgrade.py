@@ -117,7 +117,7 @@ class InstallCanvas(custom.containers.Canvas):
                 callback = self.log_queue.put, 
             )
         except Exception as e:
-            self.log_queue.put(f"[错误] {e}")
+            self.log_queue.put("[{}]\n".format(self.data_manager.language["upgrade", "error"]) + e)
         finally:
             self.log_queue.put(None)
 
@@ -131,7 +131,7 @@ class InstallCanvas(custom.containers.Canvas):
                 line = self.log_queue.get_nowait()
                 if line is None:
                     self.log.configure(state = "normal")
-                    self.log.insert("end", "\n[安装结束]\n")
+                    self.log.insert("end", "\n[{}]\n".format(self.data_manager.language["upgrade", "install_success"]))
                     self.log.see("end")
                     self.log.configure(state = "disabled")
                     return

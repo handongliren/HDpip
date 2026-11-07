@@ -451,7 +451,7 @@ class Cache(Data):
 
     `isExpired`、`lastRefresh`、`setTTL`、`refresh`、`get` 传 `str` 时返回原类型，
     传 `re.Pattern` 或 `None` 时批量操作并返回 `dict`。
-    `check()` 只检查已有 key，过期且能刷新的立即刷新。
+    `refreshStale()` 只检查已有 key，过期且能刷新的立即刷新。
     `clear()` 传 `str` 清除单个，`re.Pattern` 清除匹配的，`None` 清除全部。
 
     `__getitem__` / `__setitem__` / `__delitem__` 沿用 `Data` 的 `str | int | tuple | list` 语义，不参与统一。
@@ -691,7 +691,7 @@ class Cache(Data):
             return self.refresh(key)
         return {k: self.get(k) for k in self._match(key)}
 
-    def check(self, pattern: str | re.Pattern | None = None) -> None:
+    def refreshStale(self, pattern: str | re.Pattern | None = None) -> None:
         """
         检查已有 key，过期的立即刷新，未过期的跳过。
 

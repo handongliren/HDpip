@@ -34,11 +34,44 @@ except ImportError:
     from custom.media import bi
 
 current_version = core.system.getVersion()
-latest_version = core.pip_api.getLatestVersion("hdpip")
+
+# 后台填充，模块导入时不阻塞
+latest_version: core.util.Version | None = None
+_latest_event = threading.Event()
+
+def _fetch_latest_version() -> None:
+    """
+    后台线程：拉取最新版本，写入模块级变量并置位事件。
+    """
+
+    global latest_version
+    try:
+        latest_version = core.pip_api.getLatestVersion("hdpip")
+    except Exception:
+        latest_version = None
+    finally:
+        _latest_event.set()
+
+def _ensure_latest_version(timeout: float = 10.0) -> core.util.Version | None:
+    """
+    等待后台拉取完成，最多等 `timeout` 秒。
+
+    :param timeout: 最长等待秒数
+    :type timeout: float
+    :return: 最新版本，超时或失败返回 `None`
+    :rtype: core.util.Version | None
+    """
+
+    if latest_version is not None:
+        return latest_version
+    _latest_event.wait(timeout)
+    return latest_version
 
 def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) -> bool:
     """
     检查是否有更新。
+
+    后台拉取尚未完成时最多等 10 秒，超时视为无更新。
 
     :param data_manager: 数据管理器
     :type data_manager: core.data.DataManager
@@ -47,8 +80,10 @@ def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) ->
     """
 
     data_manager.init()
-
-    return current_version < latest_version
+    latest = _ensure_latest_version()
+    if latest is None:
+        return False
+    return current_version < latest
 
 class ConfirmCanvas(custom.containers.Canvas):
     """
@@ -61,9 +96,10 @@ class ConfirmCanvas(custom.containers.Canvas):
         渲染语言。
         """
 
+        latest_text = str(latest_version) if latest_version is not None else "……"
         self.tip.set(self.data_manager.language["upgrade", "tip"].format(
             current_version = current_version, 
-            latest_version = latest_version
+            latest_version = latest_text, 
         ))
         self.note_button.set(self.data_manager.language["upgrade", "note_button"])
         self.confirm_button.set(self.data_manager.language["upgrade", "confirm_button"])
@@ -100,11 +136,11 @@ class InstallCanvas(custom.containers.Canvas):
         渲染语言。
         """
 
+        latest_text = str(latest_version) if latest_version is not None else "……"
         self.tip.set(self.data_manager.language["upgrade", "install_tip"].format(
             current_version = current_version, 
-            latest_version = latest_version
+            latest_version = latest_text, 
         ))
-        #self.progress.set(self.data_manager.language["upgrade", "install_progress"])
 
     def _installWorker(self) -> None:
         """
@@ -117,7 +153,7 @@ class InstallCanvas(custom.containers.Canvas):
                 callback = self.log_queue.put, 
             )
         except Exception as e:
-            self.log_queue.put("[{}]\n".format(self.data_manager.language["upgrade", "error"]) + e)
+            self.log_queue.put("[{}]\n".format(self.data_manager.language["upgrade", "error"]) + str(e))
         finally:
             self.log_queue.put(None)
 
@@ -156,8 +192,6 @@ class InstallCanvas(custom.containers.Canvas):
         super().__init__(master, expand = "xy", auto_zoom = True, auto_update = True, data_manager = data_manager)
 
         self.tip = maliang.Text(self, ss((100, 50)), None, anchor = "w", justify = "center", fontsize = ss(25))
-        #self.progress_bar = maliang.ProgressBar(self, ss((300, 200)), ss((400, 50)), anchor = "center")
-        #self.progress = maliang.Text(self, ss((300, 275)), None, anchor = "center", justify = "center", fontsize = ss(20))
         self.log = custom.texts.ScrolledText(self)
         self.log.place(width = ss(500), height = ss(250), x = ss(300), y = ss(250), anchor = "center")
 
@@ -180,6 +214,16 @@ class Upgrade(custom.containers.Tk):
 
         self.quickTitle(self.data_manager.language["upgrade", "title"])
 
+    def _watchLatest(self) -> None:
+        """
+        轮询后台拉取状态，就绪后刷新所有画布的语言。
+        """
+
+        if _latest_event.is_set():
+            self.confirm_canvas.renderLanguage()
+            return
+        self.after(100, self._watchLatest)
+
     @override
     def __init__(self, data_manager: core.data.DataManager = core.data.data_manager) -> None:
         """
@@ -192,10 +236,12 @@ class Upgrade(custom.containers.Tk):
         maliang.core.configs.Env.system = "Windows11"
         maliang.core.configs.Env.auto_update = True
 
-        self.confirm_canvas = InstallCanvas(self, data_manager = data_manager)
+        self.confirm_canvas = ConfirmCanvas(self, data_manager = data_manager)
         self.confirm_canvas.place(width = ss(600), height = ss(400), x = 0, y = 0)
 
         self.renderLanguage()
+        self.after(100, self._watchLatest)
 
 if __name__ == "__main__":
+    threading.Thread(target = _fetch_latest_version, daemon = True).start()
     Upgrade().mainloop()

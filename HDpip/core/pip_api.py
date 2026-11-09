@@ -35,6 +35,33 @@ def getPip(python: str | pathlib.Path = system.getPythonPath()) -> str:
 
 pip_head = getPip()
 
+def compareMirrorSpeed(mirrors: list[dict[str, str]], timeout: float = 1.0) -> list[dict[str, str | float]]:
+    """
+    测试镜像源的响应速度。
+
+    :param mirrors: 镜像列表，每项含 "url" 字段
+    :type mirrors: list[dict]
+    :param timeout: 超时时间
+    :type timeout: float
+    :return: 由快到慢的列表
+    :rtype: list[dict]
+    """
+
+    results = []
+    for mirror in mirrors:
+        if mirror.get("test", False):
+            continue
+        url = mirror["url"]
+        t0 = time.time()
+        try:
+            urllib.request.urlopen(url, timeout = timeout)
+            elapsed = time.time() - t0
+            results.append({"url": url, "time": elapsed})
+        except Exception:
+            results.append({"url": url, "time": timeout})
+
+    return sorted(results, key = lambda x: x["time"])
+
 def version(pip_head: str = pip_head) -> dict[str, util.Version | pathlib.Path]:
     """
     返回运行`pip -V`的结果。
@@ -141,33 +168,6 @@ def uninstall(package: str, callback = print, pip_head: str = pip_head) -> subpr
     """
 
     return system.shell(f"{pip_head} uninstall {package} --yes")
-
-def compareMirrorSpeed(mirrors: list[dict], timeout: float = 1.0) -> list[dict[str, str | float]]:
-    """
-    测试镜像源的响应速度。
-
-    :param mirrors: 镜像列表，每项含 "url" 字段
-    :type mirrors: list[dict]
-    :param timeout: 超时时间
-    :type timeout: float
-    :return: 由快到慢的列表
-    :rtype: list[dict]
-    """
-
-    results = []
-    for mirror in mirrors:
-        if mirror.get("test", False):
-            continue
-        url = mirror["url"]
-        t0 = time.time()
-        try:
-            urllib.request.urlopen(url, timeout = timeout)
-            elapsed = time.time() - t0
-            results.append({"url": url, "time": elapsed})
-        except Exception:
-            results.append({"url": url, "time": timeout})
-
-    return sorted(results, key = lambda x: x["time"])
 
 def _parseJsonVersions(body: str) -> set[str] | None:
     """

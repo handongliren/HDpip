@@ -9,7 +9,6 @@
     }, 
     "pip": {
         "mirror_index": 0, 
-        "mirror_strategy": "speed", 
         "mirrors": [
             {
                 "name": "官方", 

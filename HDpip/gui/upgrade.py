@@ -35,7 +35,6 @@ except ImportError:
 
 current_version = core.system.getVersion()
 
-# 后台填充，模块导入时不阻塞
 latest_version: core.util.Version | None = None
 _latest_event = threading.Event()
 

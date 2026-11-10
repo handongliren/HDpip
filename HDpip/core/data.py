@@ -12,14 +12,17 @@ import math
 import pathlib
 import re
 import shutil
+import threading
 import time
 import traceback
 from typing import *
 from typing_extensions import overload, Self
 
 try:
+    from . import pip_api
     from . import system
 except ImportError:
+    import pip_api
     import system
 
 class Data():
@@ -889,7 +892,24 @@ class DataManager():
         elif event_type == "load":
             self.getLanguage(self.setting["language"])
 
+    def onCacheChange(self, event_type: str, event_data: dict):
+        """
+        缓存变化时写回缓存文件。
+
+        :param event_type: 事件类型
+        :type event_type: str
+        :param event_data: 事件数据
+        :type event_data: dict
+        """
+
+        if event_type in ("refresh", "clear", "__setitem__", "__delitem__"):
+            try:
+                self.cache.save()
+            except OSError:
+                pass
+
     def __init__(self):
+        self._init_lock = threading.Lock()
         self.default_setting = (system.getBaseDir() / "setting" / "global.json").resolve()
         self.custom_setting = (system.getPythonPath().parent / "HDpip" / "setting.json").resolve()
         self.language_code_dict = {
@@ -919,6 +939,17 @@ class DataManager():
         :raises json.JSONDecodeError: 设置或语言文件不是合法 JSON 时
         """
 
+        with self._init_lock:
+            self._init(must)
+
+    def _init(self, must = False):
+        """
+        初始化实现，由 `init` 加锁后调用。
+
+        :param must: 是否强制初始化（*这将会覆盖用户数据！*）
+        :type must: bool
+        """
+
         if must or not self.isInited():
             self.custom_setting.parent.mkdir(parents = True, exist_ok = True)
             shutil.copy(self.default_setting, self.custom_setting)
@@ -933,6 +964,28 @@ class DataManager():
             self.language = Data()
             self.getLanguage(self.setting["language"])
             self.setting.registerEvent(self.onLanguageChange)
+
+        if not isinstance(self.setting.data.get("upgrade"), dict):
+            self.setting["upgrade"] = {}
+        self.setting["upgrade"].setdefault("last_check", 0)
+
+        if must or not hasattr(self, "cache"):
+            self.custom_cache = (self.custom_setting.parent / "cache.json").resolve()
+            self.cache = Cache()
+            self.cache.open(self.custom_cache)
+            if self.custom_cache.is_file():
+                try:
+                    self.cache.load()
+                except (OSError, json.JSONDecodeError):
+                    self.cache.data = {}
+            else:
+                self.cache.data = {}
+                try:
+                    self.cache.save()
+                except OSError:
+                    pass
+            self.cache.registerRefresh(None, lambda pkg: str(pip_api.getLatestVersion(pkg)), ttl = 6 * 3600)
+            self.cache.registerEvent(self.onCacheChange)
 
 data_manager = DataManager()
 

@@ -35,7 +35,17 @@
         "delay_week_button": "一周后提醒", 
         "install_tip": "正在升级HDpip至{latest_version}……", 
         "install_success": "安装成功", 
-        "error": "错误"
+        "error": "错误", 
+        "checking": "正在检查更新……",
+        "checking_tip": "正在检查更新……\n当前版本{current_version}",
+        "cancel_button": "取消",
+        "know_button": "知道了", 
+        "notify_tip": "发现新版本{latest_version}，\n当前版本{current_version}，\n即将自动升级。", 
+        "degrade_tip": "自动升级已失败{attempts}次，已改为手动确认。", 
+        "install_failed": "安装失败，请查看日志。",
+        "state_error": "更新状态文件缺失或损坏，无法继续更新。",
+        "latest_tip": "当前已是最新版本{current_version}",
+        "check_failed": "检查更新失败，请稍后重试。\n当前版本{current_version}"
     }, 
     "main": {
         "description": "一个基于maliang的pip GUI", 

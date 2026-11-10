@@ -35,7 +35,17 @@
         "delay_week_button": "Remind me in a week",
         "install_tip": "Upgrading HDpip to {latest_version}...",
         "install_success": "Installation successful",
-        "error": "Error"
+        "error": "Error",
+        "checking": "Checking for updates...",
+        "checking_tip": "Checking for updates...\nCurrent version: {current_version}",
+        "cancel_button": "Cancel",
+        "know_button": "Got it",
+        "notify_tip": "A new version {latest_version} is available.\nCurrent version: {current_version}.\nThe update will start automatically.",
+        "degrade_tip": "Automatic upgrade failed {attempts} times. Manual confirmation is required now.",
+        "install_failed": "Installation failed. Please check the log.",
+        "state_error": "The update state file is missing or corrupted.",
+        "latest_tip": "You are using the latest version {current_version}.",
+        "check_failed": "Failed to check for updates. Please try again later.\nCurrent version: {current_version}"
     },
     "main": {
         "description": "A pip GUI based on maliang",

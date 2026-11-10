@@ -5,6 +5,7 @@
     "upgrade": {
         "enable": true, 
         "interval": "daily", 
+        "last_check": 0, 
         "mode": "notify"
     }, 
     "pip": {

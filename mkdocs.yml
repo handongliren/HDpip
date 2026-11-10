@@ -1,7 +1,7 @@
 # https://github.com/handongliren/handongliren.github.io/blob/main/mkdocs.yml
 
 site_name: HDpip # 站点名称
-site_url: https://handongliren.github.io/HDpip/ # 站点链接
+site_url: https://hdpip.hdlr.dpdns.org/ # 站点链接
 repo_url: https://github.com/handongliren/HDpip # 仓库地址
 repo_name: handongliren/HDpip # 仓库名称
 edit_uri: edit/main/docs # 编辑地址

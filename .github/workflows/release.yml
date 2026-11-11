@@ -1,0 +1,185 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '版本号（如 0.0.5，不带 v 前缀）'
+        required: true
+        default: ''
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            TAG="${GITHUB_REF_NAME}"
+          else
+            VERSION="${{ inputs.tag }}"
+            VERSION="${VERSION#v}"
+            TAG="v${VERSION}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "版本号: $VERSION，tag: $TAG"
+
+      - name: Verify tag matches package version
+        run: |
+          PKG_VERSION=$(python -c "import HDpip; print(HDpip.version)")
+          if [ "${{ steps.version.outputs.version }}" != "$PKG_VERSION" ]; then
+            echo "tag ${{ steps.version.outputs.version }} != package $PKG_VERSION"
+            exit 1
+          fi
+
+      - name: Build wheel and sdist with dist.py
+        id: build
+        run: |
+          python dist.py
+          ls -lh dist/
+
+      - name: Attest build provenance
+        id: attest
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/*.whl
+            dist/*.tar.gz
+
+      - name: Verify attestation
+        id: verify
+        run: |
+          gh attestation verify dist/*.whl --repo ${{ github.repository }}
+          gh attestation verify dist/*.tar.gz --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          awk -v ver="$VERSION" '
+            BEGIN { found=0; output="" }
+            /^## 🔖 `[0-9]+\.[0-9]+\.[0-9]+(\.post[0-9]+)?`/ {
+              line = $0
+              gsub(/^## 🔖 `/, "", line)
+              gsub(/`.*$/, "", line)
+              if (line == ver) { found=1; next }
+              if (found) { exit }
+            }
+            found { output = output $0 "\n" }
+            END {
+              if (found) {
+                gsub(/^[ \t\n]+/, "", output)
+                gsub(/[ \t\n]+$/, "", output)
+                print output
+              }
+            }
+          ' CHANGELOG.md > changelog_entry.md
+          if [ -s changelog_entry.md ]; then
+            echo "has_entry=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_entry=false" >> "$GITHUB_OUTPUT"
+            echo "未找到版本 $VERSION 的 CHANGELOG 条目，回退到自动生成 notes"
+          fi
+          echo "--- 提取内容 ---"
+          cat changelog_entry.md
+
+      - name: Create Release
+        id: create_release
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          if [ "${{ steps.changelog.outputs.has_entry }}" = "true" ]; then
+            URL=$(gh release create "$TAG" dist/*.whl dist/*.tar.gz \
+              --notes-file changelog_entry.md \
+              --verify-tag \
+              --title "$TAG" \
+              --clobber)
+          else
+            URL=$(gh release create "$TAG" dist/*.whl dist/*.tar.gz \
+              --generate-notes \
+              --verify-tag \
+              --title "$TAG" \
+              --clobber)
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to PyPI
+        id: pypi
+        run: python upload.py ${{ secrets.PYPI_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          REPO="${{ github.repository }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          {
+            echo "## Release ${TAG}"
+            echo ""
+            echo "| 步骤 | 状态 |"
+            echo "|---|---|"
+            echo "| 构建 | ${{ steps.build.outcome == 'success' && '✅ 成功' || '❌ 失败' }} |"
+            echo "| 证明 | ${{ steps.attest.outcome == 'success' && '✅ 已生成' || '❌ 失败' }} |"
+            echo "| 证明验证 | ${{ steps.verify.outcome == 'success' && '✅ 通过' || '❌ 失败' }} |"
+            echo "| Changelog | ${{ steps.changelog.outputs.has_entry == 'true' && '✅ 已提取' || '⚠️ 未找到，使用自动 notes' }} |"
+            echo "| Release | ${{ steps.create_release.outcome == 'success' && '✅ 已创建' || '❌ 失败' }} |"
+            echo "| PyPI | ${{ steps.pypi.outcome == 'success' && '✅ 已发布' || '❌ 失败' }} |"
+            echo ""
+            if [ -d dist ]; then
+              echo "### 构建产物"
+              echo ""
+              echo "| 文件 | 大小 |"
+              echo "|---|---|"
+              for f in dist/*; do
+                [ -f "$f" ] || continue
+                SIZE=$(du -h "$f" | cut -f1)
+                echo "| \`$(basename "$f")\` | $SIZE |"
+              done
+              echo ""
+            fi
+            if [ "${{ steps.create_release.outcome }}" = "success" ]; then
+              echo "### 链接"
+              echo ""
+              echo "- [Release 页面](https://github.com/${REPO}/releases/tag/${TAG})"
+              echo "- [PyPI](https://pypi.org/project/hdpip/${VERSION}/)"
+              echo "- [Workflow 运行](${RUN_URL})"
+            else
+              echo "### 链接"
+              echo ""
+              echo "- [Workflow 运行](${RUN_URL})"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

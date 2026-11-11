@@ -81,8 +81,15 @@ def main() -> int:
     copy()
     requirements()
     completed = subprocess.run(
-        [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"]
+        [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
+    if completed.returncode != 0:
+        print(completed.stdout)
+        print(completed.stderr, file=sys.stderr)
     return completed.returncode
 
 

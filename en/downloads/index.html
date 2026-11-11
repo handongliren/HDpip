@@ -1767,6 +1767,55 @@ version 2.1, available at
 <li>🟤 <strong>Refactored / 重构</strong></li>
 </ul>
 </div>
+<h2 id="changelog--007">🔖 <code>0.0.7</code><a class="headerlink" href="#changelog--007">¶</a></h2>
+<p>🕓 <em>Release Date / 发布日期 : 2026-11-11</em></p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>The import system has been refactored: <code>ImportError</code> fallback imports and top-level module aliases such as <code>core</code> and <code>gui</code> have turned to lazy import. Direct <code>.py</code> script execution remains supported; use the installed <code>HDpip</code> / <code>hdpip</code> command or run <code>HDpip/main.py</code> from a source checkout. <code>python -m HDpip</code> is always unavailable.</p>
+<p>导入方式已重构：已移除 <code>ImportError</code> 回退导入，<code>core</code>、<code>gui</code>、等顶层模块别名改用懒加载。仍支持直接运行 <code>.py</code> 脚本；可使用安装后的 <code>HDpip</code> / <code>hdpip</code> 命令，或在源码仓库中运行 <code>HDpip/main.py</code>。注意<code>python -m HDpip</code> 始终不可用。</p>
+</div>
+<p>🟢 <strong>Added / 新增</strong></p>
+<ul>
+<li>
+<p>Add automatic update options, including notification, notify-and-install, and silent modes, with retry state tracking and fallback to manual confirmation after repeated failures.</p>
+</li>
+<li>
+<p>新增自动更新选项，支持通知、通知后安装和静默模式；记录失败重试状态，并在多次失败后回退为手动确认。</p>
+</li>
+<li>
+<p>Add mirror response-time comparison and persistent caching for package version lookups.</p>
+</li>
+<li>
+<p>新增镜像响应速度比较，以及包版本查询的持久化缓存。</p>
+</li>
+</ul>
+<p>🟡 <strong>Changed / 变更</strong></p>
+<ul>
+<li>
+<p>Fetch the latest version asynchronously so update checks do not block the interface while the request is in progress.</p>
+</li>
+<li>
+<p>异步获取最新版本，避免更新请求期间界面被阻塞。</p>
+</li>
+</ul>
+<p>🟤 <strong>Refactored / 重构</strong></p>
+<ul>
+<li>
+<p>Remove <code>try/except ImportError</code> import fallbacks and use consistent package-relative imports. Direct script execution now initializes the package context before importing sibling modules.</p>
+</li>
+<li>
+<p>移除 <code>try/except ImportError</code> 导入回退并统一使用包内相对导入；直接运行脚本时会先初始化包上下文，再导入同包模块。</p>
+</li>
+</ul>
+<p>🟣 <strong>Fixed / 修复</strong></p>
+<ul>
+<li>
+<p>Prevent package modules from being loaded under duplicate top-level and <code>HDpip.*</code> names, keeping shared module state consistent.</p>
+</li>
+<li>
+<p>修复包模块同时以顶层名称和 <code>HDpip.*</code> 名称重复加载的问题，确保共享模块状态一致。</p>
+</li>
+</ul>
 <h2 id="changelog--006post1">🔖 <code>0.0.6.post1</code><a class="headerlink" href="#changelog--006post1">¶</a></h2>
 <p>🕓 <em>Release Date / 发布日期 : 2026-9-7</em></p>
 <p>🟣 <strong>Fixed / 修复</strong></p>

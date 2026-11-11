@@ -9,19 +9,21 @@
 import tkinter
 import tkinter.font
 import tkinter.scrolledtext
+import pathlib
 from typing import *
 from typing_extensions import override
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    __package__ = "HDpip.gui.custom"
 
 import darkdetect
 import maliang
 import maliang.theme
 
-try:
-    from . import color
-    from . import util
-except ImportError:
-    import color
-    import util
+from . import color
+from . import util
 
 class ScrolledText(tkinter.scrolledtext.ScrolledText):
     """

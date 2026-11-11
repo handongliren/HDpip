@@ -10,14 +10,17 @@ import tkinter
 from typing import *
 from typing_extensions import override
 
+import pathlib
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.gui"
+
 import maliang
 
-try:
-    from . import custom
-    from .custom.util import ss
-except ImportError:
-    import custom
-    from custom.util import ss
+from . import custom
+from .custom.util import ss
 
 class DialogCanvas(maliang.Canvas):
     """

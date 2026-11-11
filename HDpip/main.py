@@ -9,21 +9,17 @@
 from typing import *
 
 import pathlib
-import sys
 
 if __name__ == "__main__" and __package__ is None:
+    import sys
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
     __package__ = "HDpip"
 
 import maliang.theme
 import maliang.core.configs
 
-try:
-    from . import core
-    from . import gui
-except ImportError:
-    import core
-    import gui
+from . import core
+from . import gui
 
 def needWelcome(data_manager: core.data.DataManager = core.data.data_manager) -> bool:
     """
@@ -53,16 +49,13 @@ def main(data_manager: core.data.DataManager = core.data.data_manager) -> None:
 
     maliang.core.configs.Env.system = "Windows11"
     maliang.core.configs.Env.auto_update = True
-    gui.upgrade.cleanup_copy(data_manager)
+    gui.upgrade.cleanupCopy(data_manager)
     if needWelcome(data_manager):
         gui.welcome.Welcome(data_manager).mainloop()
         return
-    gui.upgrade.check_and_update(data_manager)
+    gui.upgrade.checkAndUpdate(data_manager)
     maliang.theme.set_color_mode(data_manager.setting["theme"])
     gui.main.Main().mainloop()
 
 if __name__ == "__main__":
-    if "--updater" in sys.argv:
-        gui.upgrade.runUpdater("--silent" in sys.argv)
-    else:
-        main()
+    main()

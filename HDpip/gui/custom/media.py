@@ -12,19 +12,21 @@ from typing_extensions import Self, override
 import io
 import pathlib
 import tkinter
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    __package__ = "HDpip.gui.custom"
+
 import PIL.Image
 import PIL.ImageTk
 
 import maliang.toolbox.enhanced
 
-try:
-    from . import color
-    from .util import ss
-except ImportError:
-    import color
-    from util import ss
-
 base_dir = pathlib.Path(__file__).parents[2].resolve()
+
+from . import color
+from .util import ss
 
 class Image(maliang.toolbox.enhanced.PhotoImage):
     """

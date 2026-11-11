@@ -9,6 +9,12 @@
 from typing import *
 from typing_extensions import override
 import pathlib
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.gui"
+
 import webbrowser
 
 import tkinter
@@ -17,21 +23,11 @@ import maliang.core.virtual
 
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 
-try:
-    from .. import core
-except ImportError:
-    import sys
-    sys.path.append(str(base_dir))
-    import core
+from .. import core
 
-try:
-    from . import custom
-    from .custom.util import ss
-    from .custom.media import bi
-except ImportError:
-    import custom
-    from custom.util import ss
-    from custom.media import bi
+from . import custom
+from .custom.util import ss
+from .custom.media import bi
 
 class AboutCanvas(custom.containers.Canvas):
     """

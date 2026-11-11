@@ -6,7 +6,6 @@
 本文件是错误捕捉对话框。
 """
 
-import sys
 import argparse
 import locale
 import difflib
@@ -15,20 +14,19 @@ import tkinter
 import tkinter.filedialog
 import tkinter.messagebox
 
-import maliang.core.configs
-try:
-    from .. import core
-except ImportError:
-    base_dir = pathlib.Path(__file__).parents[1].resolve()
-    sys.path.append(str(base_dir))
-    import core
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.gui"
 
-try:
-    from . import dialog
-    from .custom.util import ss
-except ImportError:
-    import dialog
-    from custom.util import ss
+import maliang.core.configs
+
+base_dir = pathlib.Path(__file__).parents[1].resolve()
+
+from .. import core
+
+from . import dialog
+from .custom.util import ss
 
 language_dict = {
     "zh-CN": {
@@ -87,7 +85,7 @@ def exportCommand(*argvs, **kargvs) -> None:
         initialdir = str(base_dir.parents[0])
     )).resolve()
     if not file.is_dir():
-        if core.data.isBelongedToHDpip(file):
+        if core.system.isBelongedToHDpip(file):
             tkinter.messagebox.showwarning(language["warning"], language["export_reject"])
             exportCommand()
         else:

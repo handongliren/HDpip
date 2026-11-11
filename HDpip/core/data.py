@@ -18,12 +18,13 @@ import traceback
 from typing import *
 from typing_extensions import overload, Self
 
-try:
-    from . import pip_api
-    from . import system
-except ImportError:
-    import pip_api
-    import system
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.core"
+
+from . import pip_api
+from . import system
 
 class Data():
     """
@@ -911,7 +912,7 @@ class DataManager():
     def __init__(self):
         self._init_lock = threading.Lock()
         self.default_setting = (system.getBaseDir() / "setting" / "global.json").resolve()
-        self.custom_setting = (system.getPythonPath().parent / "HDpip" / "setting.json").resolve()
+        self.custom_setting = (system.getDataDir() / "setting.json").resolve()
         self.language_code_dict = {
             "en": "English", 
             "zh-CN": "简体中文", 
@@ -925,7 +926,7 @@ class DataManager():
             "hi": "हिन्दी"
         }
         self.default_language_dir = (system.getBaseDir() / "language").resolve()
-        self.custom_language_dir = (system.getPythonPath().parent / "HDpip" / "language").resolve()
+        self.custom_language_dir = (system.getDataDir() / "language").resolve()
 
     def init(self, must = False):
         """
@@ -988,15 +989,3 @@ class DataManager():
             self.cache.registerEvent(self.onCacheChange)
 
 data_manager = DataManager()
-
-def isBelongedToHDpip(path: pathlib.Path) -> bool:
-    """
-    判断一个路径是否属于HDpip。
-
-    :param path: 路径
-    :type path: pathlib.Path
-    :return: 结果
-    :rtype: bool
-    """
-
-    return any(path.is_relative_to(p) for p in [system.getBaseDir(), system.getPythonPath().parent / "HDpip"])

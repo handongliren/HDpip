@@ -12,7 +12,11 @@ from typing_extensions import Self, override
 import copy
 import abc
 import pathlib
-import sys
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    __package__ = "HDpip.gui.custom"
 
 import maliang.core.containers
 import maliang.theme
@@ -21,18 +25,10 @@ import maliang.toolbox.enhanced
 
 base_dir = pathlib.Path(__file__).parents[2].resolve()
 
-try:
-    from ... import core
-except ImportError:
-    sys.path.append(str(base_dir))
-    import core
+from ... import core
 
-try:
-    from . import animations, media, widgets
-    from .util import ss
-except ImportError:
-    import animations, media, widgets
-    from util import ss
+from . import animations, media, widgets
+from .util import ss
 
 class Tk(maliang.core.containers.Tk, abc.ABC):
     """

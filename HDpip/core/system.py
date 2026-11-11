@@ -14,21 +14,16 @@ import subprocess
 import sys
 import traceback
 
+if __name__ == "__main__" and __package__ is None:
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.core"
+
 import pip
 
-try:
-    from ..info import version
-except ImportError:
-    base_dir = pathlib.Path(__file__).parents[1].resolve()
-    sys.path.append(str(base_dir))
-    from info import version
+from ..info import version
 
-try:
-    from . import util
-    from .util import Version
-except ImportError:
-    import util
-    from util import Version
+from . import util
+from .util import Version
 
 def getBaseDir() -> pathlib.Path:
     """
@@ -49,6 +44,28 @@ def getPythonPath() -> pathlib.Path:
     """
 
     return pathlib.Path(sys.executable)
+
+def getDataDir() -> pathlib.Path:
+    """
+    获取HDpip的数据目录，默认在`%PYTHON_DIR%/HDpip`。
+
+    :return: 路径
+    :rtype: pathlib.Path
+    """
+
+    return getPythonPath().parent / "HDpip"
+
+def isBelongedToHDpip(path: pathlib.Path) -> bool:
+    """
+    判断一个路径是否属于HDpip。
+
+    :param path: 路径
+    :type path: pathlib.Path
+    :return: 结果
+    :rtype: bool
+    """
+
+    return any(path.is_relative_to(p) for p in [getBaseDir(), getDataDir()])
 
 def getPythonVersion() -> Version:
     """

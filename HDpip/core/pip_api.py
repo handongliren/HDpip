@@ -8,19 +8,21 @@
 
 import json
 import pathlib
-import yaml
 import subprocess
-import urllib.parse
 import time
+import urllib.parse
 import urllib.request
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.core"
+
+import yaml
 from packaging.utils import parse_sdist_filename, parse_wheel_filename
 
-try:
-    from . import system
-    from . import util
-except ImportError:
-    import system
-    import util
+from . import system
+from . import util
 
 def getPip(python: str | pathlib.Path = system.getPythonPath()) -> str:
     """

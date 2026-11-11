@@ -9,14 +9,18 @@
 from typing import *
 from typing_extensions import override, deprecated
 
+import pathlib
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    __package__ = "HDpip.gui.custom"
+
 import maliang
 import maliang.standard.shapes
 import maliang.core.virtual
 
-try:
-    from . import util
-except ImportError:
-    import util
+from . import util
 
 class RoundedRectangle(maliang.core.virtual.Widget):
     """

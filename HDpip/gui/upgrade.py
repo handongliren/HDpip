@@ -8,6 +8,7 @@
 
 from typing import *
 from typing_extensions import override
+import importlib.metadata
 import json
 import os
 import pathlib
@@ -15,31 +16,26 @@ import queue
 import shutil
 import subprocess
 import sys
+import sysconfig
 import tempfile
 import threading
 import time
 import traceback
+
+if __name__ == "__main__" and __package__ is None:
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
+    __package__ = "HDpip.gui"
 
 import maliang.core.configs
 import maliang.core.virtual
 
 base_dir = pathlib.Path(__file__).parents[1].resolve()
 
-try:
-    from .. import core
-except ImportError:
-    sys.path.append(str(base_dir))
-    import core
+from .. import core
 
-try:
-    from . import custom, dialog
-    from .custom.util import ss
-    from .custom.media import bi
-except ImportError:
-    import custom
-    import dialog
-    from custom.util import ss
-    from custom.media import bi
+from . import custom, dialog
+from .custom.util import ss
+from .custom.media import bi
 
 current_version = core.system.getVersion()
 
@@ -58,6 +54,20 @@ def _creationFlags() -> int:
     """
 
     return subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
+def _siteMain() -> pathlib.Path:
+    """
+    返回已安装包的 `main.py` 路径。
+
+    :return: 路径
+    :rtype: pathlib.Path
+    """
+
+    try:
+        distribution = importlib.metadata.distribution("hdpip")
+        return pathlib.Path(distribution.locate_file("HDpip/main.py")).resolve()
+    except importlib.metadata.PackageNotFoundError:
+        return (pathlib.Path(sysconfig.get_path("purelib")) / "HDpip" / "main.py").resolve()
 
 def _copyRoot(data_manager: core.data.DataManager = core.data.data_manager) -> pathlib.Path:
     """
@@ -167,7 +177,7 @@ def _incrementAttempts(data_manager: core.data.DataManager = core.data.data_mana
     _writeState(state, data_manager)
     return state["attempts"]
 
-def _fetch_latest_version(data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def _fetchLatestVersion(data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     后台线程：通过缓存拉取最新版本，写入模块级变量并置位事件。
 
@@ -192,7 +202,7 @@ def _fetch_latest_version(data_manager: core.data.DataManager = core.data.data_m
     finally:
         _latest_event.set()
 
-def _ensure_latest_version(timeout: float = 10.0, data_manager: core.data.DataManager = core.data.data_manager) -> core.util.Version | None:
+def _ensureLatestVersion(timeout: float = 10.0, data_manager: core.data.DataManager = core.data.data_manager) -> core.util.Version | None:
     """
     启动后台拉取并等待完成，最多等 `timeout` 秒。
 
@@ -211,7 +221,7 @@ def _ensure_latest_version(timeout: float = 10.0, data_manager: core.data.DataMa
     if _latest_thread is None:
         with _latest_lock:
             if _latest_thread is None:
-                _latest_thread = threading.Thread(target = _fetch_latest_version, args = (data_manager,), daemon = True)
+                _latest_thread = threading.Thread(target = _fetchLatestVersion, args = (data_manager,), daemon = True)
                 _latest_thread.start()
     _latest_event.wait(timeout)
     return latest_version
@@ -229,7 +239,7 @@ def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) ->
     """
 
     data_manager.init()
-    latest = _ensure_latest_version(10.0, data_manager)
+    latest = _ensureLatestVersion(10.0, data_manager)
     if latest is None:
         return False
     return current_version < latest
@@ -253,7 +263,7 @@ def _intervalSeconds(interval: str | int | float) -> float:
         "monthly": 30 * 86400,
     }.get(str(interval).lower(), 86400)
 
-def copy_to_target(data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def copyToTarget(data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     把当前包复制到用户目录下的更新副本。
 
@@ -302,7 +312,7 @@ def _removeCopy(path: pathlib.Path) -> bool:
             return True
     return not path.exists()
 
-def cleanup_copy(data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def cleanupCopy(data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     清理已经完成更新、已过期或状态损坏的更新副本。
 
@@ -327,7 +337,7 @@ def cleanup_copy(data_manager: core.data.DataManager = core.data.data_manager) -
     if current >= to_version or current != from_version:
         _removeCopy(root)
 
-def launch_updater(silent: bool, data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def launchUpdater(silent: bool, data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     启动更新进程并立即退出主进程，释放 `site-packages/HDpip` 的文件锁。
 
@@ -340,7 +350,7 @@ def launch_updater(silent: bool, data_manager: core.data.DataManager = core.data
 
     root = _copyRoot(data_manager)
     subprocess.Popen(
-        [sys.executable, str(root / "HDpip" / "main.py"), "--updater"] + (["--silent"] if silent else []),
+        [sys.executable, str(root / "HDpip" / "gui" / "upgrade.py"), "--updater"] + (["--silent"] if silent else []),
         cwd = tempfile.gettempdir(),
         creationflags = _creationFlags(),
         close_fds = True,
@@ -380,9 +390,9 @@ def _notifyThenInstall(data_manager: core.data.DataManager = core.data.data_mana
     )
     window.after(2500, window.destroy)
     window.mainloop()
-    launch_updater(False, data_manager)
+    launchUpdater(False, data_manager)
 
-def check_and_update(data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def checkAndUpdate(data_manager: core.data.DataManager = core.data.data_manager) -> None:
     """
     检查更新并按设置决定是否复制和安装。
 
@@ -421,7 +431,7 @@ def check_and_update(data_manager: core.data.DataManager = core.data.data_manage
         last_check = 0
     if not force and not pending and now - last_check < _intervalSeconds(upgrade.get("interval", "daily")):
         return
-    latest = _ensure_latest_version(10.0, data_manager)
+    latest = _ensureLatestVersion(10.0, data_manager)
     if latest is None:
         return
     upgrade["last_check"] = now
@@ -432,12 +442,12 @@ def check_and_update(data_manager: core.data.DataManager = core.data.data_manage
         upgrade["mode"] = "notify"
         setting.save()
     try:
-        copy_to_target(data_manager)
+        copyToTarget(data_manager)
     except Exception:
         _writeError(traceback.format_exc(), data_manager)
         return
     if mode == "silent":
-        launch_updater(True, data_manager)
+        launchUpdater(True, data_manager)
     elif mode == "notify&install":
         _notifyThenInstall(data_manager)
     else:
@@ -525,7 +535,7 @@ class ConfirmCanvas(custom.containers.Canvas):
         启动更新进程。
         """
 
-        launch_updater(False, self.data_manager)
+        launchUpdater(False, self.data_manager)
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager) -> None:
@@ -626,7 +636,7 @@ class InstallCanvas(custom.containers.Canvas):
 
         try:
             subprocess.Popen(
-                [sys.executable, "-m", "HDpip"],
+                [sys.executable, str(_siteMain())],
                 cwd = tempfile.gettempdir(),
                 creationflags = _creationFlags(),
                 close_fds = True,
@@ -814,7 +824,7 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
         return
     try:
         subprocess.Popen(
-            [sys.executable, "-m", "HDpip"],
+            [sys.executable, str(_siteMain())],
             cwd = tempfile.gettempdir(),
             creationflags = _creationFlags(),
             close_fds = True,
@@ -823,6 +833,9 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
         _writeError(traceback.format_exc(), data_manager)
 
 if __name__ == "__main__":
-    core.data.data_manager.init()
-    threading.Thread(target = _fetch_latest_version, daemon = True).start()
-    Upgrade().mainloop()
+    if "--updater" in sys.argv:
+        runUpdater("--silent" in sys.argv)
+    else:
+        core.data.data_manager.init()
+        threading.Thread(target = _fetchLatestVersion, daemon = True).start()
+        Upgrade().mainloop()

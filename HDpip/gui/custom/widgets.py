@@ -10,7 +10,13 @@ from types import MethodType
 from typing import *
 from typing_extensions import override
 
+import pathlib
 import tkinter
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    __package__ = "HDpip.gui.custom"
 
 import maliang
 import maliang.standard.styles
@@ -21,14 +27,9 @@ import maliang.toolbox.utility
 for _theme_dict in (maliang.standard.styles.ButtonStyle.light, maliang.standard.styles.ButtonStyle.dark):
     _theme_dict.setdefault("StillImage", {"normal": {}, "hover": {}, "active": {}})
 
-try:
-    from . import color
-    from . import util
-    from . import media
-except ImportError:
-    import color
-    import util
-    import media
+from . import color
+from . import util
+from . import media
 
 class HorizontallyFixedTable(maliang.table.TkTable):
     """

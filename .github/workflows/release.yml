@@ -36,7 +36,7 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install wheel build twine
+          pip install build twine wheel
 
       - name: Determine version
         id: version
@@ -114,23 +114,33 @@ jobs:
           echo "--- 提取内容 ---"
           cat changelog_entry.md
 
-      - name: Create Release
+      - name: Create or update Release
         id: create_release
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          if [ "${{ steps.changelog.outputs.has_entry }}" = "true" ]; then
-            URL=$(gh release create "$TAG" dist/*.whl dist/*.tar.gz \
-              --notes-file changelog_entry.md \
-              --verify-tag \
-              --title "$TAG" \
-              --clobber)
+          if gh release view "$TAG" --repo "${{ github.repository }}" > /dev/null 2>&1; then
+            echo "Release $TAG 已存在，更新 body 和附件"
+            if [ "${{ steps.changelog.outputs.has_entry }}" = "true" ]; then
+              gh release edit "$TAG" --notes-file changelog_entry.md --title "$TAG"
+            else
+              gh release edit "$TAG" --generate-notes --title "$TAG"
+            fi
+            gh release upload "$TAG" dist/*.whl dist/*.tar.gz --clobber
           else
-            URL=$(gh release create "$TAG" dist/*.whl dist/*.tar.gz \
-              --generate-notes \
-              --verify-tag \
-              --title "$TAG" \
-              --clobber)
+            echo "Release $TAG 不存在，创建"
+            if [ "${{ steps.changelog.outputs.has_entry }}" = "true" ]; then
+              gh release create "$TAG" dist/*.whl dist/*.tar.gz \
+                --notes-file changelog_entry.md \
+                --verify-tag \
+                --title "$TAG"
+            else
+              gh release create "$TAG" dist/*.whl dist/*.tar.gz \
+                --generate-notes \
+                --verify-tag \
+                --title "$TAG"
+            fi
           fi
+          URL="https://github.com/${{ github.repository }}/releases/tag/${TAG}"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -156,7 +166,7 @@ jobs:
             echo "| 证明 | ${{ steps.attest.outcome == 'success' && '✅ 已生成' || '❌ 失败' }} |"
             echo "| 证明验证 | ${{ steps.verify.outcome == 'success' && '✅ 通过' || '❌ 失败' }} |"
             echo "| Changelog | ${{ steps.changelog.outputs.has_entry == 'true' && '✅ 已提取' || '⚠️ 未找到，使用自动 notes' }} |"
-            echo "| Release | ${{ steps.create_release.outcome == 'success' && '✅ 已创建' || '❌ 失败' }} |"
+            echo "| Release | ${{ steps.create_release.outcome == 'success' && '✅ 已创建/更新' || '❌ 失败' }} |"
             echo "| PyPI | ${{ steps.pypi.outcome == 'success' && '✅ 已发布' || '❌ 失败' }} |"
             echo ""
             if [ -d dist ]; then

@@ -15,6 +15,10 @@ jobs:
   analyze:
     runs-on: windows-latest
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -91,7 +95,7 @@ jobs:
         run: |
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           {
-            echo "## Test / Lint / Coverage"
+            echo "## Test, Lint & Coverage"
             echo ""
             echo "| 项目 | 结果 |"
             echo "|---|---|"

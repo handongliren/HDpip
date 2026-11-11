@@ -11,7 +11,12 @@ import shutil
 import subprocess
 import sys
 
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 base_dir = pathlib.Path(__file__).parent.resolve()
+
 
 def clean() -> None:
     """
@@ -19,14 +24,16 @@ def clean() -> None:
     """
 
     for name in ["build", "dist", "hdpip.egg-info"]:
+        shutil.rmtree(base_dir / name, ignore_errors=True)
         print(f"清理 {base_dir / name}")
-        shutil.rmtree(base_dir / name, ignore_errors = True)
+
 
 def copy() -> None:
     for name in ["README.md", "LICENSE.txt"]:
         if (base_dir / name).is_file():
-            print(f"复制 {base_dir / name} → {base_dir / 'HDpip' / name}")
             shutil.copy2(base_dir / name, base_dir / "HDpip" / name)
+            print(f"复制 {base_dir / name} → {base_dir / 'HDpip' / name}")
+
 
 def requirements() -> None:
     """
@@ -35,7 +42,7 @@ def requirements() -> None:
     生成：
         requirements.txt            ← [project].dependencies
         requirements-dev.txt        ← [project.optional-dependencies].dev
-        docs/requirements.txt       ← [project.optional-dependencies].docs
+        requirements-docs.txt       ← [project.optional-dependencies].docs
 
     注意：生成的是直接依赖列表，不包含间接依赖的锁定版本。
     需要锁定版本时，改用 pip-compile 或 uv pip compile。
@@ -53,13 +60,14 @@ def requirements() -> None:
     optional = project.get("optional-dependencies", {})
 
     def write(path: pathlib.Path, deps: list[str]) -> None:
-        path.parent.mkdir(parents = True, exist_ok = True)
-        path.write_text("\n".join(deps) + "\n", encoding = "utf-8")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(deps) + "\n", encoding="utf-8")
         print(f"生成 {path.relative_to(base_dir)}")
 
     write(base_dir / "requirements.txt", project.get("dependencies", []))
     write(base_dir / "requirements-dev.txt", optional.get("dev", []))
     write(base_dir / "requirements-docs.txt", optional.get("docs", []))
+
 
 def main() -> int:
     """
@@ -76,6 +84,7 @@ def main() -> int:
         [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"]
     )
     return completed.returncode
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -12,6 +12,44 @@
 > - 🟠 **Deprecated / 弃用**
 > - 🟤 **Refactored / 重构**
 
+## 🔖 `0.0.7`
+
+🕓 *Release Date / 发布日期 : 2026-11-11*
+
+> [!CAUTION]
+>
+> The import system has been refactored: `ImportError` fallback imports and top-level module aliases such as `core` and `gui` have turned to lazy import. Direct `.py` script execution remains supported; use the installed `HDpip` / `hdpip` command or run `HDpip/main.py` from a source checkout. `python -m HDpip` is always unavailable.
+>
+> 导入方式已重构：已移除 `ImportError` 回退导入，`core`、`gui`、等顶层模块别名改用懒加载。仍支持直接运行 `.py` 脚本；可使用安装后的 `HDpip` / `hdpip` 命令，或在源码仓库中运行 `HDpip/main.py`。注意`python -m HDpip` 始终不可用。
+
+🟢 **Added / 新增**
+
+- Add automatic update options, including notification, notify-and-install, and silent modes, with retry state tracking and fallback to manual confirmation after repeated failures.
+
+- 新增自动更新选项，支持通知、通知后安装和静默模式；记录失败重试状态，并在多次失败后回退为手动确认。
+
+- Add mirror response-time comparison and persistent caching for package version lookups.
+
+- 新增镜像响应速度比较，以及包版本查询的持久化缓存。
+
+🟡 **Changed / 变更**
+
+- Fetch the latest version asynchronously so update checks do not block the interface while the request is in progress.
+
+- 异步获取最新版本，避免更新请求期间界面被阻塞。
+
+🟤 **Refactored / 重构**
+
+- Remove `try/except ImportError` import fallbacks and use consistent package-relative imports. Direct script execution now initializes the package context before importing sibling modules.
+
+- 移除 `try/except ImportError` 导入回退并统一使用包内相对导入；直接运行脚本时会先初始化包上下文，再导入同包模块。
+
+🟣 **Fixed / 修复**
+
+- Prevent package modules from being loaded under duplicate top-level and `HDpip.*` names, keeping shared module state consistent.
+
+- 修复包模块同时以顶层名称和 `HDpip.*` 名称重复加载的问题，确保共享模块状态一致。
+
 ## 🔖 `0.0.6.post1`
 
 🕓 *Release Date / 发布日期 : 2026-9-7*

@@ -480,6 +480,9 @@ class Cache(Data):
 
     内部元数据只保存解析后的 `float`，不会出现 `None`，key 统一为 `str`。
 
+    `save` 和 `load` 持久化 `_meta`，文件结构为 `{"data": ..., "_meta": {...}}`，
+    `math.inf` 序列化为 `null`，读回时恢复为 `math.inf`。旧格式裸数据加载后 `_meta` 为空。
+
     TTL 和刷新只对单键 `str | int` 生效。
     路径读取（`tuple | list` key）先对顶层 key 调用 `get()`，触发顶层过期判断和刷新，
     再从刷新后的数据按剩余路径索引；顶层刷新失败时退化为 `Data` 原始路径访问，可能返回过期数据。
@@ -871,11 +874,48 @@ class Cache(Data):
         event_key = key.pattern if isinstance(key, re.Pattern) else key
         self.notifyEvent("clear", {"key": event_key})
 
+    @override
+    def save(self) -> list | dict:
+        """
+        保存数据和 `_meta` 至文件并返回。
+
+        文件结构为 `{"data": ..., "_meta": {...}}`。
+        `_meta` 中 `math.inf` 的 TTL 序列化为 `null`，读回时恢复为 `math.inf`。
+        使用临时文件 + 原子替换，避免写入中途失败导致原文件损坏。
+
+        :raises TypeError: 数据包含无法序列化为 JSON 的对象时
+        :raises OSError: 写入临时文件或替换目标文件失败时
+        :return: 数据
+        :rtype: list | dict
+        """
+
+        target = pathlib.Path(self.file["file"])
+        temp = target.with_suffix(target.suffix + ".tmp")
+        meta = {
+            k: {"ts": v["ts"], "ttl": None if v["ttl"] == math.inf else v["ttl"]}
+            for k, v in self._meta.items()
+        }
+        with open(temp, mode = "w", encoding = self.file["encoding"]) as f:
+            json.dump(
+                {"data": self.data, "_meta": meta}, 
+                f, 
+                ensure_ascii = False, 
+                indent = 4, 
+                sort_keys = True, 
+                separators = (", ", ": "), 
+            )
+        temp.replace(target)
+        self.notifyEvent("save", {"data": self.data})
+        return self.data
+
+    @override
     def load(self) -> list | dict:
         """
-        加载数据并清空运行时元数据。
+        加载数据和 `_meta`。
 
-        文件里只存值，不存时间戳和 TTL，加载后所有 key 视为过期，下次访问会刷新。
+        新格式为 `{"data": ..., "_meta": {...}}`，旧格式为裸数据。
+        旧格式加载后 `_meta` 为空，所有 key 视为过期，下次访问会刷新。
+        `_meta` 中 `null` 的 TTL 恢复为 `math.inf`。
 
         :raises FileNotFoundError: 绑定的文件不存在时
         :raises PermissionError: 没有读取权限时
@@ -884,8 +924,30 @@ class Cache(Data):
         :rtype: list | dict
         """
 
-        super().load()
-        self._meta.clear()
+        with open(**self.file, mode = "r") as f:
+            payload = json.load(f)
+        if isinstance(payload, dict) and "data" in payload and "_meta" in payload:
+            self.data = payload["data"]
+            meta = payload["_meta"]
+            if isinstance(meta, dict):
+                self._meta = {}
+                for k, v in meta.items():
+                    if not isinstance(v, dict):
+                        continue
+                    try:
+                        ts = float(v.get("ts", 0))
+                    except (TypeError, ValueError):
+                        continue
+                    ttl_value = v.get("ttl")
+                    ttl = math.inf if ttl_value is None else float(ttl_value)
+                    self._meta[str(k)] = {"ts": ts, "ttl": ttl}
+            else:
+                self._meta = {}
+        else:
+            self.data = payload
+            self._meta = {}
+        self._iterator = None
+        self.notifyEvent("load", {"data": self.data})
         return self.data
 
 class DataManager():
@@ -1092,6 +1154,7 @@ class DataManager():
                     self.cache.load()
                 except (OSError, json.JSONDecodeError):
                     self.cache.data = {}
+                    self.cache._meta = {}
             else:
                 self.cache.data = {}
                 try:

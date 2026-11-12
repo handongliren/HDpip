@@ -206,6 +206,9 @@ def _ensureLatestVersion(timeout: float = 10.0, data_manager: core.data.DataMana
     """
     启动后台拉取并等待完成，最多等 `timeout` 秒。
 
+    `timeout` 为 `0` 时只启动线程、不等待，返回当前已知版本（可能为 `None`）。
+    GUI 线程不要传大于 `0` 的 `timeout`，否则会阻塞事件循环。
+
     :param timeout: 最长等待秒数
     :type timeout: float
     :param data_manager: 数据管理器
@@ -231,6 +234,7 @@ def checkUpdate(data_manager: core.data.DataManager = core.data.data_manager) ->
     检查是否有更新。
 
     后台拉取尚未完成时最多等 10 秒，超时视为无更新。
+    会阻塞调用线程，不要在 GUI 线程调用。
 
     :param data_manager: 数据管理器
     :type data_manager: core.data.DataManager
@@ -337,24 +341,35 @@ def cleanupCopy(data_manager: core.data.DataManager = core.data.data_manager) ->
     if current >= to_version or current != from_version:
         _removeCopy(root)
 
-def launchUpdater(silent: bool, data_manager: core.data.DataManager = core.data.data_manager) -> None:
+def launchUpdater(silent: bool, data_manager: core.data.DataManager = core.data.data_manager) -> bool:
     """
     启动更新进程并立即退出主进程，释放 `site-packages/HDpip` 的文件锁。
+
+    启动失败时返回 `False`，不退出进程，由调用方处理。
 
     :param silent: 是否静默更新
     :type silent: bool
     :param data_manager: 数据管理器
     :type data_manager: core.data.DataManager
-    :raises OSError: 启动更新进程失败时
+    :return: 是否成功启动并退出（成功时不会返回）
+    :rtype: bool
     """
 
     root = _copyRoot(data_manager)
-    subprocess.Popen(
-        [sys.executable, str(root / "HDpip" / "gui" / "upgrade.py"), "--updater"] + (["--silent"] if silent else []), 
-        cwd = tempfile.gettempdir(), 
-        creationflags = _creationFlags(), 
-        close_fds = True, 
-    )
+    script = root / "HDpip" / "gui" / "upgrade.py"
+    if not script.is_file():
+        _writeError(f"更新副本不存在：{script}", data_manager)
+        return False
+    try:
+        subprocess.Popen(
+            [sys.executable, str(script), "--updater"] + (["--silent"] if silent else []), 
+            cwd = tempfile.gettempdir(), 
+            creationflags = _creationFlags(), 
+            close_fds = True, 
+        )
+    except OSError:
+        _writeError(traceback.format_exc(), data_manager)
+        return False
     os._exit(0)
 
 def pipCommand(to_version: str) -> list[str]:
@@ -398,6 +413,7 @@ def checkAndUpdate(data_manager: core.data.DataManager = core.data.data_manager)
 
     检查失败时不更新 `last_check`。`silent` 和 `notify&install` 连续失败 3 次后
     会把设置中的模式降级为 `notify`。返回时表示应正常启动 GUI。
+    会阻塞调用线程，不要在 GUI 线程直接调用。
 
     :param data_manager: 数据管理器
     :type data_manager: core.data.DataManager
@@ -530,12 +546,45 @@ class ConfirmCanvas(custom.containers.Canvas):
 
         self._close()
 
-    def _install(self) -> None:
+    def _showError(self) -> None:
         """
-        启动更新进程。
+        弹窗提示更新启动失败。
         """
 
-        launchUpdater(False, self.data_manager)
+        try:
+            dialog.DialogTk(
+                size = ss((600, 320)), 
+                title = self.data_manager.language["upgrade", "title"], 
+                text = self.data_manager.language["upgrade", "state_error"], 
+                button = [{"text": self.data_manager.language["upgrade", "know_button"], "theme": "primary"}], 
+                theme = "danger"
+            ).mainloop()
+        except Exception:
+            _writeError(traceback.format_exc(), self.data_manager)
+
+    def _install(self) -> None:
+        """
+        确保更新副本存在后启动更新进程。失败时弹窗提示，不退出进程。
+
+        目标版本未就绪（`latest_version` 为 `None` 或已是最新）时直接提示失败，
+        不在 GUI 线程等待后台拉取。
+        """
+
+        if latest_version is None or latest_version <= current_version:
+            self._showError()
+            return
+
+        try:
+            copyToTarget(self.data_manager)
+        except Exception:
+            _writeError(traceback.format_exc(), self.data_manager)
+            self._showError()
+            return
+
+        if launchUpdater(False, self.data_manager):
+            return
+
+        self._showError()
 
     @override
     def __init__(self, master: maliang.Canvas | maliang.core.virtual.Widget | maliang.Tk | maliang.Toplevel, data_manager: core.data.DataManager = core.data.data_manager) -> None:
@@ -712,11 +761,19 @@ class Upgrade(custom.containers.Tk):
 
     def _watchLatest(self) -> None:
         """
-        轮询后台拉取状态，就绪后刷新所有画布的语言。
+        轮询后台拉取状态，就绪后刷新画布并在需要时复制更新副本。
+
+        `copyToTarget` 是幂等的（起止版本一致时直接返回），
+        复制的是本地源码，窗口此时已显示，不会造成启动前卡顿。
         """
 
         if _latest_event.is_set():
             self.confirm_canvas.renderLanguage()
+            if latest_version is not None and latest_version > current_version:
+                try:
+                    copyToTarget(self.data_manager)
+                except Exception:
+                    _writeError(traceback.format_exc(), self.data_manager)
             return
         self.after(100, self._watchLatest)
 
@@ -774,6 +831,7 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
 
     `silent` 为 `True` 时不加载 GUI，直接执行 pip 安装；安装成功后启动新主体。
     `silent` 为 `False` 时显示安装窗口，由 `InstallCanvas` 完成安装和重启。
+    任何未捕获异常都会写入 `copy/error.log`，`silent=False` 时弹窗提示。
 
     :param silent: 是否静默更新
     :type silent: bool
@@ -781,61 +839,75 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
     :type data_manager: core.data.DataManager
     """
 
-    data_manager.init()
-    state = _readState(data_manager)
-    if state is None:
-        message = data_manager.language["upgrade", "state_error"]
-        _writeError(message, data_manager)
+    try:
+        data_manager.init()
+        state = _readState(data_manager)
+        if state is None:
+            message = data_manager.language["upgrade", "state_error"]
+            _writeError(message, data_manager)
+            if not silent:
+                try:
+                    dialog.DialogTk(
+                        size = ss((600, 320)), 
+                        title = data_manager.language["upgrade", "title"], 
+                        text = message, 
+                        button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}], 
+                        theme = "danger", 
+                    ).mainloop()
+                except Exception:
+                    _writeError(traceback.format_exc(), data_manager)
+            return
+        to_version = str(state["to_version"])
+        if not silent:
+            try:
+                InstallWindow(data_manager = data_manager).mainloop()
+            except Exception:
+                _writeError(traceback.format_exc(), data_manager)
+            return
+        try:
+            result = subprocess.run(
+                pipCommand(to_version), 
+                cwd = tempfile.gettempdir(), 
+                stdin = subprocess.DEVNULL, 
+                stdout = subprocess.PIPE, 
+                stderr = subprocess.STDOUT, 
+                creationflags = _creationFlags(), 
+            )
+        except Exception:
+            _writeError(traceback.format_exc(), data_manager)
+            _incrementAttempts(data_manager)
+            return
+        if result.returncode != 0:
+            _writeError(core.system.shellDecode(result.stdout or b""), data_manager)
+            _incrementAttempts(data_manager)
+            return
+        try:
+            subprocess.Popen(
+                [sys.executable, str(_siteMain())], 
+                cwd = tempfile.gettempdir(), 
+                creationflags = _creationFlags(), 
+                close_fds = True
+            )
+        except OSError:
+            _writeError(traceback.format_exc(), data_manager)
+    except Exception:
+        _writeError(traceback.format_exc(), data_manager)
         if not silent:
             try:
                 dialog.DialogTk(
                     size = ss((600, 320)), 
                     title = data_manager.language["upgrade", "title"], 
-                    text = message, 
+                    text = data_manager.language["upgrade", "state_error"], 
                     button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}], 
                     theme = "danger", 
                 ).mainloop()
             except Exception:
                 _writeError(traceback.format_exc(), data_manager)
-        return
-    to_version = str(state["to_version"])
-    if not silent:
-        try:
-            InstallWindow(data_manager = data_manager).mainloop()
-        except Exception:
-            _writeError(traceback.format_exc(), data_manager)
-        return
-    try:
-        result = subprocess.run(
-            pipCommand(to_version), 
-            cwd = tempfile.gettempdir(), 
-            stdin = subprocess.DEVNULL, 
-            stdout = subprocess.PIPE, 
-            stderr = subprocess.STDOUT, 
-            creationflags = _creationFlags(), 
-        )
-    except Exception:
-        _writeError(traceback.format_exc(), data_manager)
-        _incrementAttempts(data_manager)
-        return
-    if result.returncode != 0:
-        _writeError(core.system.shellDecode(result.stdout or b""), data_manager)
-        _incrementAttempts(data_manager)
-        return
-    try:
-        subprocess.Popen(
-            [sys.executable, str(_siteMain())], 
-            cwd = tempfile.gettempdir(), 
-            creationflags = _creationFlags(), 
-            close_fds = True
-        )
-    except OSError:
-        _writeError(traceback.format_exc(), data_manager)
 
 if __name__ == "__main__":
     if "--updater" in sys.argv:
         runUpdater("--silent" in sys.argv)
     else:
         core.data.data_manager.init()
-        threading.Thread(target = _fetchLatestVersion, daemon = True).start()
+        _ensureLatestVersion(0, core.data.data_manager)
         Upgrade().mainloop()

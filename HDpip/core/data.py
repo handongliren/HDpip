@@ -16,7 +16,7 @@ import threading
 import time
 import traceback
 from typing import *
-from typing_extensions import overload, Self
+from typing_extensions import overload, Self, override
 
 if __name__ == "__main__" and __package__ is None:
     import sys
@@ -24,6 +24,31 @@ if __name__ == "__main__" and __package__ is None:
     __package__ = "HDpip.core"
 
 from . import system
+
+_data_event_type = Literal[
+    "open", 
+    "load", 
+    "save", 
+    "__getitem__", 
+    "__setitem__", 
+    "__delitem__", 
+    "__add__", 
+    "__iadd__", 
+]
+
+_cache_event_type = Literal[
+    "open", 
+    "load", 
+    "save", 
+    "__getitem__", 
+    "__setitem__", 
+    "__delitem__", 
+    "__add__", 
+    "__iadd__", 
+    "refresh", 
+    "clear", 
+    "ttl", 
+]
 
 class Data():
     """
@@ -411,16 +436,7 @@ class Data():
 
     def notifyEvent(
         self, 
-        event_type: Literal[
-            "open", 
-            "load", 
-            "save", 
-            "__getitem__", 
-            "__setitem__", 
-            "__delitem__", 
-            "__add__", 
-            "__iadd__"
-        ], 
+        event_type: _data_event_type, 
         event_data: dict[str, Any]
     ):
         """
@@ -429,7 +445,7 @@ class Data():
         单个观察者抛出的异常会被捕获并打印，不影响其他观察者。
 
         :param event_type: 事件类型
-        :type event_type: Literal["open", "load", "save", "\\_\\_getitem\\_\\_", "\\_\\_setitem\\_\\_", "\\_\\_delitem\\_\\_", "\\_\\_add\\_\\_", "\\_\\_iadd\\_\\_"]
+        :type event_type: _data_event_type
         :param event_data: 事件数据
         :type event_data: dict[str, Any]
         """
@@ -469,8 +485,7 @@ class Cache(Data):
     再从刷新后的数据按剩余路径索引；顶层刷新失败时退化为 `Data` 原始路径访问，可能返回过期数据。
     路径写入不更新单键的 `_meta`，子键修改不代表容器被重新获取。
 
-    本类会发送 `refresh`、`clear`、`ttl` 事件，这三个值不在 `Data.notifyEvent` 的 `Literal` 中，
-    运行时不受影响，仅静态类型检查会提示。
+    本类还会发送 `refresh`、`clear`、`ttl` 事件。
     """
 
     def __init__(self, ttl: float = 6 * 3600):
@@ -485,6 +500,56 @@ class Cache(Data):
         self._rules: list[tuple[re.Pattern, Callable[[str], Any], float | None]] = []
         self._fallback: tuple[Callable[[str], Any], float | None] | None = None
         self._meta: dict[str, dict[str, float]] = {}
+
+    @override
+    def notifyEvent(self, event_type: _cache_event_type, event_data: dict[str, Any]) -> None:
+        for observer in self.event_list[:]:
+            try:
+                observer(event_type, event_data)
+            except Exception as error:
+                traceback.print_exception(error)
+
+    @override
+    def registerEvent(self, callback: Callable[[_cache_event_type, dict[str, Any]], Any]) -> None:
+        """
+        注册事件回调函数。
+
+        :param callback: 回调函数，接收事件类型和事件数据
+        :type callback: Callable[[_cache_event_type, dict[str, Any]], Any]
+
+        **event_type**
+
+        `open`、`load`、`save`、`__getitem__`、`__setitem__`、`__delitem__`、`__add__`、`__iadd__`、
+        `refresh`、`clear`、`ttl`
+
+        **event_data**
+
+        - `open`：同 `Data`，包含 `{"file": str, "encoding": str}`
+        - `load`、`save`：同 `Data`，包含 `{"data": dict | list}`
+        - `__getitem__`：同 `Data`，包含 `{"key": str | int | tuple | list, "value": Any}`
+        - `__setitem__`：同 `Data`，包含 `{"key": str | int | tuple | list, "value": Any, "old_value": Any}`
+        - `__delitem__`：同 `Data`，包含 `{"key": str | int | tuple | list, "old_value": Any}`
+        - `__add__`：同 `Data`，包含 `{"value": dict | list | Data, "result": Data}`
+        - `__iadd__`：同 `Data`，包含 `{"value": dict | list | Data}`
+        - `refresh`：包含 `{"key": str, "value": Any}`
+        - `clear`：包含 `{"key": str | None}`
+        - `ttl`：包含 `{"key": str, "ttl": float}`
+        """
+
+        if callback not in self.event_list:
+            self.event_list.append(callback)
+
+    @override
+    def unregisterEvent(self, callback: Callable[[_cache_event_type, dict[str, Any]], Any]) -> None:
+        """
+        注销事件回调函数。
+
+        :param callback: 要注销的回调函数
+        :type callback: Callable[[_cache_event_type, dict[str, Any]], Any]
+        """
+
+        if callback in self.event_list:
+            self.event_list.remove(callback)
 
     def _match(self, key: str | re.Pattern | None) -> list[str]:
         """
@@ -627,12 +692,12 @@ class Cache(Data):
                 raise KeyError(f"缓存中不存在键 {key!r}。")
             meta = self._meta.setdefault(key, {"ts": time.time(), "ttl": resolved})
             meta["ttl"] = resolved
-            self.notifyEvent("ttl", {"key": key, "ttl": resolved})  # type: ignore[arg-type]
+            self.notifyEvent("ttl", {"key": key, "ttl": resolved})
             return
         for k in self._match(key):
             meta = self._meta.setdefault(k, {"ts": time.time(), "ttl": resolved})
             meta["ttl"] = resolved
-            self.notifyEvent("ttl", {"key": k, "ttl": resolved})  # type: ignore[arg-type]
+            self.notifyEvent("ttl", {"key": k, "ttl": resolved})
 
     def setDefaultTTL(self, ttl: float) -> None:
         """
@@ -664,7 +729,7 @@ class Cache(Data):
             self.data[key] = value
             self._meta[key] = {"ts": time.time(), "ttl": ttl}
             self._iterator = None
-            self.notifyEvent("refresh", {"key": key, "value": value})  # type: ignore[arg-type]
+            self.notifyEvent("refresh", {"key": key, "value": value})
             return value
         result: dict[str, Any] = {}
         for k in self._match(key):
@@ -804,7 +869,7 @@ class Cache(Data):
             self._meta.pop(key, None)
         self._iterator = None
         event_key = key.pattern if isinstance(key, re.Pattern) else key
-        self.notifyEvent("clear", {"key": event_key})  # type: ignore[arg-type]
+        self.notifyEvent("clear", {"key": event_key})
 
     def load(self) -> list | dict:
         """

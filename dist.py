@@ -12,11 +12,10 @@ import subprocess
 import sys
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    sys.stdout.reconfigure(encoding = "utf-8", errors = "replace")
+    sys.stderr.reconfigure(encoding = "utf-8", errors = "replace")
 
 base_dir = pathlib.Path(__file__).parent.resolve()
-
 
 def clean() -> None:
     """
@@ -24,16 +23,14 @@ def clean() -> None:
     """
 
     for name in ["build", "dist", "hdpip.egg-info"]:
-        shutil.rmtree(base_dir / name, ignore_errors=True)
+        shutil.rmtree(base_dir / name, ignore_errors = True)
         print(f"清理 {base_dir / name}")
-
 
 def copy() -> None:
     for name in ["README.md", "LICENSE.txt"]:
         if (base_dir / name).is_file():
             shutil.copy2(base_dir / name, base_dir / "HDpip" / name)
             print(f"复制 {base_dir / name} → {base_dir / 'HDpip' / name}")
-
 
 def requirements() -> None:
     """
@@ -60,14 +57,13 @@ def requirements() -> None:
     optional = project.get("optional-dependencies", {})
 
     def write(path: pathlib.Path, deps: list[str]) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("\n".join(deps) + "\n", encoding="utf-8")
+        path.parent.mkdir(parents = True, exist_ok = True)
+        path.write_text("\n".join(deps) + "\n", encoding = "utf-8")
         print(f"生成 {path.relative_to(base_dir)}")
 
     write(base_dir / "requirements.txt", project.get("dependencies", []))
     write(base_dir / "requirements-dev.txt", optional.get("dev", []))
     write(base_dir / "requirements-docs.txt", optional.get("docs", []))
-
 
 def main() -> int:
     """
@@ -81,17 +77,16 @@ def main() -> int:
     copy()
     requirements()
     completed = subprocess.run(
-        [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
+        [sys.executable, "-m", "build", "--sdist", "--wheel", "--no-isolation"], 
+        capture_output = True, 
+        text = True, 
+        encoding = "utf-8", 
+        errors = "replace", 
     )
     if completed.returncode != 0:
         print(completed.stdout)
-        print(completed.stderr, file=sys.stderr)
+        print(completed.stderr, file = sys.stderr)
     return completed.returncode
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

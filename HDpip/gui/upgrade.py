@@ -257,10 +257,10 @@ def _intervalSeconds(interval: str | int | float) -> float:
     if isinstance(interval, (int, float)):
         return float(interval)
     return {
-        "hourly": 3600,
-        "daily": 86400,
-        "weekly": 7 * 86400,
-        "monthly": 30 * 86400,
+        "hourly": 3600, 
+        "daily": 86400, 
+        "weekly": 7 * 86400, 
+        "monthly": 30 * 86400
     }.get(str(interval).lower(), 86400)
 
 def copyToTarget(data_manager: core.data.DataManager = core.data.data_manager) -> None:
@@ -350,10 +350,10 @@ def launchUpdater(silent: bool, data_manager: core.data.DataManager = core.data.
 
     root = _copyRoot(data_manager)
     subprocess.Popen(
-        [sys.executable, str(root / "HDpip" / "gui" / "upgrade.py"), "--updater"] + (["--silent"] if silent else []),
-        cwd = tempfile.gettempdir(),
-        creationflags = _creationFlags(),
-        close_fds = True,
+        [sys.executable, str(root / "HDpip" / "gui" / "upgrade.py"), "--updater"] + (["--silent"] if silent else []), 
+        cwd = tempfile.gettempdir(), 
+        creationflags = _creationFlags(), 
+        close_fds = True, 
     )
     os._exit(0)
 
@@ -379,14 +379,14 @@ def _notifyThenInstall(data_manager: core.data.DataManager = core.data.data_mana
 
     latest_text = str(latest_version) if latest_version is not None else "……"
     window = dialog.DialogTk(
-        size = ss((600, 320)),
-        title = data_manager.language["upgrade", "title"],
+        size = ss((600, 320)), 
+        title = data_manager.language["upgrade", "title"], 
         text = data_manager.language["upgrade", "notify_tip"].format(
-            current_version = current_version,
-            latest_version = latest_text,
-        ),
-        button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}],
-        theme = "primary",
+            current_version = current_version, 
+            latest_version = latest_text
+        ), 
+        button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}], 
+        theme = "primary"
     )
     window.after(2500, window.destroy)
     window.mainloop()
@@ -473,8 +473,8 @@ class ConfirmCanvas(custom.containers.Canvas):
             tip = self.data_manager.language["upgrade", "latest_tip"].format(current_version = current_version)
         else:
             tip = self.data_manager.language["upgrade", "tip"].format(
-                current_version = current_version,
-                latest_version = str(latest_version),
+                current_version = current_version, 
+                latest_version = str(latest_version)
             )
         state = _readState(self.data_manager)
         attempts = int(state["attempts"]) if state is not None else 0
@@ -568,8 +568,8 @@ class InstallCanvas(custom.containers.Canvas):
         """
 
         self.tip.set(self.data_manager.language["upgrade", "install_tip"].format(
-            current_version = current_version,
-            latest_version = self._targetVersionText(),
+            current_version = current_version, 
+            latest_version = self._targetVersionText()
         ))
 
     def _targetVersionText(self) -> str:
@@ -604,12 +604,12 @@ class InstallCanvas(custom.containers.Canvas):
         output = []
         try:
             process = subprocess.Popen(
-                command,
-                cwd = tempfile.gettempdir(),
-                stdin = subprocess.DEVNULL,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.STDOUT,
-                creationflags = _creationFlags(),
+                command, 
+                cwd = tempfile.gettempdir(), 
+                stdin = subprocess.DEVNULL, 
+                stdout = subprocess.PIPE, 
+                stderr = subprocess.STDOUT, 
+                creationflags = _creationFlags(), 
             )
             for line in process.stdout:
                 text = core.system.shellDecode(line).rstrip()
@@ -636,10 +636,10 @@ class InstallCanvas(custom.containers.Canvas):
 
         try:
             subprocess.Popen(
-                [sys.executable, str(_siteMain())],
-                cwd = tempfile.gettempdir(),
-                creationflags = _creationFlags(),
-                close_fds = True,
+                [sys.executable, str(_siteMain())], 
+                cwd = tempfile.gettempdir(), 
+                creationflags = _creationFlags(), 
+                close_fds = True
             )
         except OSError:
             _writeError(traceback.format_exc(), self.data_manager)
@@ -789,11 +789,11 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
         if not silent:
             try:
                 dialog.DialogTk(
-                    size = ss((600, 320)),
-                    title = data_manager.language["upgrade", "title"],
-                    text = message,
-                    button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}],
-                    theme = "danger",
+                    size = ss((600, 320)), 
+                    title = data_manager.language["upgrade", "title"], 
+                    text = message, 
+                    button = [{"text": data_manager.language["upgrade", "know_button"], "theme": "primary"}], 
+                    theme = "danger", 
                 ).mainloop()
             except Exception:
                 _writeError(traceback.format_exc(), data_manager)
@@ -807,12 +807,12 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
         return
     try:
         result = subprocess.run(
-            pipCommand(to_version),
-            cwd = tempfile.gettempdir(),
-            stdin = subprocess.DEVNULL,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            creationflags = _creationFlags(),
+            pipCommand(to_version), 
+            cwd = tempfile.gettempdir(), 
+            stdin = subprocess.DEVNULL, 
+            stdout = subprocess.PIPE, 
+            stderr = subprocess.STDOUT, 
+            creationflags = _creationFlags(), 
         )
     except Exception:
         _writeError(traceback.format_exc(), data_manager)
@@ -824,10 +824,10 @@ def runUpdater(silent: bool = False, data_manager: core.data.DataManager = core.
         return
     try:
         subprocess.Popen(
-            [sys.executable, str(_siteMain())],
-            cwd = tempfile.gettempdir(),
-            creationflags = _creationFlags(),
-            close_fds = True,
+            [sys.executable, str(_siteMain())], 
+            cwd = tempfile.gettempdir(), 
+            creationflags = _creationFlags(), 
+            close_fds = True
         )
     except OSError:
         _writeError(traceback.format_exc(), data_manager)

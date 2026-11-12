@@ -23,7 +23,6 @@ if __name__ == "__main__" and __package__ is None:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
     __package__ = "HDpip.core"
 
-from . import pip_api
 from . import system
 
 class Data():
@@ -358,25 +357,25 @@ class Data():
         - `__getitem__`:
         ```
             {
-                "key": str | int,     # 访问的键
-                "value": Any          # 获取的值
+                "key": str | int | tuple | list,  # 访问的键，路径访问时是完整路径
+                "value": Any                      # 获取的值
             }
         ```
 
         - `__setitem__`:
         ```
             {
-                "key": str | int,     # 设置的键
-                "value": Any,         # 新设置的值
-                "old_value": Any      # 原来的值，键不存在时为 None
+                "key": str | int | tuple | list,  # 设置的键，路径访问时是完整路径
+                "value": Any,                     # 新设置的值
+                "old_value": Any                  # 原来的值，键不存在时为 None
             }
         ```
 
         - `__delitem__`:
         ```
             {
-                "key": str | int,     # 删除的键
-                "old_value": Any      # 被删除的值
+                "key": str | int | tuple | list,  # 删除的键，路径访问时是完整路径
+                "old_value": Any                  # 被删除的值
             }
         ```
 
@@ -458,14 +457,17 @@ class Cache(Data):
     `refreshStale()` 只检查已有 key，过期且能刷新的立即刷新。
     `clear()` 传 `str` 清除单个，`re.Pattern` 清除匹配的，`None` 清除全部。
 
-    `__getitem__` / `__setitem__` / `__delitem__` 沿用 `Data` 的 `str | int | tuple | list` 语义，不参与统一。
-
     TTL 语义在所有位置统一：
     - `None`：继承默认 TTL
     - `math.inf`：永不过期
     - 其他数字：过期秒数
 
-    内部元数据只保存解析后的 `float`，不会出现 `None`。
+    内部元数据只保存解析后的 `float`，不会出现 `None`，key 统一为 `str`。
+
+    TTL 和刷新只对单键 `str | int` 生效。
+    路径读取（`tuple | list` key）先对顶层 key 调用 `get()`，触发顶层过期判断和刷新，
+    再从刷新后的数据按剩余路径索引；顶层刷新失败时退化为 `Data` 原始路径访问，可能返回过期数据。
+    路径写入不更新单键的 `_meta`，子键修改不代表容器被重新获取。
 
     本类会发送 `refresh`、`clear`、`ttl` 事件，这三个值不在 `Data.notifyEvent` 的 `Literal` 中，
     运行时不受影响，仅静态类型检查会提示。
@@ -728,7 +730,10 @@ class Cache(Data):
 
     def __getitem__(self, key: str | int | tuple | list):
         """
-        访问数据，单键自动判过期并刷新，嵌套路径走 `Data` 原始逻辑。
+        访问数据。
+
+        单键自动判过期并刷新；路径读取先对顶层 key 调用 `get()` 触发刷新，
+        再从刷新后的数据按剩余路径索引。顶层刷新失败时退化为 `Data` 原始路径访问。
 
         :param key: 键，可以是字符串、整数，或由它们组成的路径
         :type key: str | int | tuple | list
@@ -739,13 +744,31 @@ class Cache(Data):
             value = self.get(key)
             self.notifyEvent("__getitem__", {"key": key, "value": value})
             return value
-        return super().__getitem__(key)
+
+        if not key:
+            raise ValueError("键不能为空。")
+
+        top = key[0]
+        if not isinstance(top, str | int):
+            return super().__getitem__(key)
+
+        try:
+            base = self.get(top)
+        except KeyError:
+            return super().__getitem__(key)
+
+        result = base
+        for i in key[1:]:
+            result = result[i]
+        self.notifyEvent("__getitem__", {"key": key, "value": result})
+        return result
 
     def __setitem__(self, key: str | int | tuple | list, value: Any):
         """
-        设置数据，并记录刷新时间和 TTL。
+        设置数据。
 
-        单键更新自身元数据，嵌套路径更新顶层 key 的元数据。
+        单键更新自身元数据；路径写入不更新单键的 `_meta`，
+        因为子键修改不代表容器被重新获取。
 
         :param key: 键，可以是字符串、整数，或由它们组成的路径
         :type key: str | int | tuple | list
@@ -754,9 +777,10 @@ class Cache(Data):
         """
 
         super().__setitem__(key, value)
-        top = key if isinstance(key, str | int) else key[0]
-        _, ttl = self._resolve(str(top))
-        self._meta[top] = {"ts": time.time(), "ttl": ttl}
+        if isinstance(key, str | int):
+            top = str(key)
+            _, ttl = self._resolve(top)
+            self._meta[top] = {"ts": time.time(), "ttl": ttl}
 
     def clear(self, key: str | re.Pattern | None = None) -> None:
         """
@@ -966,11 +990,35 @@ class DataManager():
             self.getLanguage(self.setting["language"])
             self.setting.registerEvent(self.onLanguageChange)
 
+        dirty = False
         if not isinstance(self.setting.data.get("upgrade"), dict):
             self.setting["upgrade"] = {}
-        self.setting["upgrade"].setdefault("last_check", 0)
+            dirty = True
+        if "last_check" not in self.setting["upgrade"]:
+            self.setting["upgrade"]["last_check"] = 0
+            dirty = True
+        if dirty:
+            self.setting.save()
 
         if must or not hasattr(self, "cache"):
+            from . import pip_api
+
+            def _refreshVersion(pkg: str) -> str:
+                """
+                查询最新版本，失败时抛 `KeyError`，避免 `"None"` 写入缓存。
+
+                :param pkg: 包名
+                :type pkg: str
+                :raises KeyError: 查询失败时
+                :return: 版本号字符串
+                :rtype: str
+                """
+
+                v = pip_api.getLatestVersion(pkg)
+                if v is None:
+                    raise KeyError(pkg)
+                return str(v)
+
             self.custom_cache = (self.custom_setting.parent / "cache.json").resolve()
             self.cache = Cache()
             self.cache.open(self.custom_cache)
@@ -985,7 +1033,7 @@ class DataManager():
                     self.cache.save()
                 except OSError:
                     pass
-            self.cache.registerRefresh(None, lambda pkg: str(pip_api.getLatestVersion(pkg)), ttl = 6 * 3600)
+            self.cache.registerRefresh(None, _refreshVersion, ttl = 6 * 3600)
             self.cache.registerEvent(self.onCacheChange)
 
 data_manager = DataManager()

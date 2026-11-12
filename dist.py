@@ -81,9 +81,12 @@ def main() -> int:
         capture_output = True, 
         text = True, 
         encoding = "utf-8", 
-        errors = "replace", 
+        errors = "replace"
     )
-    if completed.returncode != 0:
+    if completed.returncode == 0:
+        print("构建成功！")
+    else:
+        print("构建失败！", file = sys.stderr)
         print(completed.stdout)
         print(completed.stderr, file = sys.stderr)
     return completed.returncode

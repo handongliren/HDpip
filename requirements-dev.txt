@@ -1,4 +1,6 @@
+setuptools>=77
 build
+wheel
 pytest
 pytest-cov
 coverage

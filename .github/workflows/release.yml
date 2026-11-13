@@ -87,16 +87,16 @@ jobs:
           fi
           cat release_notes.md
 
-      # 计算 SHA256 并以表格形式写入 Release Notes 和 Job Summary，
-      # 文件名只保留 basename，不带路径。
+      # 计算 SHA256 并以中英双语表格写入 Release Notes 和 Job Summary，
+      # 英文在前，中文在后；文件名只保留 basename，不带路径。
       - name: Generate SHA256 checksums
         run: |
           shopt -s nullglob
           {
             echo ""
-            echo "## SHA256 Checksums"
+            echo "## SHA256 Checksums / SHA256 校验和"
             echo ""
-            echo "| File | SHA256 |"
+            echo "| File / 文件 | SHA256 |"
             echo "|------|--------|"
           } > sha256_table.md
           for f in dist/*.whl dist/*.tar.gz; do

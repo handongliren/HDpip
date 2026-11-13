@@ -7,6 +7,7 @@ on:
 
 # Immutable Releases 需要：contents: write 上传附件
 # 构建来源证明需要：id-token: write + attestations: write
+# PyPI trusted publishing 需要：id-token: write
 permissions:
   contents: write
   id-token: write
@@ -15,6 +16,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: pypi
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,12 +40,12 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Verify tag matches pyproject.toml
+      - name: Verify tag matches package version
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          PKG_VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          PKG_VERSION=$(python -c "import HDpip; print(HDpip.version)")
           if [ "$VERSION" != "$PKG_VERSION" ]; then
-            echo "::error::Tag version ($VERSION) 与 pyproject.toml 中的版本 ($PKG_VERSION) 不一致"
+            echo "::error::Tag version ($VERSION) 与包版本 ($PKG_VERSION) 不一致"
             exit 1
           fi
 
@@ -140,6 +142,11 @@ jobs:
             dist/*.tar.gz \
             --clobber \
             --repo "${{ github.repository }}"
+
+      # 先准备好草稿 Release 和附件，再发布到 PyPI。
+      # Trusted publishing 使用 OIDC，无需在仓库中保存 API Token。
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Publish release
         env:

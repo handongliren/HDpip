@@ -12,6 +12,42 @@
 > - 🟠 **Deprecated / 弃用**
 > - 🟤 **Refactored / 重构**
 
+## 🔖 `0.0.7.post1`
+
+🕓 *Release Date / 发布日期 : 2026-11-13*
+
+> [!IMPORTANT]
+>
+> This release keeps Python 3.10 support. `maliang 3.2.0` requires Python `>=3.11`, so HDpip remains on `maliang>=3.1.0,<3.2.0`. Do not upgrade Maliang to 3.2.0 unless HDpip's supported Python range is intentionally raised.
+>
+> 本版本继续支持 Python 3.10。`maliang 3.2.0` 要求 Python `>=3.11`，因此 HDpip 继续使用 `maliang>=3.1.0,<3.2.0`。除非明确提高 HDpip 的 Python 支持下限，否则不要升级到 Maliang 3.2.0。
+
+🟡 **Changed / 变更**
+
+- Persist cached values and their expiration metadata across restarts, while continuing to load the previous raw-data cache format.
+
+- 缓存数据及其过期元数据现可跨重启持久化，同时继续兼容旧版裸数据缓存格式。
+
+- Improve automatic update failure handling with clearer user feedback and error logging.
+
+- 改进自动更新失败处理，提供更明确的用户提示并记录错误日志。
+
+- Tighten dependency version ranges and include the `tomli` compatibility dependency for Python versions below 3.11.
+
+- 收紧依赖版本范围，并为 Python 3.11 以下版本添加 `tomli` 兼容依赖。
+
+🟣 **Fixed / 修复**
+
+- Preserve infinite cache TTL values when saving and restoring cache metadata.
+
+- 修复缓存元数据保存和恢复时无限 TTL 值无法保留的问题。
+
+🟤 **Refactored / 重构**
+
+- Improve build output so success and failure details are reported clearly.
+
+- 改进构建输出，明确报告构建成功状态或失败详情。
+
 ## 🔖 `0.0.7`
 
 🕓 *Release Date / 发布日期 : 2026-11-11*
